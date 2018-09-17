@@ -39,17 +39,17 @@ class Compiler(Element):
         boundmass="0",
         boundinertia="0",
         settotalmass="-1",
-        balanceinertia="BAD DEFAULT",
-        strippath="BAD DEFAULT",
-        coordinate="BAD DEFAULT",
-        angle="BAD DEFAULT",
-        fitaabb="BAD DEFAULT",
+        balanceinertia="false",
+        strippath="false",
+        coordinate="local",
+        angle="degree",
+        fitaabb="false",
         eulerseq="xyz",
         meshdir=None,
         texturedir=None,
-        discardvisual="BAD DEFAULT",
-        convexhull="BAD DEFAULT",
-        inertiafromgeom="BAD DEFAULT",
+        discardvisual="false",
+        convexhull="true",
+        inertiafromgeom="auto",
         inertiagrouprange="0 4",
     ):
         super().__init__()
@@ -89,13 +89,13 @@ class CompilerLengthrange(Element):
         o_margin="0",
         o_solref="0.02 1",
         o_solimp="0.8 0.8 0.01",
-        integrator="BAD DEFAULT",
-        collision="BAD DEFAULT",
-        impedance="BAD DEFAULT",
-        reference="BAD DEFAULT",
-        cone="BAD DEFAULT",
-        jacobian="BAD DEFAULT",
-        solver="BAD DEFAULT",
+        integrator="Euler",
+        collision="all",
+        impedance="sigmoid",
+        reference="spring",
+        cone="pyramidal",
+        jacobian="auto",
+        solver="Newton",
         iterations="100",
         tolerance="1e-8",
         noslip_iterations="0",
@@ -149,13 +149,13 @@ class Option(Element):
         o_margin="0",
         o_solref="0.02 1",
         o_solimp="0.8 0.8 0.01",
-        integrator="BAD DEFAULT",
-        collision="BAD DEFAULT",
-        impedance="BAD DEFAULT",
-        reference="BAD DEFAULT",
-        cone="BAD DEFAULT",
-        jacobian="BAD DEFAULT",
-        solver="BAD DEFAULT",
+        integrator="Euler",
+        collision="all",
+        impedance="sigmoid",
+        reference="spring",
+        cone="pyramidal",
+        jacobian="auto",
+        solver="Newton",
         iterations="100",
         tolerance="1e-8",
         noslip_iterations="0",
@@ -198,22 +198,22 @@ class OptionFlag(Element):
     """
     def __init__(
         self,
-        constraint="BAD DEFAULT",
-        equality="BAD DEFAULT",
-        frictionloss="BAD DEFAULT",
-        limit="BAD DEFAULT",
-        contact="BAD DEFAULT",
-        passive="BAD DEFAULT",
-        gravity="BAD DEFAULT",
-        clampctrl="BAD DEFAULT",
-        warmstart="BAD DEFAULT",
-        filterparent="BAD DEFAULT",
-        actuation="BAD DEFAULT",
-        refsafe="BAD DEFAULT",
-        override="BAD DEFAULT",
-        energy="BAD DEFAULT",
-        fwdinv="BAD DEFAULT",
-        sensornoise="BAD DEFAULT",
+        constraint="enable",
+        equality="enable",
+        frictionloss="enable",
+        limit="enable",
+        contact="enable",
+        passive="enable",
+        gravity="enable",
+        clampctrl="enable",
+        warmstart="enable",
+        filterparent="enable",
+        actuation="enable",
+        refsafe="enable",
+        override="disable",
+        energy="disable",
+        fwdinv="disable",
+        sensornoise="disable",
     ):
         super().__init__()
         self.constraint = constraint
@@ -930,7 +930,7 @@ class Tupleelement(Element):
     """
     def __init__(
         self,
-        objtype="BAD DEFAULT",
+        objtype=None,
         objname=None,
         prm="0",
     ):
@@ -949,16 +949,20 @@ class Asset(Element):
     def __init__(
         self,
         name=None,
-        type="BAD DEFAULT",
-        cube="BAD DEFAULT",
+        type="cube",
         file=None,
         gridsize="1 1",
         gridlayout="............",
-        builtin="BAD DEFAULT",
-        gradient="BAD DEFAULT",
+        fileright=None,
+        fileleft=None,
+        fileup=None,
+        filedown=None,
+        filefront=None,
+        fileback=None,
+        builtin="none",
         rgb1="0.8 0.8 0.8",
         rgb2="0.5 0.5 0.5",
-        mark="BAD DEFAULT",
+        mark="none",
         markrgb="0 0 0",
         random="0.01",
         width="0",
@@ -967,12 +971,16 @@ class Asset(Element):
         super().__init__()
         self.name = name
         self.type = type
-        self.cube = cube
         self.file = file
         self.gridsize = gridsize
         self.gridlayout = gridlayout
+        self.fileright = fileright
+        self.fileleft = fileleft
+        self.fileup = fileup
+        self.filedown = filedown
+        self.filefront = filefront
+        self.fileback = fileback
         self.builtin = builtin
-        self.gradient = gradient
         self.rgb1 = rgb1
         self.rgb2 = rgb2
         self.mark = mark
@@ -980,7 +988,7 @@ class Asset(Element):
         self.random = random
         self.width = width
         self.height = height
-        self._attribute_names = ['name', 'type', 'cube', 'file', 'gridsize', 'gridlayout', 'builtin', 'gradient', 'rgb1', 'rgb2', 'mark', 'markrgb', 'random', 'width', 'height']
+        self._attribute_names = ['name', 'type', 'file', 'gridsize', 'gridlayout', 'fileright', 'fileleft', 'fileup', 'filedown', 'filefront', 'fileback', 'builtin', 'rgb1', 'rgb2', 'mark', 'markrgb', 'random', 'width', 'height']
 
 
 class Texture(Element):
@@ -991,16 +999,20 @@ class Texture(Element):
     def __init__(
         self,
         name=None,
-        type="BAD DEFAULT",
-        cube="BAD DEFAULT",
+        type="cube",
         file=None,
         gridsize="1 1",
         gridlayout="............",
-        builtin="BAD DEFAULT",
-        gradient="BAD DEFAULT",
+        fileright=None,
+        fileleft=None,
+        fileup=None,
+        filedown=None,
+        filefront=None,
+        fileback=None,
+        builtin="none",
         rgb1="0.8 0.8 0.8",
         rgb2="0.5 0.5 0.5",
-        mark="BAD DEFAULT",
+        mark="none",
         markrgb="0 0 0",
         random="0.01",
         width="0",
@@ -1009,12 +1021,16 @@ class Texture(Element):
         super().__init__()
         self.name = name
         self.type = type
-        self.cube = cube
         self.file = file
         self.gridsize = gridsize
         self.gridlayout = gridlayout
+        self.fileright = fileright
+        self.fileleft = fileleft
+        self.fileup = fileup
+        self.filedown = filedown
+        self.filefront = filefront
+        self.fileback = fileback
         self.builtin = builtin
-        self.gradient = gradient
         self.rgb1 = rgb1
         self.rgb2 = rgb2
         self.mark = mark
@@ -1022,7 +1038,7 @@ class Texture(Element):
         self.random = random
         self.width = width
         self.height = height
-        self._attribute_names = ['name', 'type', 'cube', 'file', 'gridsize', 'gridlayout', 'builtin', 'gradient', 'rgb1', 'rgb2', 'mark', 'markrgb', 'random', 'width', 'height']
+        self._attribute_names = ['name', 'type', 'file', 'gridsize', 'gridlayout', 'fileright', 'fileleft', 'fileup', 'filedown', 'filefront', 'fileback', 'builtin', 'rgb1', 'rgb2', 'mark', 'markrgb', 'random', 'width', 'height']
 
 
 class Hfield(Element):
@@ -1090,7 +1106,7 @@ class Material(Element):
         class_=None,
         texture=None,
         texrepeat="1 1",
-        texuniform="BAD DEFAULT",
+        texuniform="false",
         emission="0",
         specular="0.5",
         shininess="0.5",
@@ -1121,8 +1137,13 @@ class Body(Element):
         self,
         name=None,
         childclass=None,
-        mocap="BAD DEFAULT",
+        mocap="false",
         pos=None,
+        quat=None,
+        axisangle=None,
+        xyaxes=None,
+        zaxis=None,
+        euler=None,
         user="0 0 ...",
     ):
         super().__init__()
@@ -1130,8 +1151,13 @@ class Body(Element):
         self.childclass = childclass
         self.mocap = mocap
         self.pos = pos
+        self.quat = quat
+        self.axisangle = axisangle
+        self.xyaxes = xyaxes
+        self.zaxis = zaxis
+        self.euler = euler
         self.user = user
-        self._attribute_names = ['name', 'childclass', 'mocap', 'pos', 'user']
+        self._attribute_names = ['name', 'childclass', 'mocap', 'pos', 'quat', 'axisangle', 'xyaxes', 'zaxis', 'euler', 'user']
 
 
 class Inertial(Element):
@@ -1142,16 +1168,26 @@ class Inertial(Element):
     def __init__(
         self,
         pos=None,
+        quat=None,
+        axisangle=None,
+        xyaxes=None,
+        zaxis=None,
+        euler=None,
         mass=None,
         diaginertia=None,
         fullinertia=None,
     ):
         super().__init__()
         self.pos = pos
+        self.quat = quat
+        self.axisangle = axisangle
+        self.xyaxes = xyaxes
+        self.zaxis = zaxis
+        self.euler = euler
         self.mass = mass
         self.diaginertia = diaginertia
         self.fullinertia = fullinertia
-        self._attribute_names = ['pos', 'mass', 'diaginertia', 'fullinertia']
+        self._attribute_names = ['pos', 'quat', 'axisangle', 'xyaxes', 'zaxis', 'euler', 'mass', 'diaginertia', 'fullinertia']
 
 
 class Joint(Element):
@@ -1163,12 +1199,15 @@ class Joint(Element):
         self,
         name=None,
         class_=None,
-        type="BAD DEFAULT",
-        free="BAD DEFAULT",
+        type="hinge",
         pos="0 0 0",
         axis="0 0 1",
         springdamper="0 0",
-        limited="BAD DEFAULT",
+        limited="false",
+        solreflimit=None,
+        solimplimit=None,
+        solreffriction=None,
+        solimpfriction=None,
         stiffness="0",
         range="0 0",
         margin="0",
@@ -1183,11 +1222,14 @@ class Joint(Element):
         self.name = name
         self.class_ = class_
         self.type = type
-        self.free = free
         self.pos = pos
         self.axis = axis
         self.springdamper = springdamper
         self.limited = limited
+        self.solreflimit = solreflimit
+        self.solimplimit = solimplimit
+        self.solreffriction = solreffriction
+        self.solimpfriction = solimpfriction
         self.stiffness = stiffness
         self.range = range
         self.margin = margin
@@ -1197,7 +1239,7 @@ class Joint(Element):
         self.damping = damping
         self.frictionloss = frictionloss
         self.user = user
-        self._attribute_names = ['name', 'class_', 'type', 'free', 'pos', 'axis', 'springdamper', 'limited', 'stiffness', 'range', 'margin', 'ref', 'springref', 'armature', 'damping', 'frictionloss', 'user']
+        self._attribute_names = ['name', 'class_', 'type', 'pos', 'axis', 'springdamper', 'limited', 'solreflimit', 'solimplimit', 'solreffriction', 'solimpfriction', 'stiffness', 'range', 'margin', 'ref', 'springref', 'armature', 'damping', 'frictionloss', 'user']
 
 
 class Freejoint(Element):
@@ -1226,8 +1268,7 @@ class Geom(Element):
         self,
         name=None,
         class_=None,
-        type="BAD DEFAULT",
-        plane="BAD DEFAULT",
+        type="sphere",
         contype="1",
         conaffinity="1",
         condim="3",
@@ -1239,10 +1280,17 @@ class Geom(Element):
         mass=None,
         density="1000",
         solmix="1",
+        solref=None,
+        solimp=None,
         margin="0",
         gap="0",
         fromto=None,
         pos="0 0 0",
+        quat=None,
+        axisangle=None,
+        xyaxes=None,
+        zaxis=None,
+        euler=None,
         hfield=None,
         mesh=None,
         fitscale="1",
@@ -1252,7 +1300,6 @@ class Geom(Element):
         self.name = name
         self.class_ = class_
         self.type = type
-        self.plane = plane
         self.contype = contype
         self.conaffinity = conaffinity
         self.condim = condim
@@ -1264,15 +1311,22 @@ class Geom(Element):
         self.mass = mass
         self.density = density
         self.solmix = solmix
+        self.solref = solref
+        self.solimp = solimp
         self.margin = margin
         self.gap = gap
         self.fromto = fromto
         self.pos = pos
+        self.quat = quat
+        self.axisangle = axisangle
+        self.xyaxes = xyaxes
+        self.zaxis = zaxis
+        self.euler = euler
         self.hfield = hfield
         self.mesh = mesh
         self.fitscale = fitscale
         self.user = user
-        self._attribute_names = ['name', 'class_', 'type', 'plane', 'contype', 'conaffinity', 'condim', 'group', 'size', 'material', 'rgba', 'friction', 'mass', 'density', 'solmix', 'margin', 'gap', 'fromto', 'pos', 'hfield', 'mesh', 'fitscale', 'user']
+        self._attribute_names = ['name', 'class_', 'type', 'contype', 'conaffinity', 'condim', 'group', 'size', 'material', 'rgba', 'friction', 'mass', 'density', 'solmix', 'solref', 'solimp', 'margin', 'gap', 'fromto', 'pos', 'quat', 'axisangle', 'xyaxes', 'zaxis', 'euler', 'hfield', 'mesh', 'fitscale', 'user']
 
 
 class Site(Element):
@@ -1284,12 +1338,17 @@ class Site(Element):
         self,
         name=None,
         class_=None,
-        type="BAD DEFAULT",
+        type="sphere",
         group="0",
         material=None,
         rgba="0.5 0.5 0.5 1",
         size="0 0 0",
         pos="0 0 0",
+        quat=None,
+        axisangle=None,
+        xyaxes=None,
+        zaxis=None,
+        euler=None,
         user="0 0 ...",
     ):
         super().__init__()
@@ -1301,8 +1360,13 @@ class Site(Element):
         self.rgba = rgba
         self.size = size
         self.pos = pos
+        self.quat = quat
+        self.axisangle = axisangle
+        self.xyaxes = xyaxes
+        self.zaxis = zaxis
+        self.euler = euler
         self.user = user
-        self._attribute_names = ['name', 'class_', 'type', 'group', 'material', 'rgba', 'size', 'pos', 'user']
+        self._attribute_names = ['name', 'class_', 'type', 'group', 'material', 'rgba', 'size', 'pos', 'quat', 'axisangle', 'xyaxes', 'zaxis', 'euler', 'user']
 
 
 class Camera(Element):
@@ -1314,11 +1378,16 @@ class Camera(Element):
         self,
         name=None,
         class_=None,
-        mode="BAD DEFAULT",
+        mode="fixed",
         target=None,
         fovy="45",
         ipd="0.068",
         pos="0 0 0",
+        quat=None,
+        axisangle=None,
+        xyaxes=None,
+        zaxis=None,
+        euler=None,
         user="0 0 ...",
     ):
         super().__init__()
@@ -1329,8 +1398,13 @@ class Camera(Element):
         self.fovy = fovy
         self.ipd = ipd
         self.pos = pos
+        self.quat = quat
+        self.axisangle = axisangle
+        self.xyaxes = xyaxes
+        self.zaxis = zaxis
+        self.euler = euler
         self.user = user
-        self._attribute_names = ['name', 'class_', 'mode', 'target', 'fovy', 'ipd', 'pos', 'user']
+        self._attribute_names = ['name', 'class_', 'mode', 'target', 'fovy', 'ipd', 'pos', 'quat', 'axisangle', 'xyaxes', 'zaxis', 'euler', 'user']
 
 
 class Light(Element):
@@ -1342,11 +1416,11 @@ class Light(Element):
         self,
         name=None,
         class_=None,
-        mode="BAD DEFAULT",
+        mode="fixed",
         target=None,
-        directional="BAD DEFAULT",
-        castshadow="BAD DEFAULT",
-        active="BAD DEFAULT",
+        directional="false",
+        castshadow="true",
+        active="true",
         pos="0 0 0",
         dir="0 0 -1",
         attenuation="1 0 0",
@@ -1387,6 +1461,8 @@ class Contact(Element):
         geom2=None,
         condim="3",
         friction="1 1 0.005 0.0001 0.0001",
+        solref=None,
+        solimp=None,
         margin="0",
         gap="0",
     ):
@@ -1396,9 +1472,11 @@ class Contact(Element):
         self.geom2 = geom2
         self.condim = condim
         self.friction = friction
+        self.solref = solref
+        self.solimp = solimp
         self.margin = margin
         self.gap = gap
-        self._attribute_names = ['class_', 'geom1', 'geom2', 'condim', 'friction', 'margin', 'gap']
+        self._attribute_names = ['class_', 'geom1', 'geom2', 'condim', 'friction', 'solref', 'solimp', 'margin', 'gap']
 
 
 class Pair(Element):
@@ -1413,6 +1491,8 @@ class Pair(Element):
         geom2=None,
         condim="3",
         friction="1 1 0.005 0.0001 0.0001",
+        solref=None,
+        solimp=None,
         margin="0",
         gap="0",
     ):
@@ -1422,9 +1502,11 @@ class Pair(Element):
         self.geom2 = geom2
         self.condim = condim
         self.friction = friction
+        self.solref = solref
+        self.solimp = solimp
         self.margin = margin
         self.gap = gap
-        self._attribute_names = ['class_', 'geom1', 'geom2', 'condim', 'friction', 'margin', 'gap']
+        self._attribute_names = ['class_', 'geom1', 'geom2', 'condim', 'friction', 'solref', 'solimp', 'margin', 'gap']
 
 
 class Exclude(Element):
@@ -1452,7 +1534,9 @@ class Equality(Element):
         self,
         name=None,
         class_=None,
-        active="BAD DEFAULT",
+        active="true",
+        solref=None,
+        solimp=None,
         body1=None,
         body2=None,
         anchor=None,
@@ -1461,10 +1545,12 @@ class Equality(Element):
         self.name = name
         self.class_ = class_
         self.active = active
+        self.solref = solref
+        self.solimp = solimp
         self.body1 = body1
         self.body2 = body2
         self.anchor = anchor
-        self._attribute_names = ['name', 'class_', 'active', 'body1', 'body2', 'anchor']
+        self._attribute_names = ['name', 'class_', 'active', 'solref', 'solimp', 'body1', 'body2', 'anchor']
 
 
 class EqualityConnect(Element):
@@ -1476,7 +1562,9 @@ class EqualityConnect(Element):
         self,
         name=None,
         class_=None,
-        active="BAD DEFAULT",
+        active="true",
+        solref=None,
+        solimp=None,
         body1=None,
         body2=None,
         anchor=None,
@@ -1485,10 +1573,12 @@ class EqualityConnect(Element):
         self.name = name
         self.class_ = class_
         self.active = active
+        self.solref = solref
+        self.solimp = solimp
         self.body1 = body1
         self.body2 = body2
         self.anchor = anchor
-        self._attribute_names = ['name', 'class_', 'active', 'body1', 'body2', 'anchor']
+        self._attribute_names = ['name', 'class_', 'active', 'solref', 'solimp', 'body1', 'body2', 'anchor']
 
 
 class EqualityWeld(Element):
@@ -1498,13 +1588,23 @@ class EqualityWeld(Element):
     """
     def __init__(
         self,
+        name=None,
+        class_=None,
+        active=None,
+        solref=None,
+        solimp=None,
         body1=None,
         body2=None,
     ):
         super().__init__()
+        self.name = name
+        self.class_ = class_
+        self.active = active
+        self.solref = solref
+        self.solimp = solimp
         self.body1 = body1
         self.body2 = body2
-        self._attribute_names = ['body1', 'body2']
+        self._attribute_names = ['name', 'class_', 'active', 'solref', 'solimp', 'body1', 'body2']
 
 
 class EqualityJoint(Element):
@@ -1514,15 +1614,25 @@ class EqualityJoint(Element):
     """
     def __init__(
         self,
+        name=None,
+        class_=None,
+        active=None,
+        solref=None,
+        solimp=None,
         joint1=None,
         joint2=None,
         polycoef="0 1 0 0 0",
     ):
         super().__init__()
+        self.name = name
+        self.class_ = class_
+        self.active = active
+        self.solref = solref
+        self.solimp = solimp
         self.joint1 = joint1
         self.joint2 = joint2
         self.polycoef = polycoef
-        self._attribute_names = ['joint1', 'joint2', 'polycoef']
+        self._attribute_names = ['name', 'class_', 'active', 'solref', 'solimp', 'joint1', 'joint2', 'polycoef']
 
 
 class EqualityTendon(Element):
@@ -1532,15 +1642,25 @@ class EqualityTendon(Element):
     """
     def __init__(
         self,
+        name=None,
+        class_=None,
+        active=None,
+        solref=None,
+        solimp=None,
         tendon1=None,
         tendon2=None,
         polycoef="0 1 0 0",
     ):
         super().__init__()
+        self.name = name
+        self.class_ = class_
+        self.active = active
+        self.solref = solref
+        self.solimp = solimp
         self.tendon1 = tendon1
         self.tendon2 = tendon2
         self.polycoef = polycoef
-        self._attribute_names = ['tendon1', 'tendon2', 'polycoef']
+        self._attribute_names = ['name', 'class_', 'active', 'solref', 'solimp', 'tendon1', 'tendon2', 'polycoef']
 
 
 class EqualityDistance(Element):
@@ -1550,15 +1670,25 @@ class EqualityDistance(Element):
     """
     def __init__(
         self,
+        name=None,
+        class_=None,
+        active=None,
+        solref=None,
+        solimp=None,
         geom1=None,
         geom2=None,
         distance="0",
     ):
         super().__init__()
+        self.name = name
+        self.class_ = class_
+        self.active = active
+        self.solref = solref
+        self.solimp = solimp
         self.geom1 = geom1
         self.geom2 = geom2
         self.distance = distance
-        self._attribute_names = ['geom1', 'geom2', 'distance']
+        self._attribute_names = ['name', 'class_', 'active', 'solref', 'solimp', 'geom1', 'geom2', 'distance']
 
 
 class Tendon(Element):
@@ -1570,8 +1700,12 @@ class Tendon(Element):
         self,
         name=None,
         class_=None,
-        limited="BAD DEFAULT",
+        limited="false",
         range="0 0",
+        solreflimit=None,
+        solimplimit=None,
+        solreffriction=None,
+        solimpfriction=None,
         margin="0",
         frictionloss="0",
         width="0",
@@ -1586,6 +1720,10 @@ class Tendon(Element):
         self.class_ = class_
         self.limited = limited
         self.range = range
+        self.solreflimit = solreflimit
+        self.solimplimit = solimplimit
+        self.solreffriction = solreffriction
+        self.solimpfriction = solimpfriction
         self.margin = margin
         self.frictionloss = frictionloss
         self.width = width
@@ -1594,7 +1732,7 @@ class Tendon(Element):
         self.stiffness = stiffness
         self.damping = damping
         self.user = user
-        self._attribute_names = ['name', 'class_', 'limited', 'range', 'margin', 'frictionloss', 'width', 'material', 'rgba', 'stiffness', 'damping', 'user']
+        self._attribute_names = ['name', 'class_', 'limited', 'range', 'solreflimit', 'solimplimit', 'solreffriction', 'solimpfriction', 'margin', 'frictionloss', 'width', 'material', 'rgba', 'stiffness', 'damping', 'user']
 
 
 class Spatial(Element):
@@ -1610,8 +1748,12 @@ tendon.xml
         self,
         name=None,
         class_=None,
-        limited="BAD DEFAULT",
+        limited="false",
         range="0 0",
+        solreflimit=None,
+        solimplimit=None,
+        solreffriction=None,
+        solimpfriction=None,
         margin="0",
         frictionloss="0",
         width="0",
@@ -1626,6 +1768,10 @@ tendon.xml
         self.class_ = class_
         self.limited = limited
         self.range = range
+        self.solreflimit = solreflimit
+        self.solimplimit = solimplimit
+        self.solreffriction = solreffriction
+        self.solimpfriction = solimpfriction
         self.margin = margin
         self.frictionloss = frictionloss
         self.width = width
@@ -1634,7 +1780,7 @@ tendon.xml
         self.stiffness = stiffness
         self.damping = damping
         self.user = user
-        self._attribute_names = ['name', 'class_', 'limited', 'range', 'margin', 'frictionloss', 'width', 'material', 'rgba', 'stiffness', 'damping', 'user']
+        self._attribute_names = ['name', 'class_', 'limited', 'range', 'solreflimit', 'solimplimit', 'solreffriction', 'solimpfriction', 'margin', 'frictionloss', 'width', 'material', 'rgba', 'stiffness', 'damping', 'user']
 
 
 class SpatialSite(Element):
@@ -1688,9 +1834,35 @@ class Fixed(Element):
     """
     def __init__(
         self,
+        name=None,
+        class_=None,
+        limited=None,
+        range=None,
+        margin=None,
+        frictionloss=None,
+        stiffness=None,
+        damping=None,
+        user=None,
+        solreflimit=None,
+        solimplimit=None,
+        solreffriction=None,
+        solimpfriction=None,
     ):
         super().__init__()
-        self._attribute_names = []
+        self.name = name
+        self.class_ = class_
+        self.limited = limited
+        self.range = range
+        self.margin = margin
+        self.frictionloss = frictionloss
+        self.stiffness = stiffness
+        self.damping = damping
+        self.user = user
+        self.solreflimit = solreflimit
+        self.solimplimit = solimplimit
+        self.solreffriction = solreffriction
+        self.solimpfriction = solimpfriction
+        self._attribute_names = ['name', 'class_', 'limited', 'range', 'margin', 'frictionloss', 'stiffness', 'damping', 'user', 'solreflimit', 'solimplimit', 'solreffriction', 'solimpfriction']
 
 
 class FixedJoint(Element):
@@ -1718,8 +1890,8 @@ class Actuator(Element):
         self,
         name=None,
         class_=None,
-        ctrllimited="BAD DEFAULT",
-        forcelimited="BAD DEFAULT",
+        ctrllimited="false",
+        forcelimited="false",
         ctrlrange="0 0",
         forcerange="0 0",
         gear="1 0 0 0 0 0",
@@ -1731,9 +1903,9 @@ class Actuator(Element):
         cranksite=None,
         slidersite=None,
         user="0 0 ...",
-        dyntype="BAD DEFAULT",
-        gaintype="BAD DEFAULT",
-        biastype="BAD DEFAULT",
+        dyntype="none",
+        gaintype="fixed",
+        biastype="none",
         dynprm="1 0 0",
         gainprm="1 0 0",
         biasprm="0 0 0",
@@ -1772,8 +1944,8 @@ class General(Element):
         self,
         name=None,
         class_=None,
-        ctrllimited="BAD DEFAULT",
-        forcelimited="BAD DEFAULT",
+        ctrllimited="false",
+        forcelimited="false",
         ctrlrange="0 0",
         forcerange="0 0",
         gear="1 0 0 0 0 0",
@@ -1785,9 +1957,9 @@ class General(Element):
         cranksite=None,
         slidersite=None,
         user="0 0 ...",
-        dyntype="BAD DEFAULT",
-        gaintype="BAD DEFAULT",
-        biastype="BAD DEFAULT",
+        dyntype="none",
+        gaintype="fixed",
+        biastype="none",
         dynprm="1 0 0",
         gainprm="1 0 0",
         biasprm="0 0 0",
@@ -1857,9 +2029,51 @@ biasprm
     """
     def __init__(
         self,
+        name=None,
+        class_=None,
+        ctrllimited="false",
+        forcelimited="false",
+        ctrlrange="0 0",
+        forcerange="0 0",
+        gear="1 0 0 0 0 0",
+        cranklength="0",
+        joint=None,
+        jointinparent=None,
+        site=None,
+        tendon=None,
+        cranksite=None,
+        slidersite=None,
+        user="0 0 ...",
+        dyntype="none",
+        gaintype="fixed",
+        biastype="none",
+        dynprm="1 0 0",
+        gainprm="1 0 0",
+        biasprm="0 0 0",
     ):
         super().__init__()
-        self._attribute_names = []
+        self.name = name
+        self.class_ = class_
+        self.ctrllimited = ctrllimited
+        self.forcelimited = forcelimited
+        self.ctrlrange = ctrlrange
+        self.forcerange = forcerange
+        self.gear = gear
+        self.cranklength = cranklength
+        self.joint = joint
+        self.jointinparent = jointinparent
+        self.site = site
+        self.tendon = tendon
+        self.cranksite = cranksite
+        self.slidersite = slidersite
+        self.user = user
+        self.dyntype = dyntype
+        self.gaintype = gaintype
+        self.biastype = biastype
+        self.dynprm = dynprm
+        self.gainprm = gainprm
+        self.biasprm = biasprm
+        self._attribute_names = ['name', 'class_', 'ctrllimited', 'forcelimited', 'ctrlrange', 'forcerange', 'gear', 'cranklength', 'joint', 'jointinparent', 'site', 'tendon', 'cranksite', 'slidersite', 'user', 'dyntype', 'gaintype', 'biastype', 'dynprm', 'gainprm', 'biasprm']
 
 
 class Position(Element):
@@ -1899,11 +2113,37 @@ biasprm
     """
     def __init__(
         self,
+        name=None,
+        class_=None,
+        ctrllimited=None,
+        forcelimited=None,
+        ctrlrange=None,
+        forcerange=None,
+        gear=None,
+        cranklength=None,
+        joint=None,
+        tendon=None,
+        cranksite=None,
+        slidersite=None,
+        user=None,
         kp="1",
     ):
         super().__init__()
+        self.name = name
+        self.class_ = class_
+        self.ctrllimited = ctrllimited
+        self.forcelimited = forcelimited
+        self.ctrlrange = ctrlrange
+        self.forcerange = forcerange
+        self.gear = gear
+        self.cranklength = cranklength
+        self.joint = joint
+        self.tendon = tendon
+        self.cranksite = cranksite
+        self.slidersite = slidersite
+        self.user = user
         self.kp = kp
-        self._attribute_names = ['kp']
+        self._attribute_names = ['name', 'class_', 'ctrllimited', 'forcelimited', 'ctrlrange', 'forcerange', 'gear', 'cranklength', 'joint', 'tendon', 'cranksite', 'slidersite', 'user', 'kp']
 
 
 class Velocity(Element):
@@ -1943,11 +2183,37 @@ biasprm
     """
     def __init__(
         self,
+        name=None,
+        class_=None,
+        ctrllimited=None,
+        forcelimited=None,
+        ctrlrange=None,
+        forcerange=None,
+        gear=None,
+        cranklength=None,
+        joint=None,
+        tendon=None,
+        cranksite=None,
+        slidersite=None,
+        user=None,
         kv="1",
     ):
         super().__init__()
+        self.name = name
+        self.class_ = class_
+        self.ctrllimited = ctrllimited
+        self.forcelimited = forcelimited
+        self.ctrlrange = ctrlrange
+        self.forcerange = forcerange
+        self.gear = gear
+        self.cranklength = cranklength
+        self.joint = joint
+        self.tendon = tendon
+        self.cranksite = cranksite
+        self.slidersite = slidersite
+        self.user = user
         self.kv = kv
-        self._attribute_names = ['kv']
+        self._attribute_names = ['name', 'class_', 'ctrllimited', 'forcelimited', 'ctrlrange', 'forcerange', 'gear', 'cranklength', 'joint', 'tendon', 'cranksite', 'slidersite', 'user', 'kv']
 
 
 class Cylinder(Element):
@@ -1987,17 +2253,43 @@ bias
     """
     def __init__(
         self,
+        name=None,
+        class_=None,
+        ctrllimited=None,
+        forcelimited=None,
+        ctrlrange=None,
+        forcerange=None,
+        gear=None,
+        cranklength=None,
+        joint=None,
+        tendon=None,
+        cranksite=None,
+        slidersite=None,
+        user=None,
         timeconst="1",
         area="1",
         diameter=None,
         bias="0 0 0",
     ):
         super().__init__()
+        self.name = name
+        self.class_ = class_
+        self.ctrllimited = ctrllimited
+        self.forcelimited = forcelimited
+        self.ctrlrange = ctrlrange
+        self.forcerange = forcerange
+        self.gear = gear
+        self.cranklength = cranklength
+        self.joint = joint
+        self.tendon = tendon
+        self.cranksite = cranksite
+        self.slidersite = slidersite
+        self.user = user
         self.timeconst = timeconst
         self.area = area
         self.diameter = diameter
         self.bias = bias
-        self._attribute_names = ['timeconst', 'area', 'diameter', 'bias']
+        self._attribute_names = ['name', 'class_', 'ctrllimited', 'forcelimited', 'ctrlrange', 'forcerange', 'gear', 'cranklength', 'joint', 'tendon', 'cranksite', 'slidersite', 'user', 'timeconst', 'area', 'diameter', 'bias']
 
 
 class Muscle(Element):
@@ -2007,11 +2299,19 @@ class Muscle(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         site=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.site = site
-        self._attribute_names = ['site']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'site']
 
 
 class Sensor(Element):
@@ -2024,11 +2324,19 @@ class Sensor(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         site=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.site = site
-        self._attribute_names = ['site']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'site']
 
 
 class SensorTouch(Element):
@@ -2038,11 +2346,19 @@ class SensorTouch(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         site=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.site = site
-        self._attribute_names = ['site']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'site']
 
 
 class SensorAccelerometer(Element):
@@ -2052,11 +2368,19 @@ class SensorAccelerometer(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         site=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.site = site
-        self._attribute_names = ['site']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'site']
 
 
 class SensorVelocimeter(Element):
@@ -2066,11 +2390,19 @@ class SensorVelocimeter(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         site=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.site = site
-        self._attribute_names = ['site']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'site']
 
 
 class SensorGyro(Element):
@@ -2080,11 +2412,19 @@ class SensorGyro(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         site=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.site = site
-        self._attribute_names = ['site']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'site']
 
 
 class SensorForce(Element):
@@ -2094,11 +2434,19 @@ class SensorForce(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         site=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.site = site
-        self._attribute_names = ['site']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'site']
 
 
 class SensorTorque(Element):
@@ -2108,11 +2456,19 @@ class SensorTorque(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         site=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.site = site
-        self._attribute_names = ['site']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'site']
 
 
 class SensorMagnetometer(Element):
@@ -2122,11 +2478,19 @@ class SensorMagnetometer(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         site=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.site = site
-        self._attribute_names = ['site']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'site']
 
 
 class SensorRangefinder(Element):
@@ -2136,11 +2500,19 @@ class SensorRangefinder(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         site=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.site = site
-        self._attribute_names = ['site']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'site']
 
 
 class SensorJointpos(Element):
@@ -2150,11 +2522,19 @@ class SensorJointpos(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         joint=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.joint = joint
-        self._attribute_names = ['joint']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'joint']
 
 
 class SensorJointvel(Element):
@@ -2164,11 +2544,19 @@ class SensorJointvel(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         joint=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.joint = joint
-        self._attribute_names = ['joint']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'joint']
 
 
 class SensorTendonpos(Element):
@@ -2178,11 +2566,19 @@ class SensorTendonpos(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         tendon=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.tendon = tendon
-        self._attribute_names = ['tendon']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'tendon']
 
 
 class SensorTendonvel(Element):
@@ -2192,11 +2588,19 @@ class SensorTendonvel(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         tendon=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.tendon = tendon
-        self._attribute_names = ['tendon']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'tendon']
 
 
 class SensorActuatorpos(Element):
@@ -2206,11 +2610,19 @@ class SensorActuatorpos(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         actuator=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.actuator = actuator
-        self._attribute_names = ['actuator']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'actuator']
 
 
 class SensorActuatorvel(Element):
@@ -2220,11 +2632,19 @@ class SensorActuatorvel(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         actuator=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.actuator = actuator
-        self._attribute_names = ['actuator']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'actuator']
 
 
 class SensorActuatorfrc(Element):
@@ -2234,11 +2654,19 @@ class SensorActuatorfrc(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         actuator=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.actuator = actuator
-        self._attribute_names = ['actuator']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'actuator']
 
 
 class SensorBallquat(Element):
@@ -2248,11 +2676,19 @@ class SensorBallquat(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         joint=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.joint = joint
-        self._attribute_names = ['joint']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'joint']
 
 
 class SensorBallangvel(Element):
@@ -2262,11 +2698,19 @@ class SensorBallangvel(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         joint=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.joint = joint
-        self._attribute_names = ['joint']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'joint']
 
 
 class SensorFramepos(Element):
@@ -2276,13 +2720,21 @@ class SensorFramepos(Element):
     """
     def __init__(
         self,
-        objtype="BAD DEFAULT",
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
+        objtype=None,
         objname=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.objtype = objtype
         self.objname = objname
-        self._attribute_names = ['objtype', 'objname']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'objtype', 'objname']
 
 
 class SensorFramequat(Element):
@@ -2292,13 +2744,21 @@ class SensorFramequat(Element):
     """
     def __init__(
         self,
-        objtype="BAD DEFAULT",
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
+        objtype=None,
         objname=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.objtype = objtype
         self.objname = objname
-        self._attribute_names = ['objtype', 'objname']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'objtype', 'objname']
 
 
 class SensorFramexaxis(Element):
@@ -2308,13 +2768,21 @@ class SensorFramexaxis(Element):
     """
     def __init__(
         self,
-        objtype="BAD DEFAULT",
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
+        objtype=None,
         objname=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.objtype = objtype
         self.objname = objname
-        self._attribute_names = ['objtype', 'objname']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'objtype', 'objname']
 
 
 class SensorFrameyaxis(Element):
@@ -2324,13 +2792,21 @@ class SensorFrameyaxis(Element):
     """
     def __init__(
         self,
-        objtype="BAD DEFAULT",
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
+        objtype=None,
         objname=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.objtype = objtype
         self.objname = objname
-        self._attribute_names = ['objtype', 'objname']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'objtype', 'objname']
 
 
 class SensorFramezaxis(Element):
@@ -2340,13 +2816,21 @@ class SensorFramezaxis(Element):
     """
     def __init__(
         self,
-        objtype="BAD DEFAULT",
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
+        objtype=None,
         objname=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.objtype = objtype
         self.objname = objname
-        self._attribute_names = ['objtype', 'objname']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'objtype', 'objname']
 
 
 class SensorFramelinvel(Element):
@@ -2356,13 +2840,21 @@ class SensorFramelinvel(Element):
     """
     def __init__(
         self,
-        objtype="BAD DEFAULT",
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
+        objtype=None,
         objname=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.objtype = objtype
         self.objname = objname
-        self._attribute_names = ['objtype', 'objname']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'objtype', 'objname']
 
 
 class SensorFrameangvel(Element):
@@ -2372,13 +2864,21 @@ class SensorFrameangvel(Element):
     """
     def __init__(
         self,
-        objtype="BAD DEFAULT",
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
+        objtype=None,
         objname=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.objtype = objtype
         self.objname = objname
-        self._attribute_names = ['objtype', 'objname']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'objtype', 'objname']
 
 
 class SensorFramelinacc(Element):
@@ -2388,13 +2888,21 @@ class SensorFramelinacc(Element):
     """
     def __init__(
         self,
-        objtype="BAD DEFAULT",
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
+        objtype=None,
         objname=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.objtype = objtype
         self.objname = objname
-        self._attribute_names = ['objtype', 'objname']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'objtype', 'objname']
 
 
 class SensorFrameangacc(Element):
@@ -2404,13 +2912,21 @@ class SensorFrameangacc(Element):
     """
     def __init__(
         self,
-        objtype="BAD DEFAULT",
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
+        objtype=None,
         objname=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.objtype = objtype
         self.objname = objname
-        self._attribute_names = ['objtype', 'objname']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'objtype', 'objname']
 
 
 class SensorSubtreecom(Element):
@@ -2420,11 +2936,19 @@ class SensorSubtreecom(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         body=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.body = body
-        self._attribute_names = ['body']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'body']
 
 
 class SensorSubtreelinvel(Element):
@@ -2434,11 +2958,19 @@ class SensorSubtreelinvel(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         body=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.body = body
-        self._attribute_names = ['body']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'body']
 
 
 class SensorSubtreeangmom(Element):
@@ -2448,11 +2980,19 @@ class SensorSubtreeangmom(Element):
     """
     def __init__(
         self,
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
         body=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.body = body
-        self._attribute_names = ['body']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'body']
 
 
 class SensorUser(Element):
@@ -2462,19 +3002,27 @@ class SensorUser(Element):
     """
     def __init__(
         self,
-        objtype="BAD DEFAULT",
+        name=None,
+        noise=None,
+        cutoff=None,
+        user=None,
+        objtype=None,
         objname=None,
-        datatype="BAD DEFAULT",
-        needstage="BAD DEFAULT",
+        datatype=None,
+        needstage=None,
         dim=None,
     ):
         super().__init__()
+        self.name = name
+        self.noise = noise
+        self.cutoff = cutoff
+        self.user = user
         self.objtype = objtype
         self.objname = objname
         self.datatype = datatype
         self.needstage = needstage
         self.dim = dim
-        self._attribute_names = ['objtype', 'objname', 'datatype', 'needstage', 'dim']
+        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'objtype', 'objname', 'datatype', 'needstage', 'dim']
 
 
 class Keyframe(Element):

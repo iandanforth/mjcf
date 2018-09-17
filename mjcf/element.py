@@ -34,8 +34,11 @@ class Element(object):
         element_name = element_name.lower()
         outdict = {element_name: {}}
         for attr in self._attribute_names:
-            k = "@{}".format(attr)
+            # Strip underscore from protected name
             v = getattr(self, attr)
+            if attr == "class_":
+                attr = "class"
+            k = "@{}".format(attr)
             outdict[element_name][k] = v
 
         for child in self._children:

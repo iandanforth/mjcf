@@ -92,6 +92,30 @@ def gen_world():
     return world
 
 
+def get_leg(name):
+    leg = e.Body(name=name)
+    aux_geom = e.Geom()
+    aux_body = e.Body()
+    leg.add_children([
+        aux_geom,
+        aux_body
+    ])
+
+    hip_joint = e.Joint()
+    leg_geom = e.Geom()
+    ankle_body = e.Body()
+    aux_body.add_children([
+        hip_joint,
+        leg_geom,
+        ankle_body
+    ])
+
+    ankle_joint = e.Joint()
+    ankle_geom = e.Geom()
+    ankle_body.add_children([ankle_joint, ankle_geom])
+
+    return leg
+
 def main():
     # filepath = os.path.join('assets', 'minimal.xml')
     # with open(filepath, 'r') as fh:
@@ -107,37 +131,105 @@ def main():
     # with open(outpath, 'w') as fh:
     #     fh.write(world_markup)
 
-    # Class based output
+    #########################
+    # Level 1
     mujoco = e.Mujoco()
 
-
-    j1 = e.Joint()
-    geom = e.Geom()
-    body = e.Body()
-    body.add_children([
-        j1,
-        j1,
-        j1,
-        geom
-    ])
-    light = e.Light()
+    #########################
+    # Level 2
+    compiler = e.Compiler()
+    option = e.Option()
+    custom = e.Custom()
+    default = e.Default()
+    asset = e.Asset()
     worldbody = e.Worldbody()
+    actuator = e.Actuator()
+
+    mujoco.add_children([
+        compiler,
+        option,
+        custom,
+        default,
+        asset,
+        worldbody,
+        actuator
+    ])
+
+    ######################
+    # Level 3
+
+    # Custom
+    numeric = e.Numeric()
+    custom.add_child(numeric)
+
+    # Default
+    d_joint = e.Joint()
+    d_geom = e.Geom()
+    default.add_children([d_joint, d_geom])
+
+    # Asset
+    tex1 = e.Texture()
+    tex2 = e.Texture()
+    tex3 = e.Texture()
+    mat1 = e.Material()
+    mat2 = e.Material()
+    asset.add_children([
+        tex1,
+        tex2,
+        tex3,
+        mat1,
+        mat2,
+    ])
+
+    # Worldbody
+    light = e.Light()
+    floor_geom = e.Geom()
+    torso = e.Body()
     worldbody.add_children([
         light,
-        geom,
-        body
+        floor_geom,
+        torso
     ])
-    asset = e.Asset()
-    texture = e.Texture()
-    material = e.Material()
-    asset.add_children([
-        texture,
-        texture,
-        material
+
+    # Actuator
+    hip_1 = e.Motor()
+    ankle_1 = e.Motor()
+    hip_2 = e.Motor()
+    ankle_2 = e.Motor()
+    hip_3 = e.Motor()
+    ankle_3 = e.Motor()
+    hip_4 = e.Motor()
+    ankle_4 = e.Motor()
+    actuator.add_children([
+        hip_1,
+        ankle_1,
+        hip_2,
+        ankle_2,
+        hip_3,
+        ankle_3,
+        hip_4,
+        ankle_4
     ])
-    mujoco.add_children([
-        worldbody,
-        asset
+
+    ######################
+    # Level 4
+
+    # Torso
+    camera = e.Camera()
+    torso_geom = e.Geom()
+    joint = e.Joint()
+    front_left_leg = get_leg("front_left_leg")
+    front_right_leg = get_leg("front_right_leg")
+    back_left_leg = get_leg("back_left_leg")
+    back_right_leg = get_leg("back_right_leg")
+    torso.add_children([
+        camera,
+        torso_geom,
+        joint,
+        front_left_leg,
+        front_right_leg,
+        back_left_leg,
+        back_right_leg
     ])
 
     model_xml = mujoco.xml()

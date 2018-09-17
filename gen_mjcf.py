@@ -14,18 +14,43 @@ def get_elem_nodes(soup):
     return nodes
 
 
-def get_type_default(detail):
+def get_clean_attr_default(attr_default):
+    """
+    Cleans ambiguous strings
+    """
+    if "for MJCF" in attr_default:
+        parts = attr_default.split(",")
+        mjcf_default = parts[0]
+        attr_default = mjcf_default.split(" ")[0]
+
+    return attr_default
+
+
+def get_type_default(dl_item_text):
     """
     Splits a 'detail' string into the type and default parts
     """
-    parts = detail.split(",")
-    attr_type = parts[0].strip()
-    # Sometimes a default value is actually in multiple parts
-    default_parts = parts[1:]
-    if len(default_parts) > 1:
-        attr_default = "\"BAD DEFAULT\""
+
+    # Separate attr names from attr details
+    parts = dl_item_text.split(":")
+    if len(parts) > 1:
+        detail = parts[1]
     else:
-        attr_default = ",".join(default_parts).strip()
+        return None, None
+
+    # Handle lists of valid strings
+    if "[" in detail and "]" in detail:
+        obi = detail.find("[")
+        cbi = detail.find("]")
+        valid_strings = detail[obi+1:cbi].split(",")
+        attr_type = [s.strip() for s in valid_strings]
+        attr_default = detail[cbi+2:].strip()  # e.g. move just past the ], in [false, true], "false"
+        attr_default = get_clean_attr_default(attr_default)
+    # Handle type, default style details
+    else:
+        detail_parts = detail.split(",")
+        attr_type = detail_parts[0].strip()
+        attr_default = detail_parts[1].strip()
 
     if "optional" in attr_default \
         or "required" in attr_default \
@@ -34,14 +59,19 @@ def get_type_default(detail):
     return attr_type, attr_default
 
 
-def get_clean_name(attr_name_node):
-    text = attr_name_node.text
-    parts = text.split(" ")
-    name = parts[0]
+def get_clean_name(name):
     name = name.replace("\"", "")
     if name == "class":
         name = "class_"
     return name
+
+
+def get_names(name_node_text):
+    parts = name_node_text.split(":")
+    names_string = parts[0]
+    names = [n.strip() for n in names_string.split(",")]
+    names = [get_clean_name(n) for n in names]
+    return names
 
 
 def get_attributes_from_node(node):
@@ -54,27 +84,22 @@ def get_attributes_from_node(node):
     attributes = []
     dl_data = node.findNext("dl")
     for dl_item in dl_data:
-        if isinstance(dl_item, Tag):
+        if isinstance(dl_item, Tag) and dl_item.name == "dt":
             attr_name_node = dl_item.find("b")
             # Make sure we're dealing with an attribute name line
-            # TODO - Handle sublists of attributes
-            #      a, b, c,
-            #      a, b, c: int, 1
-            if attr_name_node and ":" in dl_item.text:
-                attribute = copy(attr_template)
-                attr_name = get_clean_name(attr_name_node)
-                if "," in attr_name:
-                    continue
-                attr_detail = dl_item.text.split(":")[1]
-                attr_type, attr_default = get_type_default(attr_detail)
+            if attr_name_node:
+                attr_names = get_names(attr_name_node.text)
+                attr_type, attr_default = get_type_default(dl_item.text)
                 attr_desc = dl_item.findNext("dd").text.strip()
 
-                attribute["name"] = attr_name
-                attribute["type"] = attr_type
-                attribute["default"] = attr_default
-                attribute["description"] = attr_desc
+                for attr_name in attr_names:
+                    attribute = copy(attr_template)
+                    attribute["name"] = attr_name
+                    attribute["type"] = attr_type
+                    attribute["default"] = attr_default
+                    attribute["description"] = attr_desc
 
-                attributes.append(attribute)
+                    attributes.append(attribute)
 
     return attributes
 
@@ -99,6 +124,7 @@ def get_details_from_node(node):
 
     return element
 
+
 def add_worldbody(elements):
     """
     Special case the world body as it doesn't have a separate description
@@ -106,6 +132,22 @@ def add_worldbody(elements):
     worldbody = deepcopy(elements["body"])
     worldbody["attributes"] = []
     elements["worldbody"] = worldbody
+    return elements
+
+
+def attributes_for_motors(elements):
+    """
+    Docs point back to actuator / general for details on these attributes
+    """
+    attrs = elements["general"]["attributes"]
+    elements["motor"]["attributes"] = attrs
+
+    return elements
+
+
+def handle_special_cases(elements):
+    elements = add_worldbody(elements)
+    elements = attributes_for_motors(elements)
     return elements
 
 
@@ -121,7 +163,7 @@ def get_elements():
         elem_id = elem['id']
         elements[elem_id] = get_details_from_node(elem)
 
-    elements = add_worldbody(elements)
+    elements = handle_special_cases(elements)
 
     return elements
 
