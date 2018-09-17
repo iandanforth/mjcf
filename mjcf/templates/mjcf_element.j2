@@ -1,0 +1,15 @@
+class {{ classname }}(Element):
+    {%- if docstring %}
+    """
+    {{- docstring }}
+    """{% endif %}
+    def __init__(
+        self,
+{%- for attr in attributes %}
+        {{ attr["name"] }}={{ attr["default"]|string }},
+{%- endfor %}
+    ):
+{%- for attr in attributes %}
+        self.{{ attr["name"] }} = {{ attr["name"] }}
+{%- endfor %}
+        self._attribute_names = {{ attribute_names }}
