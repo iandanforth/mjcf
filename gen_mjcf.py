@@ -1,6 +1,5 @@
 import os
-import csv
-from copy import copy
+from copy import copy, deepcopy
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 from jinja2 import Environment, PackageLoader, select_autoescape
@@ -100,6 +99,15 @@ def get_details_from_node(node):
 
     return element
 
+def add_worldbody(elements):
+    """
+    Special case the world body as it doesn't have a separate description
+    """
+    worldbody = deepcopy(elements["body"])
+    worldbody["attributes"] = []
+    elements["worldbody"] = worldbody
+    return elements
+
 
 def get_elements():
     # MuJoCo Docs
@@ -113,17 +121,14 @@ def get_elements():
         elem_id = elem['id']
         elements[elem_id] = get_details_from_node(elem)
 
+    elements = add_worldbody(elements)
+
     return elements
 
 
 def main():
 
     elements = get_elements()
-
-    # MuJoCo Element Data
-    # with open('mujoco-elements.csv', 'r') as fh:
-    #     reader = csv.reader(fh)
-    #     elements = [line for line in reader]
 
     # Jinja2
     env = Environment(
@@ -155,21 +160,6 @@ def main():
     sourcepath = os.path.join("mjcf", "generated", "elements.py")
     with open(sourcepath, 'w') as fh:
         fh.write(rendered_elements)
-
-    # for elem in elements:
-    #     name, _, attrs_string = elem
-    #     attributes = []
-    #     if attrs_string != "no attributes":
-    #         attributes = attrs_string.split(' ')
-    #     classname = name.title()
-
-    #     inputs = dict(
-    #         classname=classname,
-    #         attributes=attributes,
-    #         docstring=descriptions.get(name),
-    #     )
-    #     output = template.render(**inputs)
-    #     print(output)
 
 
 if __name__ == '__main__':

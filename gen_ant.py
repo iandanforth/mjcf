@@ -1,7 +1,4 @@
-import os
-import json
-from xmltodict import parse, unparse
-from mjcf.generated.elements import Mujoco
+from mjcf.generated import elements as e
 
 
 def gen_world():
@@ -111,9 +108,39 @@ def main():
     #     fh.write(world_markup)
 
     # Class based output
-    world = Mujoco()
+    mujoco = e.Mujoco()
 
-    model_xml = world.xml()
+
+    j1 = e.Joint()
+    geom = e.Geom()
+    body = e.Body()
+    body.add_children([
+        j1,
+        j1,
+        j1,
+        geom
+    ])
+    light = e.Light()
+    worldbody = e.Worldbody()
+    worldbody.add_children([
+        light,
+        geom,
+        body
+    ])
+    asset = e.Asset()
+    texture = e.Texture()
+    material = e.Material()
+    asset.add_children([
+        texture,
+        texture,
+        material
+    ])
+    mujoco.add_children([
+        worldbody,
+        asset
+    ])
+
+    model_xml = mujoco.xml()
     print(model_xml)
 
 

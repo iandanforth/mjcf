@@ -9,6 +9,7 @@ class {{ classname }}(Element):
         {{ attr["name"] }}={{ attr["default"]|string }},
 {%- endfor %}
     ):
+        super().__init__()
 {%- for attr in attributes %}
         self.{{ attr["name"] }} = {{ attr["name"] }}
 {%- endfor %}

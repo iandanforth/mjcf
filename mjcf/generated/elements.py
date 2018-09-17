@@ -10,6 +10,7 @@ class Include(Element):
         self,
         file=None,
     ):
+        super().__init__()
         self.file = file
         self._attribute_names = ['file']
 
@@ -23,6 +24,7 @@ class Mujoco(Element):
         self,
         model="MuJoCo Model",
     ):
+        super().__init__()
         self.model = model
         self._attribute_names = ['model']
 
@@ -50,6 +52,7 @@ class Compiler(Element):
         inertiafromgeom="BAD DEFAULT",
         inertiagrouprange="0 4",
     ):
+        super().__init__()
         self.boundmass = boundmass
         self.boundinertia = boundinertia
         self.settotalmass = settotalmass
@@ -100,6 +103,7 @@ class CompilerLengthrange(Element):
         mpr_iterations="50",
         mpr_tolerance="1e-6",
     ):
+        super().__init__()
         self.timestep = timestep
         self.apirate = apirate
         self.gravity = gravity
@@ -159,6 +163,7 @@ class Option(Element):
         mpr_iterations="50",
         mpr_tolerance="1e-6",
     ):
+        super().__init__()
         self.timestep = timestep
         self.apirate = apirate
         self.gravity = gravity
@@ -210,6 +215,7 @@ class OptionFlag(Element):
         fwdinv="BAD DEFAULT",
         sensornoise="BAD DEFAULT",
     ):
+        super().__init__()
         self.constraint = constraint
         self.equality = equality
         self.frictionloss = frictionloss
@@ -250,6 +256,7 @@ class Size(Element):
         nuser_actuator="0",
         nuser_sensor="0",
     ):
+        super().__init__()
         self.njmax = njmax
         self.nconmax = nconmax
         self.nstack = nstack
@@ -283,6 +290,7 @@ class Visual(Element):
         offwidth="640",
         offheight="480",
     ):
+        super().__init__()
         self.fovy = fovy
         self.ipd = ipd
         self.linewidth = linewidth
@@ -306,6 +314,7 @@ class Global(Element):
         offwidth="640",
         offheight="480",
     ):
+        super().__init__()
         self.fovy = fovy
         self.ipd = ipd
         self.linewidth = linewidth
@@ -329,6 +338,7 @@ class Quality(Element):
         numarrows="10",
         numquads="4",
     ):
+        super().__init__()
         self.shadowsize = shadowsize
         self.offsamples = offsamples
         self.numslices = numslices
@@ -350,6 +360,7 @@ class Headlight(Element):
         specular="0.5 0.5 0.5",
         active="1",
     ):
+        super().__init__()
         self.ambient = ambient
         self.diffuse = diffuse
         self.specular = specular
@@ -376,6 +387,7 @@ class Map(Element):
         shadowclip="1",
         shadowscale="0.6",
     ):
+        super().__init__()
         self.stiffness = stiffness
         self.stiffnessrot = stiffnessrot
         self.force = force
@@ -414,6 +426,7 @@ class Scale(Element):
         constraint="0.1",
         slidercrank="0.2",
     ):
+        super().__init__()
         self.forcewidth = forcewidth
         self.contactwidth = contactwidth
         self.contactheight = contactheight
@@ -458,6 +471,7 @@ class Rgba(Element):
         slidercrank="0.5 0.3 0.8 1",
         crankbroken="0.9 0 0 1",
     ):
+        super().__init__()
         self.fog = fog
         self.force = force
         self.inertia = inertia
@@ -491,6 +505,7 @@ class Statistic(Element):
         extent=None,
         center=None,
     ):
+        super().__init__()
         self.meanmass = meanmass
         self.meaninertia = meaninertia
         self.meansize = meansize
@@ -509,6 +524,7 @@ class Default(Element):
         self,
         class_=None,
     ):
+        super().__init__()
         self.class_ = class_
         self._attribute_names = ['class_']
 
@@ -526,6 +542,7 @@ class DefaultMesh(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -546,6 +563,7 @@ class DefaultMaterial(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -566,6 +584,7 @@ class DefaultJoint(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -586,6 +605,7 @@ class DefaultGeom(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -606,6 +626,7 @@ class DefaultSite(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -626,6 +647,7 @@ class DefaultCamera(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -646,6 +668,7 @@ class DefaultLight(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -666,6 +689,7 @@ class DefaultPair(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -686,6 +710,7 @@ class DefaultEquality(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -707,6 +732,7 @@ class DefaultTendon(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -727,6 +753,7 @@ class DefaultGeneral(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -747,6 +774,7 @@ class DefaultMotor(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -765,6 +793,7 @@ class DefaultPosition(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -783,6 +812,7 @@ class DefaultVelocity(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -801,6 +831,7 @@ class DefaultCylinder(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -819,6 +850,7 @@ class DefaultMuscle(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -836,6 +868,7 @@ class Custom(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -853,6 +886,7 @@ class Numeric(Element):
         size=None,
         data="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.size = size
         self.data = data
@@ -869,6 +903,7 @@ class Text(Element):
         name=None,
         data=None,
     ):
+        super().__init__()
         self.name = name
         self.data = data
         self._attribute_names = ['name', 'data']
@@ -883,6 +918,7 @@ class Tuple(Element):
         self,
         name=None,
     ):
+        super().__init__()
         self.name = name
         self._attribute_names = ['name']
 
@@ -898,6 +934,7 @@ class Tupleelement(Element):
         objname=None,
         prm="0",
     ):
+        super().__init__()
         self.objtype = objtype
         self.objname = objname
         self.prm = prm
@@ -927,6 +964,7 @@ class Asset(Element):
         width="0",
         height="0",
     ):
+        super().__init__()
         self.name = name
         self.type = type
         self.cube = cube
@@ -968,6 +1006,7 @@ class Texture(Element):
         width="0",
         height="0",
     ):
+        super().__init__()
         self.name = name
         self.type = type
         self.cube = cube
@@ -999,6 +1038,7 @@ class Hfield(Element):
         ncol="0",
         size=None,
     ):
+        super().__init__()
         self.name = name
         self.file = file
         self.nrow = nrow
@@ -1031,6 +1071,7 @@ class Mesh(Element):
         file=None,
         scale="1 1 1",
     ):
+        super().__init__()
         self.name = name
         self.class_ = class_
         self.file = file
@@ -1056,6 +1097,7 @@ class Material(Element):
         reflectance="0",
         rgba="1 1 1 1",
     ):
+        super().__init__()
         self.name = name
         self.class_ = class_
         self.texture = texture
@@ -1083,6 +1125,7 @@ class Body(Element):
         pos=None,
         user="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.childclass = childclass
         self.mocap = mocap
@@ -1103,6 +1146,7 @@ class Inertial(Element):
         diaginertia=None,
         fullinertia=None,
     ):
+        super().__init__()
         self.pos = pos
         self.mass = mass
         self.diaginertia = diaginertia
@@ -1135,6 +1179,7 @@ class Joint(Element):
         frictionloss="0",
         user="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.class_ = class_
         self.type = type
@@ -1164,6 +1209,7 @@ class Freejoint(Element):
         self,
         name=None,
     ):
+        super().__init__()
         self.name = name
         self._attribute_names = ['name']
 
@@ -1202,6 +1248,7 @@ class Geom(Element):
         fitscale="1",
         user="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.class_ = class_
         self.type = type
@@ -1245,6 +1292,7 @@ class Site(Element):
         pos="0 0 0",
         user="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.class_ = class_
         self.type = type
@@ -1273,6 +1321,7 @@ class Camera(Element):
         pos="0 0 0",
         user="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.class_ = class_
         self.mode = mode
@@ -1307,6 +1356,7 @@ class Light(Element):
         diffuse="0.7 0.7 0.7",
         specular="0.3 0.3 0.3",
     ):
+        super().__init__()
         self.name = name
         self.class_ = class_
         self.mode = mode
@@ -1340,6 +1390,7 @@ class Contact(Element):
         margin="0",
         gap="0",
     ):
+        super().__init__()
         self.class_ = class_
         self.geom1 = geom1
         self.geom2 = geom2
@@ -1365,6 +1416,7 @@ class Pair(Element):
         margin="0",
         gap="0",
     ):
+        super().__init__()
         self.class_ = class_
         self.geom1 = geom1
         self.geom2 = geom2
@@ -1385,6 +1437,7 @@ class Exclude(Element):
         body1=None,
         body2=None,
     ):
+        super().__init__()
         self.body1 = body1
         self.body2 = body2
         self._attribute_names = ['body1', 'body2']
@@ -1404,6 +1457,7 @@ class Equality(Element):
         body2=None,
         anchor=None,
     ):
+        super().__init__()
         self.name = name
         self.class_ = class_
         self.active = active
@@ -1427,6 +1481,7 @@ class EqualityConnect(Element):
         body2=None,
         anchor=None,
     ):
+        super().__init__()
         self.name = name
         self.class_ = class_
         self.active = active
@@ -1446,6 +1501,7 @@ class EqualityWeld(Element):
         body1=None,
         body2=None,
     ):
+        super().__init__()
         self.body1 = body1
         self.body2 = body2
         self._attribute_names = ['body1', 'body2']
@@ -1462,6 +1518,7 @@ class EqualityJoint(Element):
         joint2=None,
         polycoef="0 1 0 0 0",
     ):
+        super().__init__()
         self.joint1 = joint1
         self.joint2 = joint2
         self.polycoef = polycoef
@@ -1479,6 +1536,7 @@ class EqualityTendon(Element):
         tendon2=None,
         polycoef="0 1 0 0",
     ):
+        super().__init__()
         self.tendon1 = tendon1
         self.tendon2 = tendon2
         self.polycoef = polycoef
@@ -1496,6 +1554,7 @@ class EqualityDistance(Element):
         geom2=None,
         distance="0",
     ):
+        super().__init__()
         self.geom1 = geom1
         self.geom2 = geom2
         self.distance = distance
@@ -1522,6 +1581,7 @@ class Tendon(Element):
         damping="0",
         user="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.class_ = class_
         self.limited = limited
@@ -1561,6 +1621,7 @@ tendon.xml
         damping="0",
         user="0 0 ...",
     ):
+        super().__init__()
         self.name = name
         self.class_ = class_
         self.limited = limited
@@ -1585,6 +1646,7 @@ class SpatialSite(Element):
         self,
         site=None,
     ):
+        super().__init__()
         self.site = site
         self._attribute_names = ['site']
 
@@ -1599,6 +1661,7 @@ class SpatialGeom(Element):
         geom=None,
         sidesite=None,
     ):
+        super().__init__()
         self.geom = geom
         self.sidesite = sidesite
         self._attribute_names = ['geom', 'sidesite']
@@ -1613,6 +1676,7 @@ class SpatialPulley(Element):
         self,
         divisor=None,
     ):
+        super().__init__()
         self.divisor = divisor
         self._attribute_names = ['divisor']
 
@@ -1625,6 +1689,7 @@ class Fixed(Element):
     def __init__(
         self,
     ):
+        super().__init__()
         self._attribute_names = []
 
 
@@ -1638,6 +1703,7 @@ class FixedJoint(Element):
         joint=None,
         coef=None,
     ):
+        super().__init__()
         self.joint = joint
         self.coef = coef
         self._attribute_names = ['joint', 'coef']
@@ -1672,6 +1738,7 @@ class Actuator(Element):
         gainprm="1 0 0",
         biasprm="0 0 0",
     ):
+        super().__init__()
         self.name = name
         self.class_ = class_
         self.ctrllimited = ctrllimited
@@ -1725,6 +1792,7 @@ class General(Element):
         gainprm="1 0 0",
         biasprm="0 0 0",
     ):
+        super().__init__()
         self.name = name
         self.class_ = class_
         self.ctrllimited = ctrllimited
@@ -1790,6 +1858,7 @@ biasprm
     def __init__(
         self,
     ):
+        super().__init__()
         self._attribute_names = []
 
 
@@ -1832,6 +1901,7 @@ biasprm
         self,
         kp="1",
     ):
+        super().__init__()
         self.kp = kp
         self._attribute_names = ['kp']
 
@@ -1875,6 +1945,7 @@ biasprm
         self,
         kv="1",
     ):
+        super().__init__()
         self.kv = kv
         self._attribute_names = ['kv']
 
@@ -1921,6 +1992,7 @@ bias
         diameter=None,
         bias="0 0 0",
     ):
+        super().__init__()
         self.timeconst = timeconst
         self.area = area
         self.diameter = diameter
@@ -1937,6 +2009,7 @@ class Muscle(Element):
         self,
         site=None,
     ):
+        super().__init__()
         self.site = site
         self._attribute_names = ['site']
 
@@ -1953,6 +2026,7 @@ class Sensor(Element):
         self,
         site=None,
     ):
+        super().__init__()
         self.site = site
         self._attribute_names = ['site']
 
@@ -1966,6 +2040,7 @@ class SensorTouch(Element):
         self,
         site=None,
     ):
+        super().__init__()
         self.site = site
         self._attribute_names = ['site']
 
@@ -1979,6 +2054,7 @@ class SensorAccelerometer(Element):
         self,
         site=None,
     ):
+        super().__init__()
         self.site = site
         self._attribute_names = ['site']
 
@@ -1992,6 +2068,7 @@ class SensorVelocimeter(Element):
         self,
         site=None,
     ):
+        super().__init__()
         self.site = site
         self._attribute_names = ['site']
 
@@ -2005,6 +2082,7 @@ class SensorGyro(Element):
         self,
         site=None,
     ):
+        super().__init__()
         self.site = site
         self._attribute_names = ['site']
 
@@ -2018,6 +2096,7 @@ class SensorForce(Element):
         self,
         site=None,
     ):
+        super().__init__()
         self.site = site
         self._attribute_names = ['site']
 
@@ -2031,6 +2110,7 @@ class SensorTorque(Element):
         self,
         site=None,
     ):
+        super().__init__()
         self.site = site
         self._attribute_names = ['site']
 
@@ -2044,6 +2124,7 @@ class SensorMagnetometer(Element):
         self,
         site=None,
     ):
+        super().__init__()
         self.site = site
         self._attribute_names = ['site']
 
@@ -2057,6 +2138,7 @@ class SensorRangefinder(Element):
         self,
         site=None,
     ):
+        super().__init__()
         self.site = site
         self._attribute_names = ['site']
 
@@ -2070,6 +2152,7 @@ class SensorJointpos(Element):
         self,
         joint=None,
     ):
+        super().__init__()
         self.joint = joint
         self._attribute_names = ['joint']
 
@@ -2083,6 +2166,7 @@ class SensorJointvel(Element):
         self,
         joint=None,
     ):
+        super().__init__()
         self.joint = joint
         self._attribute_names = ['joint']
 
@@ -2096,6 +2180,7 @@ class SensorTendonpos(Element):
         self,
         tendon=None,
     ):
+        super().__init__()
         self.tendon = tendon
         self._attribute_names = ['tendon']
 
@@ -2109,6 +2194,7 @@ class SensorTendonvel(Element):
         self,
         tendon=None,
     ):
+        super().__init__()
         self.tendon = tendon
         self._attribute_names = ['tendon']
 
@@ -2122,6 +2208,7 @@ class SensorActuatorpos(Element):
         self,
         actuator=None,
     ):
+        super().__init__()
         self.actuator = actuator
         self._attribute_names = ['actuator']
 
@@ -2135,6 +2222,7 @@ class SensorActuatorvel(Element):
         self,
         actuator=None,
     ):
+        super().__init__()
         self.actuator = actuator
         self._attribute_names = ['actuator']
 
@@ -2148,6 +2236,7 @@ class SensorActuatorfrc(Element):
         self,
         actuator=None,
     ):
+        super().__init__()
         self.actuator = actuator
         self._attribute_names = ['actuator']
 
@@ -2161,6 +2250,7 @@ class SensorBallquat(Element):
         self,
         joint=None,
     ):
+        super().__init__()
         self.joint = joint
         self._attribute_names = ['joint']
 
@@ -2174,6 +2264,7 @@ class SensorBallangvel(Element):
         self,
         joint=None,
     ):
+        super().__init__()
         self.joint = joint
         self._attribute_names = ['joint']
 
@@ -2188,6 +2279,7 @@ class SensorFramepos(Element):
         objtype="BAD DEFAULT",
         objname=None,
     ):
+        super().__init__()
         self.objtype = objtype
         self.objname = objname
         self._attribute_names = ['objtype', 'objname']
@@ -2203,6 +2295,7 @@ class SensorFramequat(Element):
         objtype="BAD DEFAULT",
         objname=None,
     ):
+        super().__init__()
         self.objtype = objtype
         self.objname = objname
         self._attribute_names = ['objtype', 'objname']
@@ -2218,6 +2311,7 @@ class SensorFramexaxis(Element):
         objtype="BAD DEFAULT",
         objname=None,
     ):
+        super().__init__()
         self.objtype = objtype
         self.objname = objname
         self._attribute_names = ['objtype', 'objname']
@@ -2233,6 +2327,7 @@ class SensorFrameyaxis(Element):
         objtype="BAD DEFAULT",
         objname=None,
     ):
+        super().__init__()
         self.objtype = objtype
         self.objname = objname
         self._attribute_names = ['objtype', 'objname']
@@ -2248,6 +2343,7 @@ class SensorFramezaxis(Element):
         objtype="BAD DEFAULT",
         objname=None,
     ):
+        super().__init__()
         self.objtype = objtype
         self.objname = objname
         self._attribute_names = ['objtype', 'objname']
@@ -2263,6 +2359,7 @@ class SensorFramelinvel(Element):
         objtype="BAD DEFAULT",
         objname=None,
     ):
+        super().__init__()
         self.objtype = objtype
         self.objname = objname
         self._attribute_names = ['objtype', 'objname']
@@ -2278,6 +2375,7 @@ class SensorFrameangvel(Element):
         objtype="BAD DEFAULT",
         objname=None,
     ):
+        super().__init__()
         self.objtype = objtype
         self.objname = objname
         self._attribute_names = ['objtype', 'objname']
@@ -2293,6 +2391,7 @@ class SensorFramelinacc(Element):
         objtype="BAD DEFAULT",
         objname=None,
     ):
+        super().__init__()
         self.objtype = objtype
         self.objname = objname
         self._attribute_names = ['objtype', 'objname']
@@ -2308,6 +2407,7 @@ class SensorFrameangacc(Element):
         objtype="BAD DEFAULT",
         objname=None,
     ):
+        super().__init__()
         self.objtype = objtype
         self.objname = objname
         self._attribute_names = ['objtype', 'objname']
@@ -2322,6 +2422,7 @@ class SensorSubtreecom(Element):
         self,
         body=None,
     ):
+        super().__init__()
         self.body = body
         self._attribute_names = ['body']
 
@@ -2335,6 +2436,7 @@ class SensorSubtreelinvel(Element):
         self,
         body=None,
     ):
+        super().__init__()
         self.body = body
         self._attribute_names = ['body']
 
@@ -2348,6 +2450,7 @@ class SensorSubtreeangmom(Element):
         self,
         body=None,
     ):
+        super().__init__()
         self.body = body
         self._attribute_names = ['body']
 
@@ -2365,6 +2468,7 @@ class SensorUser(Element):
         needstage="BAD DEFAULT",
         dim=None,
     ):
+        super().__init__()
         self.objtype = objtype
         self.objname = objname
         self.datatype = datatype
@@ -2385,6 +2489,7 @@ class Keyframe(Element):
         qvel="0 0 ...",
         act="0 0 ...",
     ):
+        super().__init__()
         self.time = time
         self.qpos = qpos
         self.qvel = qvel
@@ -2404,9 +2509,23 @@ class Key(Element):
         qvel="0 0 ...",
         act="0 0 ...",
     ):
+        super().__init__()
         self.time = time
         self.qpos = qpos
         self.qvel = qvel
         self.act = act
         self._attribute_names = ['time', 'qpos', 'qvel', 'act']
+
+
+class Worldbody(Element):
+    """
+    This element is used to construct the kinematic tree via nesting. The element worldbody is used for the top-level body, while the element body is used for all other bodies. The top-level body is a restricted type of body: it cannot have child elements inertial and joint, and also cannot have any attributes. It corresponds to the origin of the world frame, within which the rest of the kinematic tree is defined. Its body name is automatically defined as "world".
+
+    
+    """
+    def __init__(
+        self,
+    ):
+        super().__init__()
+        self._attribute_names = []
 
