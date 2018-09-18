@@ -78,57 +78,9 @@ class CompilerLengthrange(Element):
     """
     def __init__(
         self,
-        timestep="0.002",
-        apirate="100",
-        gravity="0 0 -9.81",
-        wind="0 0 0",
-        magnetic="0 -0.5 0",
-        density="0",
-        viscosity="0",
-        impratio="1",
-        o_margin="0",
-        o_solref="0.02 1",
-        o_solimp="0.8 0.8 0.01",
-        integrator="Euler",
-        collision="all",
-        impedance="sigmoid",
-        reference="spring",
-        cone="pyramidal",
-        jacobian="auto",
-        solver="Newton",
-        iterations="100",
-        tolerance="1e-8",
-        noslip_iterations="0",
-        noslip_tolerance="1e-6",
-        mpr_iterations="50",
-        mpr_tolerance="1e-6",
     ):
         super().__init__()
-        self.timestep = timestep
-        self.apirate = apirate
-        self.gravity = gravity
-        self.wind = wind
-        self.magnetic = magnetic
-        self.density = density
-        self.viscosity = viscosity
-        self.impratio = impratio
-        self.o_margin = o_margin
-        self.o_solref = o_solref
-        self.o_solimp = o_solimp
-        self.integrator = integrator
-        self.collision = collision
-        self.impedance = impedance
-        self.reference = reference
-        self.cone = cone
-        self.jacobian = jacobian
-        self.solver = solver
-        self.iterations = iterations
-        self.tolerance = tolerance
-        self.noslip_iterations = noslip_iterations
-        self.noslip_tolerance = noslip_tolerance
-        self.mpr_iterations = mpr_iterations
-        self.mpr_tolerance = mpr_tolerance
-        self._attribute_names = ['timestep', 'apirate', 'gravity', 'wind', 'magnetic', 'density', 'viscosity', 'impratio', 'o_margin', 'o_solref', 'o_solimp', 'integrator', 'collision', 'impedance', 'reference', 'cone', 'jacobian', 'solver', 'iterations', 'tolerance', 'noslip_iterations', 'noslip_tolerance', 'mpr_iterations', 'mpr_tolerance']
+        self._attribute_names = []
 
 
 class Option(Element):
@@ -142,7 +94,6 @@ class Option(Element):
         apirate="100",
         gravity="0 0 -9.81",
         wind="0 0 0",
-        magnetic="0 -0.5 0",
         density="0",
         viscosity="0",
         impratio="1",
@@ -168,7 +119,6 @@ class Option(Element):
         self.apirate = apirate
         self.gravity = gravity
         self.wind = wind
-        self.magnetic = magnetic
         self.density = density
         self.viscosity = viscosity
         self.impratio = impratio
@@ -188,7 +138,7 @@ class Option(Element):
         self.noslip_tolerance = noslip_tolerance
         self.mpr_iterations = mpr_iterations
         self.mpr_tolerance = mpr_tolerance
-        self._attribute_names = ['timestep', 'apirate', 'gravity', 'wind', 'magnetic', 'density', 'viscosity', 'impratio', 'o_margin', 'o_solref', 'o_solimp', 'integrator', 'collision', 'impedance', 'reference', 'cone', 'jacobian', 'solver', 'iterations', 'tolerance', 'noslip_iterations', 'noslip_tolerance', 'mpr_iterations', 'mpr_tolerance']
+        self._attribute_names = ['timestep', 'apirate', 'gravity', 'wind', 'density', 'viscosity', 'impratio', 'o_margin', 'o_solref', 'o_solimp', 'integrator', 'collision', 'impedance', 'reference', 'cone', 'jacobian', 'solver', 'iterations', 'tolerance', 'noslip_iterations', 'noslip_tolerance', 'mpr_iterations', 'mpr_tolerance']
 
 
 class OptionFlag(Element):
@@ -283,21 +233,9 @@ class Visual(Element):
     """
     def __init__(
         self,
-        fovy="45",
-        ipd="0.068",
-        linewidth="1",
-        glow="0.3",
-        offwidth="640",
-        offheight="480",
     ):
         super().__init__()
-        self.fovy = fovy
-        self.ipd = ipd
-        self.linewidth = linewidth
-        self.glow = glow
-        self.offwidth = offwidth
-        self.offheight = offheight
-        self._attribute_names = ['fovy', 'ipd', 'linewidth', 'glow', 'offwidth', 'offheight']
+        self._attribute_names = []
 
 
 class Global(Element):
@@ -538,15 +476,9 @@ class DefaultMesh(Element):
     """
     def __init__(
         self,
-        name=None,
-        size=None,
-        data="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.size = size
-        self.data = data
-        self._attribute_names = ['name', 'size', 'data']
+        self._attribute_names = []
 
 
 class DefaultMaterial(Element):
@@ -559,15 +491,9 @@ class DefaultMaterial(Element):
     """
     def __init__(
         self,
-        name=None,
-        size=None,
-        data="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.size = size
-        self.data = data
-        self._attribute_names = ['name', 'size', 'data']
+        self._attribute_names = []
 
 
 class DefaultJoint(Element):
@@ -580,15 +506,9 @@ class DefaultJoint(Element):
     """
     def __init__(
         self,
-        name=None,
-        size=None,
-        data="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.size = size
-        self.data = data
-        self._attribute_names = ['name', 'size', 'data']
+        self._attribute_names = []
 
 
 class DefaultGeom(Element):
@@ -601,15 +521,9 @@ class DefaultGeom(Element):
     """
     def __init__(
         self,
-        name=None,
-        size=None,
-        data="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.size = size
-        self.data = data
-        self._attribute_names = ['name', 'size', 'data']
+        self._attribute_names = []
 
 
 class DefaultSite(Element):
@@ -622,15 +536,9 @@ class DefaultSite(Element):
     """
     def __init__(
         self,
-        name=None,
-        size=None,
-        data="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.size = size
-        self.data = data
-        self._attribute_names = ['name', 'size', 'data']
+        self._attribute_names = []
 
 
 class DefaultCamera(Element):
@@ -643,15 +551,9 @@ class DefaultCamera(Element):
     """
     def __init__(
         self,
-        name=None,
-        size=None,
-        data="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.size = size
-        self.data = data
-        self._attribute_names = ['name', 'size', 'data']
+        self._attribute_names = []
 
 
 class DefaultLight(Element):
@@ -664,15 +566,9 @@ class DefaultLight(Element):
     """
     def __init__(
         self,
-        name=None,
-        size=None,
-        data="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.size = size
-        self.data = data
-        self._attribute_names = ['name', 'size', 'data']
+        self._attribute_names = []
 
 
 class DefaultPair(Element):
@@ -685,15 +581,9 @@ class DefaultPair(Element):
     """
     def __init__(
         self,
-        name=None,
-        size=None,
-        data="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.size = size
-        self.data = data
-        self._attribute_names = ['name', 'size', 'data']
+        self._attribute_names = []
 
 
 class DefaultEquality(Element):
@@ -706,15 +596,9 @@ class DefaultEquality(Element):
     """
     def __init__(
         self,
-        name=None,
-        size=None,
-        data="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.size = size
-        self.data = data
-        self._attribute_names = ['name', 'size', 'data']
+        self._attribute_names = []
 
 
 class DefaultTendon(Element):
@@ -728,15 +612,9 @@ class DefaultTendon(Element):
     """
     def __init__(
         self,
-        name=None,
-        size=None,
-        data="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.size = size
-        self.data = data
-        self._attribute_names = ['name', 'size', 'data']
+        self._attribute_names = []
 
 
 class DefaultGeneral(Element):
@@ -749,15 +627,9 @@ class DefaultGeneral(Element):
     """
     def __init__(
         self,
-        name=None,
-        size=None,
-        data="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.size = size
-        self.data = data
-        self._attribute_names = ['name', 'size', 'data']
+        self._attribute_names = []
 
 
 class DefaultMotor(Element):
@@ -770,15 +642,9 @@ class DefaultMotor(Element):
     """
     def __init__(
         self,
-        name=None,
-        size=None,
-        data="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.size = size
-        self.data = data
-        self._attribute_names = ['name', 'size', 'data']
+        self._attribute_names = []
 
 
 class DefaultPosition(Element):
@@ -789,15 +655,9 @@ class DefaultPosition(Element):
     """
     def __init__(
         self,
-        name=None,
-        size=None,
-        data="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.size = size
-        self.data = data
-        self._attribute_names = ['name', 'size', 'data']
+        self._attribute_names = []
 
 
 class DefaultVelocity(Element):
@@ -808,15 +668,9 @@ class DefaultVelocity(Element):
     """
     def __init__(
         self,
-        name=None,
-        size=None,
-        data="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.size = size
-        self.data = data
-        self._attribute_names = ['name', 'size', 'data']
+        self._attribute_names = []
 
 
 class DefaultCylinder(Element):
@@ -827,15 +681,9 @@ class DefaultCylinder(Element):
     """
     def __init__(
         self,
-        name=None,
-        size=None,
-        data="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.size = size
-        self.data = data
-        self._attribute_names = ['name', 'size', 'data']
+        self._attribute_names = []
 
 
 class DefaultMuscle(Element):
@@ -846,15 +694,9 @@ class DefaultMuscle(Element):
     """
     def __init__(
         self,
-        name=None,
-        size=None,
-        data="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.size = size
-        self.data = data
-        self._attribute_names = ['name', 'size', 'data']
+        self._attribute_names = []
 
 
 class Custom(Element):
@@ -864,15 +706,9 @@ class Custom(Element):
     """
     def __init__(
         self,
-        name=None,
-        size=None,
-        data="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.size = size
-        self.data = data
-        self._attribute_names = ['name', 'size', 'data']
+        self._attribute_names = []
 
 
 class Numeric(Element):
@@ -948,47 +784,9 @@ class Asset(Element):
     """
     def __init__(
         self,
-        name=None,
-        type="cube",
-        file=None,
-        gridsize="1 1",
-        gridlayout="............",
-        fileright=None,
-        fileleft=None,
-        fileup=None,
-        filedown=None,
-        filefront=None,
-        fileback=None,
-        builtin="none",
-        rgb1="0.8 0.8 0.8",
-        rgb2="0.5 0.5 0.5",
-        mark="none",
-        markrgb="0 0 0",
-        random="0.01",
-        width="0",
-        height="0",
     ):
         super().__init__()
-        self.name = name
-        self.type = type
-        self.file = file
-        self.gridsize = gridsize
-        self.gridlayout = gridlayout
-        self.fileright = fileright
-        self.fileleft = fileleft
-        self.fileup = fileup
-        self.filedown = filedown
-        self.filefront = filefront
-        self.fileback = fileback
-        self.builtin = builtin
-        self.rgb1 = rgb1
-        self.rgb2 = rgb2
-        self.mark = mark
-        self.markrgb = markrgb
-        self.random = random
-        self.width = width
-        self.height = height
-        self._attribute_names = ['name', 'type', 'file', 'gridsize', 'gridlayout', 'fileright', 'fileleft', 'fileup', 'filedown', 'filefront', 'fileback', 'builtin', 'rgb1', 'rgb2', 'mark', 'markrgb', 'random', 'width', 'height']
+        self._attribute_names = []
 
 
 class Texture(Element):
@@ -1456,27 +1254,9 @@ class Contact(Element):
     """
     def __init__(
         self,
-        class_=None,
-        geom1=None,
-        geom2=None,
-        condim="3",
-        friction="1 1 0.005 0.0001 0.0001",
-        solref=None,
-        solimp=None,
-        margin="0",
-        gap="0",
     ):
         super().__init__()
-        self.class_ = class_
-        self.geom1 = geom1
-        self.geom2 = geom2
-        self.condim = condim
-        self.friction = friction
-        self.solref = solref
-        self.solimp = solimp
-        self.margin = margin
-        self.gap = gap
-        self._attribute_names = ['class_', 'geom1', 'geom2', 'condim', 'friction', 'solref', 'solimp', 'margin', 'gap']
+        self._attribute_names = []
 
 
 class Pair(Element):
@@ -1532,25 +1312,9 @@ class Equality(Element):
     """
     def __init__(
         self,
-        name=None,
-        class_=None,
-        active="true",
-        solref=None,
-        solimp=None,
-        body1=None,
-        body2=None,
-        anchor=None,
     ):
         super().__init__()
-        self.name = name
-        self.class_ = class_
-        self.active = active
-        self.solref = solref
-        self.solimp = solimp
-        self.body1 = body1
-        self.body2 = body2
-        self.anchor = anchor
-        self._attribute_names = ['name', 'class_', 'active', 'solref', 'solimp', 'body1', 'body2', 'anchor']
+        self._attribute_names = []
 
 
 class EqualityConnect(Element):
@@ -1698,41 +1462,9 @@ class Tendon(Element):
     """
     def __init__(
         self,
-        name=None,
-        class_=None,
-        limited="false",
-        range="0 0",
-        solreflimit=None,
-        solimplimit=None,
-        solreffriction=None,
-        solimpfriction=None,
-        margin="0",
-        frictionloss="0",
-        width="0",
-        material=None,
-        rgba="0.5 0.5 0.5 1",
-        stiffness="0",
-        damping="0",
-        user="0 0 ...",
     ):
         super().__init__()
-        self.name = name
-        self.class_ = class_
-        self.limited = limited
-        self.range = range
-        self.solreflimit = solreflimit
-        self.solimplimit = solimplimit
-        self.solreffriction = solreffriction
-        self.solimpfriction = solimpfriction
-        self.margin = margin
-        self.frictionloss = frictionloss
-        self.width = width
-        self.material = material
-        self.rgba = rgba
-        self.stiffness = stiffness
-        self.damping = damping
-        self.user = user
-        self._attribute_names = ['name', 'class_', 'limited', 'range', 'solreflimit', 'solimplimit', 'solreffriction', 'solimpfriction', 'margin', 'frictionloss', 'width', 'material', 'rgba', 'stiffness', 'damping', 'user']
+        self._attribute_names = []
 
 
 class Spatial(Element):
@@ -1888,51 +1620,9 @@ class Actuator(Element):
     """
     def __init__(
         self,
-        name=None,
-        class_=None,
-        ctrllimited="false",
-        forcelimited="false",
-        ctrlrange="0 0",
-        forcerange="0 0",
-        gear="1 0 0 0 0 0",
-        cranklength="0",
-        joint=None,
-        jointinparent=None,
-        site=None,
-        tendon=None,
-        cranksite=None,
-        slidersite=None,
-        user="0 0 ...",
-        dyntype="none",
-        gaintype="fixed",
-        biastype="none",
-        dynprm="1 0 0",
-        gainprm="1 0 0",
-        biasprm="0 0 0",
     ):
         super().__init__()
-        self.name = name
-        self.class_ = class_
-        self.ctrllimited = ctrllimited
-        self.forcelimited = forcelimited
-        self.ctrlrange = ctrlrange
-        self.forcerange = forcerange
-        self.gear = gear
-        self.cranklength = cranklength
-        self.joint = joint
-        self.jointinparent = jointinparent
-        self.site = site
-        self.tendon = tendon
-        self.cranksite = cranksite
-        self.slidersite = slidersite
-        self.user = user
-        self.dyntype = dyntype
-        self.gaintype = gaintype
-        self.biastype = biastype
-        self.dynprm = dynprm
-        self.gainprm = gainprm
-        self.biasprm = biasprm
-        self._attribute_names = ['name', 'class_', 'ctrllimited', 'forcelimited', 'ctrlrange', 'forcerange', 'gear', 'cranklength', 'joint', 'jointinparent', 'site', 'tendon', 'cranksite', 'slidersite', 'user', 'dyntype', 'gaintype', 'biastype', 'dynprm', 'gainprm', 'biasprm']
+        self._attribute_names = []
 
 
 class General(Element):
@@ -2299,19 +1989,9 @@ class Muscle(Element):
     """
     def __init__(
         self,
-        name=None,
-        noise=None,
-        cutoff=None,
-        user=None,
-        site=None,
     ):
         super().__init__()
-        self.name = name
-        self.noise = noise
-        self.cutoff = cutoff
-        self.user = user
-        self.site = site
-        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'site']
+        self._attribute_names = []
 
 
 class Sensor(Element):
@@ -2324,19 +2004,9 @@ class Sensor(Element):
     """
     def __init__(
         self,
-        name=None,
-        noise=None,
-        cutoff=None,
-        user=None,
-        site=None,
     ):
         super().__init__()
-        self.name = name
-        self.noise = noise
-        self.cutoff = cutoff
-        self.user = user
-        self.site = site
-        self._attribute_names = ['name', 'noise', 'cutoff', 'user', 'site']
+        self._attribute_names = []
 
 
 class SensorTouch(Element):
@@ -3032,17 +2702,9 @@ class Keyframe(Element):
     """
     def __init__(
         self,
-        time="0",
-        qpos=None,
-        qvel="0 0 ...",
-        act="0 0 ...",
     ):
         super().__init__()
-        self.time = time
-        self.qpos = qpos
-        self.qvel = qvel
-        self.act = act
-        self._attribute_names = ['time', 'qpos', 'qvel', 'act']
+        self._attribute_names = []
 
 
 class Key(Element):

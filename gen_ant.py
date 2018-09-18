@@ -1,3 +1,4 @@
+import os
 from mjcf.generated import elements as e
 
 
@@ -126,11 +127,6 @@ def main():
     # world_dict = gen_world()
     # world_markup = unparse(world_dict, pretty=True)
 
-    # # Output
-    # outpath = os.path.join('minimal-gen.xml')
-    # with open(outpath, 'w') as fh:
-    #     fh.write(world_markup)
-
     #########################
     # Level 1
     mujoco = e.Mujoco()
@@ -233,7 +229,11 @@ def main():
     ])
 
     model_xml = mujoco.xml()
-    print(model_xml)
+
+    # Output
+    outpath = os.path.join('ant-gen.xml')
+    with open(outpath, 'w') as fh:
+        fh.write(model_xml)
 
 
 if __name__ == '__main__':

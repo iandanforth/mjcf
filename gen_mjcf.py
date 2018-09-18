@@ -7,170 +7,225 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 SENTINEL = "MISSING"
 
 
-def get_elem_nodes(soup):
-    # Each element doc starts with an <h3> tag
-    h3s = soup.find_all('h3')
-    nodes = [elem for elem in h3s if elem['id']]
-    return nodes
+class MJScraper(object):
 
+    def __init__(self, html_filepath="modeling.htm"):
+        # MuJoCo Docs
+        with open(html_filepath, 'r') as fh:
+            self.soup = BeautifulSoup(fh, 'html.parser')
 
-def get_clean_attr_default(attr_default):
-    """
-    Cleans ambiguous strings
-    """
-    if "for MJCF" in attr_default:
-        parts = attr_default.split(",")
-        mjcf_default = parts[0]
-        attr_default = mjcf_default.split(" ")[0]
+        self.frame_orientation_attrs = self._get_frame_orientation_attrs()
+        self.sensor_attrs = self._get_sensor_attrs()
+        self.solver_attrs = self._get_solver_attrs()
 
-    return attr_default
+    @staticmethod
+    def get_elem_nodes(soup):
+        # Each element doc starts with an <h3> tag
+        h3s = soup.find_all('h3')
+        nodes = [elem for elem in h3s if elem['id']]
+        return nodes
 
+    @staticmethod
+    def get_clean_attr_default(attr_default):
+        """
+        Cleans ambiguous strings
+        """
+        if "for MJCF" in attr_default:
+            parts = attr_default.split(",")
+            mjcf_default = parts[0]
+            attr_default = mjcf_default.split(" ")[0]
 
-def get_type_default(dl_item_text):
-    """
-    Splits a 'detail' string into the type and default parts
-    """
+        return attr_default
 
-    # Separate attr names from attr details
-    parts = dl_item_text.split(":")
-    if len(parts) > 1:
-        detail = parts[1]
-    else:
-        return None, None
+    @staticmethod
+    def get_clean_name(name):
+        name = name.replace("\"", "")
+        if name == "class":
+            name = "class_"
+        return name
 
-    # Handle lists of valid strings
-    if "[" in detail and "]" in detail:
-        obi = detail.find("[")
-        cbi = detail.find("]")
-        valid_strings = detail[obi+1:cbi].split(",")
-        attr_type = [s.strip() for s in valid_strings]
-        attr_default = detail[cbi+2:].strip()  # e.g. move just past the ], in [false, true], "false"
-        attr_default = get_clean_attr_default(attr_default)
-    # Handle type, default style details
-    else:
-        detail_parts = detail.split(",")
-        attr_type = detail_parts[0].strip()
-        attr_default = detail_parts[1].strip()
+    @staticmethod
+    def add_worldbody(elements):
+        """
+        Special case the world body as it doesn't have a separate description
+        """
+        worldbody = deepcopy(elements["body"])
+        worldbody["attributes"] = []
+        elements["worldbody"] = worldbody
+        return elements
 
-    if "optional" in attr_default \
-        or "required" in attr_default \
-        or "default" in attr_default:
-        attr_default = None
-    return attr_type, attr_default
+    @staticmethod
+    def attributes_for_motors(elements):
+        """
+        Docs point back to actuator / general for details on these attributes
+        """
+        attrs = elements["general"]["attributes"]
+        elements["motor"]["attributes"] = attrs
 
+        return elements
 
-def get_clean_name(name):
-    name = name.replace("\"", "")
-    if name == "class":
-        name = "class_"
-    return name
+    def _get_type_default(self, dl_item_text):
+        """
+        Splits a 'detail' string into the type and default parts
+        """
 
+        # Separate attr names from attr details
+        parts = dl_item_text.split(":")
+        if len(parts) > 1:
+            detail = parts[1]
+        else:
+            return None, None
 
-def get_names(name_node_text):
-    parts = name_node_text.split(":")
-    names_string = parts[0]
-    names = [n.strip() for n in names_string.split(",")]
-    names = [get_clean_name(n) for n in names]
-    return names
+        # Handle lists of valid strings
+        if "[" in detail and "]" in detail:
+            obi = detail.find("[")
+            cbi = detail.find("]")
+            valid_strings = detail[obi+1:cbi].split(",")
+            attr_type = [s.strip() for s in valid_strings]
+            attr_default = detail[cbi+2:].strip()  # e.g. move just past the ], in [false, true], "false"
+            attr_default = self.get_clean_attr_default(attr_default)
+        # Handle type, default style details
+        else:
+            detail_parts = detail.split(",")
+            attr_type = detail_parts[0].strip()
+            attr_default = detail_parts[1].strip()
 
+        if "optional" in attr_default \
+            or "required" in attr_default \
+            or "default" in attr_default:
+            attr_default = None
+        return attr_type, attr_default
 
-def get_attributes_from_node(node):
-    attr_template = {
-        "type": SENTINEL,
-        "default": SENTINEL,
-        "description": SENTINEL
-    }
+    def _get_names(self, name_node_text):
+        parts = name_node_text.split(":")
+        names_string = parts[0]
+        names = [n.strip() for n in names_string.split(",")]
+        names = [self.get_clean_name(n) for n in names]
+        return names
 
-    attributes = []
-    dl_data = node.findNext("dl")
-    for dl_item in dl_data:
-        if isinstance(dl_item, Tag) and dl_item.name == "dt":
-            attr_name_node = dl_item.find("b")
-            # Make sure we're dealing with an attribute name line
-            if attr_name_node:
-                attr_names = get_names(attr_name_node.text)
-                attr_type, attr_default = get_type_default(dl_item.text)
-                attr_desc = dl_item.findNext("dd").text.strip()
+    def _get_frame_orientation_attrs(self):
+        """
+        Get attributes used by elements that refer to an orientation frame
+        """
+        orientation_node = self.soup.find(id="COrientation")
+        attrs = self._get_attributes_from_node(orientation_node)
+        return attrs
 
-                for attr_name in attr_names:
-                    attribute = copy(attr_template)
-                    attribute["name"] = attr_name
-                    attribute["type"] = attr_type
-                    attribute["default"] = attr_default
-                    attribute["description"] = attr_desc
+    def _get_sensor_attrs(self):
+        """
+        Get attributes shared by all sensor elements
+        """
+        sensor_node = self.soup.find(id="CSensor")
+        attrs = self._get_attributes_from_node(sensor_node)
+        return attrs
 
-                    attributes.append(attribute)
+    def _get_solver_attrs(self):
+        """
+        Get attributes related to solvers
+        """
+        solver_node = self.soup.find(id="CSolver")
+        attrs = self._get_attributes_from_node(solver_node)
+        return attrs
 
-    return attributes
+    def _banned_attr(self, attr_name):
+        banned_attrs = ["magnetic"]
+        if attr_name in banned_attrs:
+            return True
 
+        return False
 
-def get_details_from_node(node):
-    # Template element
+    def _node_has_no_attrs(self, node):
+        """
+        Check to see if we can expect any attributes from this node
+        """
+        next_siblings = []
+        for i, s in enumerate(node.next_siblings):
+            if i > 5:
+                break
+            next_siblings.append(s.name)
 
-    element = {
-        "description": SENTINEL,
-        "attributes": {}
-    }
+        if next_siblings[3] == "h3":
+            return True
 
-    # Element Description
-    p = node.nextSibling.nextSibling
-    desc = p.string
-    if not desc:
-        desc = p.text
-    element["description"] = desc
+        return False
 
-    # Attributes
-    element["attributes"] = get_attributes_from_node(node)
+    def _get_attributes_from_node(self, node):
+        attr_template = {
+            "type": SENTINEL,
+            "default": SENTINEL,
+            "description": SENTINEL
+        }
 
-    return element
+        attributes = []
 
+        if self._node_has_no_attrs(node):
+            return attributes
 
-def add_worldbody(elements):
-    """
-    Special case the world body as it doesn't have a separate description
-    """
-    worldbody = deepcopy(elements["body"])
-    worldbody["attributes"] = []
-    elements["worldbody"] = worldbody
-    return elements
+        dl_data = node.findNext("dl")
+        for dl_item in dl_data:
+            if isinstance(dl_item, Tag) and dl_item.name == "dt":
+                attr_name_node = dl_item.find("b")
+                # Make sure we're dealing with an attribute name line
+                if attr_name_node:
+                    attr_names = self._get_names(attr_name_node.text)
+                    attr_type, attr_default = self._get_type_default(dl_item.text)
+                    attr_desc = dl_item.findNext("dd").text.strip()
 
+                    for attr_name in attr_names:
+                        if self._banned_attr(attr_name):
+                            continue
+                        attribute = copy(attr_template)
+                        attribute["name"] = attr_name
+                        attribute["type"] = attr_type
+                        attribute["default"] = attr_default
+                        attribute["description"] = attr_desc
 
-def attributes_for_motors(elements):
-    """
-    Docs point back to actuator / general for details on these attributes
-    """
-    attrs = elements["general"]["attributes"]
-    elements["motor"]["attributes"] = attrs
+                        attributes.append(attribute)
 
-    return elements
+        return attributes
 
+    def _get_details_from_node(self, node):
+        # Template element
 
-def handle_special_cases(elements):
-    elements = add_worldbody(elements)
-    elements = attributes_for_motors(elements)
-    return elements
+        element = {
+            "description": SENTINEL,
+            "attributes": {}
+        }
 
+        # Element Description
+        p = node.nextSibling.nextSibling
+        desc = p.string
+        if not desc:
+            desc = p.text
+        element["description"] = desc
 
-def get_elements():
-    # MuJoCo Docs
-    with open("modeling.htm", 'r') as fh:
-        soup = BeautifulSoup(fh, 'html.parser')
+        # Attributes
+        element["attributes"] = self._get_attributes_from_node(node)
 
-    elem_nodes = get_elem_nodes(soup)
-    elements = {}
-    for elem in elem_nodes:
-        # Name of the element
-        elem_id = elem['id']
-        elements[elem_id] = get_details_from_node(elem)
+        return element
 
-    elements = handle_special_cases(elements)
+    def _handle_special_cases(self, elements):
+        elements = self.add_worldbody(elements)
+        elements = self.attributes_for_motors(elements)
+        return elements
 
-    return elements
+    def get_elements(self):
+        elem_nodes = self.get_elem_nodes(self.soup)
+        elements = {}
+        for elem in elem_nodes:
+            # Name of the element
+            elem_id = elem['id']
+            elements[elem_id] = self._get_details_from_node(elem)
+
+        elements = self._handle_special_cases(elements)
+
+        return elements
 
 
 def main():
 
-    elements = get_elements()
+    scraper = MJScraper()
+    elements = scraper.get_elements()
 
     # Jinja2
     env = Environment(

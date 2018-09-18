@@ -34,8 +34,12 @@ class Element(object):
         element_name = element_name.lower()
         outdict = {element_name: {}}
         for attr in self._attribute_names:
-            # Strip underscore from protected name
             v = getattr(self, attr)
+
+            # Ignore values set to a Python None
+            if v is None:
+                continue
+            # Strip underscore from protected name
             if attr == "class_":
                 attr = "class"
             k = "@{}".format(attr)
