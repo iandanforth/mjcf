@@ -26,6 +26,15 @@ class Element(object):
 
         return parent
 
+    def _stringify_value(self, val):
+
+        if isinstance(val, list):
+            val = str(val).strip(("[]"))
+        if isinstance(val, bool):
+            val = str(val).lower()
+
+        return val
+
     def _to_dict(self):
         """
         Returns a dict ready for processing by xmltodict lib
@@ -43,7 +52,7 @@ class Element(object):
             if attr == "class_":
                 attr = "class"
             k = "@{}".format(attr)
-            outdict[element_name][k] = v
+            outdict[element_name][k] = self._stringify_value(v)
 
         for child in self._children:
             child_dict = child._to_dict()
