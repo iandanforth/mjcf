@@ -4561,21 +4561,26 @@ class SensorTouch(Element):
     :param site:
         Site defining the active sensor zone.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         site,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.site = site
@@ -4597,21 +4602,26 @@ class SensorAccelerometer(Element):
         Site where the sensor is mounted. The accelerometer is centered and
         aligned with the site local frame.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         site,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.site = site
@@ -4633,21 +4643,26 @@ class SensorVelocimeter(Element):
         Site where the sensor is mounted. The velocimeter is centered and
         aligned with the site local frame.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         site,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.site = site
@@ -4671,21 +4686,26 @@ class SensorGyro(Element):
         Site where the sensor is mounted. The gyroscope is centered and aligned
         with the site local frame.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         site,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.site = site
@@ -4717,21 +4737,26 @@ class SensorForce(Element):
         unique parent but can have multiple children, which is why we define
         this sensor through the child rather than the parent body in the pair.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         site,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.site = site
@@ -4751,21 +4776,26 @@ class SensorTorque(Element):
         Site where the sensor is mounted. The measured interaction torque is
         between the body where the site is defined and its parent body.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         site,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.site = site
@@ -4785,21 +4815,26 @@ class SensorMagnetometer(Element):
     :param site:
         The site where the sensor is attached.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         site,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.site = site
@@ -4826,21 +4861,26 @@ class SensorRangefinder(Element):
     :param site:
         The site where the sensor is attached.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         site,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.site = site
@@ -4863,21 +4903,26 @@ class SensorJointpos(Element):
         The joint whose position or angle will be sensed. Only scalar joints
         can be referenced here. The sensor output is copied from mjData.qpos.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         joint,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.joint = joint
@@ -4897,21 +4942,26 @@ class SensorJointvel(Element):
         The joint whose velocity will be sensed. Only scalar joints can be
         referenced here. The sensor output is copied from mjData.qvel.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         joint,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.joint = joint
@@ -4931,21 +4981,26 @@ class SensorTendonpos(Element):
         The tendon whose length will be sensed. The sensor output is copied
         from mjData.ten_length.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         tendon,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.tendon = tendon
@@ -4965,21 +5020,26 @@ class SensorTendonvel(Element):
         The tendon whose velocity will be sensed. The sensor output is copied
         from mjData.ten_velocity.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         tendon,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.tendon = tendon
@@ -5000,21 +5060,26 @@ class SensorActuatorpos(Element):
         The actuator whose transmission's length will be sensed. The sensor
         output is copied from mjData.actuator_length.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         actuator,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.actuator = actuator
@@ -5034,21 +5099,26 @@ class SensorActuatorvel(Element):
         The actuator whose transmission's velocity will be sensed. The sensor
         output is copied from mjData.actuator_velocity.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         actuator,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.actuator = actuator
@@ -5071,21 +5141,26 @@ class SensorActuatorfrc(Element):
         The actuator whose scalar force output will be sensed. The sensor
         output is copied from mjData.actuator_force.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         actuator,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.actuator = actuator
@@ -5105,21 +5180,26 @@ class SensorBallquat(Element):
         The ball joint whose quaternion is sensed. The sensor output is copied
         from mjData.qpos.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         joint,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.joint = joint
@@ -5141,21 +5221,26 @@ class SensorBallangvel(Element):
         The ball joint whose angular velocity is sensed. The sensor output is
         copied from mjData.qvel.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         joint,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.joint = joint
@@ -5179,22 +5264,27 @@ class SensorFramepos(Element):
         frame of the body, while "xbody" refers to the regular frame of the
         body (usually centered at the joint with the parent body).
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         objname,
         objtype,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.objname = objname
@@ -5220,22 +5310,27 @@ class SensorFramequat(Element):
         frame of the body, while "xbody" refers to the regular frame of the
         body (usually centered at the joint with the parent body).
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         objname,
         objtype,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.objname = objname
@@ -5261,22 +5356,27 @@ class SensorFramexaxis(Element):
         frame of the body, while "xbody" refers to the regular frame of the
         body (usually centered at the joint with the parent body).
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         objname,
         objtype,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.objname = objname
@@ -5302,22 +5402,27 @@ class SensorFrameyaxis(Element):
         frame of the body, while "xbody" refers to the regular frame of the
         body (usually centered at the joint with the parent body).
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         objname,
         objtype,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.objname = objname
@@ -5343,22 +5448,27 @@ class SensorFramezaxis(Element):
         frame of the body, while "xbody" refers to the regular frame of the
         body (usually centered at the joint with the parent body).
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         objname,
         objtype,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.objname = objname
@@ -5383,22 +5493,27 @@ class SensorFramelinvel(Element):
         frame of the body, while "xbody" refers to the regular frame of the
         body (usually centered at the joint with the parent body).
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         objname,
         objtype,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.objname = objname
@@ -5423,22 +5538,27 @@ class SensorFrameangvel(Element):
         frame of the body, while "xbody" refers to the regular frame of the
         body (usually centered at the joint with the parent body).
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         objname,
         objtype,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.objname = objname
@@ -5463,22 +5583,27 @@ class SensorFramelinacc(Element):
         frame of the body, while "xbody" refers to the regular frame of the
         body (usually centered at the joint with the parent body).
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         objname,
         objtype,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.objname = objname
@@ -5503,22 +5628,27 @@ class SensorFrameangacc(Element):
         frame of the body, while "xbody" refers to the regular frame of the
         body (usually centered at the joint with the parent body).
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         objname,
         objtype,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.objname = objname
@@ -5538,21 +5668,26 @@ class SensorSubtreecom(Element):
     :param body:
         Name of the body where the kinematic subtree is rooted.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         body,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.body = body
@@ -5572,21 +5707,26 @@ class SensorSubtreelinvel(Element):
     :param body:
         Name of the body where the kinematic subtree is rooted.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         body,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.body = body
@@ -5606,21 +5746,26 @@ class SensorSubtreeangmom(Element):
     :param body:
         Name of the body where the kinematic subtree is rooted.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
         body,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.body = body
@@ -5660,13 +5805,18 @@ class SensorUser(Element):
         Type of the MuJoCo object to which the sensor is attached. This
         together with the objname attribute determines the actual object.
     :param cutoff:
-        See Sensors.
+        When this value is positive, it limits the absolute value of the sensor
+        output. It is also used to normalize the sensor output in the sensor
+        data plots in HAPTIX and simulate.cpp.
     :param name:
-        See Sensors.
+        Name of the sensor.
     :param noise:
-        See Sensors.
+        The standard deviation of zero-mean Gaussian noise added to the sensor
+        output, when the sensornoise attribute of flag is enabled. Sensor noise
+        respects the sensor data type: quaternions and unit vectors remain
+        normalized, non-negative quantities remain non-negative.
     :param user:
-        See Sensors.
+        See User parameters.
     """
     def __init__(
         self,
@@ -5675,10 +5825,10 @@ class SensorUser(Element):
         needstage,
         objname,
         objtype,
-        cutoff: None=None,
-        name: None=None,
-        noise: None=None,
-        user: None=None,
+        cutoff: float=None,
+        name: str=None,
+        noise: float=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.datatype = datatype

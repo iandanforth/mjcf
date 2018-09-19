@@ -301,6 +301,37 @@ class MJScraper(object):
         elements = self.attributes_for_motors(elements)
         return elements
 
+    def _update_list_of_dicts(self, orig, alt):
+        """
+        Operates on a list of dicts where each dict has a 'name' key.
+
+        Any dict in orig which has a matching dict in alt (by name) will
+        be replaced by the one in alt.
+        """
+        new_list = []
+        for d in orig:
+            replacement = d
+            for a_d in alt:
+                if d["name"] == a_d["name"]:
+                    replacement = a_d
+            new_list.append(replacement)
+        return new_list
+
+    def _add_inherited_attrs(self, elem_id, details):
+
+        if "sensor" in elem_id and elem_id != "sensor":
+            details["attributes"] = self._update_list_of_dicts(
+                details["attributes"],
+                self.sensor_attrs
+            )
+        if "sensor" in elem_id and elem_id != "sensor":
+            details["attributes"] = self._update_list_of_dicts(
+                details["attributes"],
+                self.sensor_attrs
+            )
+
+        return details
+
     def get_elements(self):
         elem_nodes = self.get_elem_nodes(self.soup)
         elements = {}
@@ -308,6 +339,9 @@ class MJScraper(object):
             # Name of the element
             elem_id = elem['id']
             elements[elem_id] = self._get_details_from_node(elem)
+            details = self._get_details_from_node(elem)
+            details = self._add_inherited_attrs(elem_id, details)
+            elements[elem_id] = details
 
         elements = self._handle_special_cases(elements)
 
