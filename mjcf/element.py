@@ -32,7 +32,7 @@ class Element(object):
         """
 
         if isinstance(val, list):
-            val = str(val).strip(("[]"))
+            val = str(val).strip(("[]")).replace(",", "")
         if isinstance(val, bool):
             val = str(val).lower()
 
