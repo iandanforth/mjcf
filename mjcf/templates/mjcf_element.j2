@@ -2,6 +2,11 @@ class {{ classname }}(Element):
     {% if docstring %}
     """
     {{ docstring }}
+
+    {% for attr in attributes %}
+    :param {{ attr["name"] }}:
+        {{ attr["description"] }}
+    {% endfor %}
     """
     {% endif %}
     def __init__(

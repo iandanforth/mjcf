@@ -126,7 +126,6 @@ class MJScraper(object):
         else:
             attr_type = "str"
 
-        print(orig_type, attr_type, attr_default)
         return attr_type, attr_default
 
     def _get_type_default(self, dl_item_text):
@@ -230,6 +229,11 @@ class MJScraper(object):
         attributes = sorted(attributes, key=lambda x: (x["required"], x["name"]))
         return attributes
 
+    def _format_attr_desc(self, desc):
+
+        desc = "\n        ".join(wrap(desc, 71))
+        return desc
+
     def _get_attributes_from_node(self, node):
         attr_template = {
             "type": SENTINEL,
@@ -259,7 +263,9 @@ class MJScraper(object):
                         attribute["name"] = attr_name
                         attribute["type"] = attr_type
                         attribute["default"] = attr_default
-                        attribute["description"] = attr_desc
+                        attribute["description"] = self._format_attr_desc(
+                            attr_desc
+                        )
                         attribute["required"] = attr_required
 
                         attributes.append(attribute)

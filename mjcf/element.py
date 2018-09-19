@@ -27,6 +27,9 @@ class Element(object):
         return parent
 
     def _stringify_value(self, val):
+        """
+        Values need to be in an XML/MCJF compatible format.
+        """
 
         if isinstance(val, list):
             val = str(val).strip(("[]"))

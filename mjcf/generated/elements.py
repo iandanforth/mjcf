@@ -16,6 +16,11 @@ class Include(Element):
     included XML files have been assembled into a single DOM, it must
     correspond to a valid MJCF model. Other than that, it is up to the user to
     decide how to use includes and how to modularize large files if desired.
+
+    :param file:
+        The name of the XML file to be included. The file location is relative
+        to the directory of the main MJCF file. If the file is not in the same
+        directory, it should be prefixed with a relative path.
     """
     def __init__(
         self,
@@ -30,6 +35,10 @@ class Mujoco(Element):
     """
          The unique top-level element, identifying the XML file as an MJCF
     model file.
+
+    :param model:
+        The name of the model. This name is shown in the title bar of MuJoCo
+        HAPTIX.
     """
     def __init__(
         self,
@@ -45,6 +54,135 @@ class Compiler(Element):
          This element is used to set options for the built-in parser and
     compiler. After parsing and compilation it no longer has any effect. The
     settings here are global and apply to the entire model.
+
+    :param angle:
+        This attribute specifies whether the angles in the MJCF model are
+        expressed in units of degrees or radians. The compiler converts degrees
+        into radians, and mjModel always uses radians. For URDF models the
+        parser sets this attribute to "radian" internally, regardless of the
+        XML setting.
+    :param balanceinertia:
+        A valid diagonal inertia matrix must satisfy A+B>=C for all
+        permutations of the three diagonal elements. Some poorly designed
+        models violate this constraint, which will normally result in compile
+        error. If this attribute is set to "true", the compiler will silently
+        set all three diagonal elements to their average value whenever the
+        above condition is violated.
+    :param boundinertia:
+        This attribute imposes a lower bound on the diagonal inertia components
+        of each body except for the world body. Its use is similar to boundmass
+        above.
+    :param boundmass:
+        This attribute imposes a lower bound on the mass of each body except
+        for the world body. It can be used as a quick fix for poorly designed
+        models that contain massless moving bodies, such as the dummy bodies
+        often used in URDF models to attach sensors. Note that in MuJoCo there
+        is no need to create dummy bodies.
+    :param convexhull:
+        If this attribute is "true", the compiler will automatically generate a
+        convex hull for every mesh that is used in at least one non-visual geom
+        (in the sense of the discardvisual attribute above). This is done to
+        speed up collision detection; recall Collision detection section in the
+        Computation chapter. Even if the mesh is already convex, the hull
+        contains edge information that is not present in the mesh file, so it
+        needs to be constructed. The only reason to disable this feature is to
+        speed up re-loading of a model with large meshes during model editing
+        (since the convex hull computation is the slowest operation performed
+        by the compiler). However once model design is finished, this feature
+        should be enabled, because the availability of convex hulls
+        substantially speeds up collision detection with large meshes.
+    :param coordinate:
+        This attribute specifies whether the frame positions and orientations
+        in the MJCF model are expressed in local or global coordinates; recall
+        Coordinate frames. The compiler converts global into local coordinates,
+        and mjModel always uses local coordinates. For URDF models the parser
+        sets this attribute to "local" internally, regardless of the XML
+        setting.
+    :param discardvisual:
+        This attribute instructs the parser to discard "visual geoms", defined
+        as geoms whose contype and conaffinity attributes are both set to 0.
+        This functionality is useful for models that contain two sets of geoms,
+        one for collisions and the other for visualization. Note that URDF
+        models are usually constructed in this way. It rarely makes sense to
+        have two sets of geoms in the model, especially since MuJoCo uses
+        convex hulls for collisions, so we recommend using this feature to
+        discard redundant geoms. Keep in mind however that geoms considered
+        visual per the above definition can still participate in collisions, if
+        they appear in the explicit list of contact pairs. The parser does not
+        check this list before discarding geoms; it relies solely on the geom
+        attributes to make the determination.
+    :param eulerseq:
+        This attribute specifies the sequence of Euler rotations for all euler
+        attributes of elements that have spatial frames, as explained in Frame
+        orientations. This must be a string with exactly 3 characters from the
+        set {'x', 'y', 'z', 'X', 'Y', 'Z'}. The character at position n
+        determines the axis around which the n-th rotation is performed. Lower
+        case denotes axes that rotate with the frame, while upper case denotes
+        axes that remain fixed in the parent frame. The "rpy" convention used
+        in URDF corresponds to the default "xyz" in MJCF.
+    :param fitaabb:
+        The compiler is able to replace a mesh with a geometric primitive
+        fitted to that mesh; see geom below. If this attribute is "true", the
+        fitting procedure uses the axis-aligned bounding box (aabb) of the
+        mesh. Otherwise it uses the equivalent-inertia box of the mesh. The
+        type of geometric primitive used for fitting is specified separately
+        for each geom.
+    :param inertiafromgeom:
+        This attribute controls the automatic inference of body masses and
+        inertias from geoms attached to the body. If this setting is "false",
+        no automatic inference is performed. In that case each body must have
+        explicitly defined mass and inertia with the inertial element, or else
+        a compile error will be generated. If this setting is "true", the mass
+        and inertia of each body will be inferred from the geoms attached to
+        it, overriding any values specified with the inertial element. The
+        default setting "auto" means that masses and inertias are inferred
+        automatically only when the inertial element is missing in the body
+        definition. One reason to set this attribute to "true" instead of
+        "auto" is to override inertial data imported from a poorly designed
+        model. In particular, a number of publicly available URDF models have
+        seemingly arbitrary inertias which are too large compared to the mass.
+        This results in equivalent inertia boxes which extend far beyond the
+        geometric boundaries of the model. Note that the built-in OpenGL
+        visualizer can render equivalent inertia boxes.
+    :param inertiagrouprange:
+        This attribute specifies the range of geom groups that are used to
+        infer body masses and inertias (when such inference is enabled). The
+        group attribute of geom is an integer. If this integer falls in the
+        range specified here, the geom will be used in the inertial
+        computation, otherwise it will be ignored. This feature is useful in
+        models that have redundant sets of geoms for collision and
+        visualization. Note that the world body does not participate in the
+        inertial computations, so any geoms attached to it are automatically
+        ignored. Therefore it is not necessary to adjust this attribute and the
+        geom-specific groups so as to exclude world geoms from the inertial
+        computation.
+    :param meshdir:
+        This attribute instructs the compiler where to look for mesh and height
+        field files. The full path to a file is determined as follows. If the
+        strippath attribute described above is "true", all path information
+        from the file name is removed. The following checks are then applied in
+        order: (1) if the file name contains an absolute path, it is used
+        without further changes; (2) if this attribute is set and contains an
+        absolute path, the full path is the string given here appended with the
+        file name; (3) the full path is the path to the main MJCF model file,
+        appended with the value of this attribute if specified, appended with
+        the file name.
+    :param settotalmass:
+        If this value is positive, the compiler will scale the masses and
+        inertias of all bodies in the model, so that the total mass equals the
+        value specified here. The world body has mass 0 and does not
+        participate in any mass-related computations. This scaling is performed
+        last, after all other operations affecting the body mass and inertia.
+        The same scaling operation can be applied at runtime to the compiled
+        mjModel with the function mj_setTotalmass.
+    :param strippath:
+        The this attribute is "true", the parser will remove any path
+        information in file names specified in the model. This is useful for
+        loading models created on a different system using a different
+        directory structure.
+    :param texturedir:
+        This attribute is used to instruct the compiler where to look for
+        texture files. It works in the same way as meshdir above.
     """
     def __init__(
         self,
@@ -86,6 +224,7 @@ class Compiler(Element):
 class CompilerLengthrange(Element):
     """
          To be written.
+
     """
     def __init__(
         self,
@@ -102,6 +241,145 @@ class Option(Element):
     way; they are simply copied into the low level model. Even though mjOption
     can be modified by the user at runtime, it is nevertheless a good idea to
     adjust it properly through the XML.
+
+    :param apirate:
+        This parameter determines the rate (in Hz) at which the socket API in
+        HAPTIX allows the update function to be executed. This mechanism is
+        used to simulate devices with limited communication bandwidth. It only
+        affects the socket API and not the physics simulation.
+    :param collision:
+        This attribute specifies which geom pairs should be checked for
+        collision; recall Collision detection in the Computation chapter.
+        "predefined" means that only the explicitly-defined contact pairs are
+        checked. "dynamic" means that only the contact pairs generated
+        dynamically are checked. "all" means that the contact pairs from both
+        sources are checked.
+    :param cone:
+        The type of contact friction cone. Elliptic cones are a better model of
+        the physical reality, but pyramidal cones sometimes make the solver
+        faster and more robust.
+    :param density:
+        Density of the medium, not to be confused with the geom density used to
+        infer masses and inertias. This parameter is used to simulate lift and
+        drag forces, which scale quadratically with velocity. In SI units the
+        density of air is around 1.2 while the density of water is around 1000
+        depending on temperature. Setting density to 0 disables lift and drag
+        forces.
+    :param gravity:
+        Gravitational acceleration vector. In the default world orientation the
+        Z-axis points up. The MuJoCo GUI is organized around this convention
+        (both the camera and perturbation commands are based on it) so we do
+        not recommend deviating from it.
+    :param impedance:
+        This attribute selects the spatial profile of the constraint impedance.
+        See Solver parameters for a description of built-in impedance profiles.
+        "user" means that the callback mjcb_sol_imp will be used to compute the
+        constraint impedance at runtime.
+    :param impratio:
+        This attribute determines the ratio of frictional-to-normal constraint
+        impedance for elliptic friction cones. The setting of solimp determines
+        a single impedance value for all contact dimensions, which is then
+        modulated by this attribute. Settings larger than 1 cause friction
+        forces to be "harder" than normal forces, having the general effect of
+        preventing slip, without increasing the actual friction coefficient.
+        For pyramidal friction cones the situation is more complex because the
+        pyramidal approximation mixes normal and frictional dimensions within
+        each basis vector; but the overall effect of this attribute is
+        qualitatively similar.
+    :param integrator:
+        This attribute selects the numerical integrator to be used.
+        Currently the available integrators are the semi-implicit Euler method
+        and the fixed-step 4-th order Runge Kutta method.
+    :param iterations:
+        Maximum number of iterations of the constraint solver. When the
+        warmstart attribute of flag is enabled (which is the default), accurate
+        results are obtained with fewer iterations. Larger and more complex
+        systems with many interacting constraints require more iterations. Note
+        that mjData.solver contains statistics about solver convergence, also
+        shown in the profiler.
+    :param jacobian:
+        The type of constraint Jacobian and matrices computed from it. Auto
+        resolves to dense when the number of degrees of freedom is up to 60,
+        and sparse over 60.
+    :param mpr_iterations:
+        Maximum number of iterations of the MPR algorithm used for convex mesh
+        collisions. This rarely needs to be adjusted, except in situations
+        where some geoms have very large aspect ratios.
+    :param mpr_tolerance:
+        Tolerance threshold used for early termination of the MPR algorithm.
+    :param noslip_iterations:
+        Maximum number of iterations of the Noslip solver. This is a post-
+        processing step executed after the main solver. It uses a modified PGS
+        method to suppress slip/drift in friction dimensions resulting from the
+        soft-constraint model. The default setting 0 disables this post-
+        processing step.
+    :param noslip_tolerance:
+        Tolerance threshold used for early termination of the Noslip solver.
+    :param o_margin:
+        This attribute replaces the margin parameter of all active contact
+        pairs when Contact override is enabled. Otherwise MuJoCo uses the
+        element-specific margin attribute of geom or pair depending on how the
+        contact pair was generated. See also Collision detection in the
+        Computation chapter.         The related gap parameter does not have a
+        global override.
+    :param o_solimp:
+        This attribute replaces the solimp parameter of all active contact
+        pairs when contact override is enabled. See also Solver parameters.
+    :param o_solref:
+        This attribute replaces the solref parameter of all active contact
+        pairs when contact override is enabled. See also Solver parameters.
+    :param reference:
+        This attribute controls the computation of the reference acceleration.
+        The default setting corresponds to the virtual spring-damper described
+        in Solver parameters. "user" means that the callback mjcb_sol_ref will
+        be used to compute the reference acceleration at runtime.
+    :param solver:
+        This attribute selects one of the constraint solver algorithms
+        described in the Computation chapter. Guidelines for solver selection
+        and parameter tuning are available in the Algorithms section above.
+    :param timestep:
+        Simulation time step in seconds. This is the single most important
+        parameter affecting the speed-accuracy trade-off which is inherent in
+        every physics simulation. Smaller values result in better accuracy and
+        stability. To achieve real-time performance, the time step must be
+        larger than the CPU time per step (or 4 times larger when using the RK4
+        integrator). The CPU time is measured with internal timers and can be
+        displayed in both HAPTIX and Pro. It should be monitored when adjusting
+        the time step. MuJoCo can simulate most robotic systems a lot faster
+        than real-time, however models with many floating objects (resulting in
+        many contacts) are more demanding computationally. Keep in mind that
+        stability is determined not only by the time step but also by the
+        Solver parameters; in particular softer constraints can be simulated
+        with larger time steps. When fine-tuning a challenging model, it is
+        recommended to experiment with both settings jointly. In optimization-
+        related applications, real-time is no longer good enough and instead it
+        is desirable to run the simulation as fast as possible. In that case
+        the time step should be made as large as possible.
+    :param tolerance:
+        Tolerance threshold used for early termination of the iterative solver.
+        For PGS, the threshold is applied to the cost improvement between two
+        iterations. For CG and Newton, it is applied to the smaller of the cost
+        improvement and the gradient norm. Set the tolerance to 0 to disable
+        early termination.
+    :param viscosity:
+        Viscosity of the medium. This parameter is used to simulate viscous
+        forces, which scale linearly with velocity. In SI units the viscosity
+        of air is around 0.00002 while the viscosity of water is around 0.0009
+        depending on temperature. Setting viscosity to 0 disables viscous
+        forces. Note that the Euler integrator handles damping in the joints
+        implicitly - which improves stability and accuracy. It does not
+        presently do this with body viscosity. Therefore, if the goal is merely
+        to create a damped simulation (as opposed to modeling the specific
+        effects of viscosity), we recommend using joint damping rather than
+        body viscosity. There is a plan to develop an integrator that is fully
+        implicit in velocity, which will make joint damping and body viscosity
+        equally stable, but this feature is not yet available.
+    :param wind:
+        Velocity vector of the medium (i.e. wind). This vector is subtracted
+        from the 3D translational velocity of each body, and the result is used
+        to compute viscous, lift and drag forces acting on the body; recall
+        Passive forces in the Computation chapter. The magnitude of these
+        forces scales with the values of the next two attributes.
     """
     def __init__(
         self,
@@ -168,6 +446,79 @@ class OptionFlag(Element):
     are "enable" for flags corresponding to standard features, and "disable"
     for flags corresponding to optional features. In the documentation below,
     we explain what happens when the setting is different from its default.
+
+    :param actuation:
+        This flag disables all standard computations related to actuator
+        forces, including the actuator dynamics. As a result, no actuator
+        forces are applied to the simulation.
+    :param clampctrl:
+        This flag disables the clamping of control inputs to all actuators,
+        even if the actuator-specific attributes are set to enable clamping.
+    :param constraint:
+        This flag disables all standard computations related to the constraint
+        solver. As a result, no constraint forces are applied. Note that the
+        next four flags disable the computations related to a specific type of
+        constraint. Both this flag and the type-specific flag must be set to
+        "enable" for a given computation to be performed.
+    :param contact:
+        This flag disables all standard computations related to contact
+        constraints.
+    :param energy:
+        This flag enables the computation of kinetic and potential energy,
+        stored in mjData.energy and displayed in the GUI. This feature adds
+        some CPU time but it is usually negligible. Monitoring energy for a
+        system that is supposed to be energy-conserving is one of the best ways
+        to assess the accuracy of a complex simulation.
+    :param equality:
+        This flag disables all standard computations related to equality
+        constraints.
+    :param filterparent:
+        This flag disables the filtering of contact pairs where the two geoms
+        belong to a parent and child body; recall contact selection in the
+        Computation chapter.
+    :param frictionloss:
+        This flag disables all standard computations related to friction loss
+        constraints.
+    :param fwdinv:
+        This flag enables the automatic comparison of forward and inverse
+        dynamics. When enabled, the inverse dynamics is invoked after
+        mj_forward (or internally within mj_step) and the difference in applied
+        forces is recorded in mjData.solver_fwdinv[2]. The first value is the
+        relative norm of the discrepancy in joint space, the next is in
+        constraint space.
+    :param gravity:
+        This flag causes the gravitational acceleration vector in mjOption to
+        be replaced with (0 0 0) at runtime, without changing the value in
+        mjOption. Once the flag is re-enabled, the value in mjOption is used.
+    :param limit:
+        This flag disables all standard computations related to joint and
+        tendon limit constraints.
+    :param override:
+        This flag enables to Contact override mechanism explained above.
+    :param passive:
+        This flag disables the simulation of joint and tendon spring-dampers,
+        fluid dynamics forces, and custom passive forces computed by the
+        mjcb_passive callback. As a result, no passive forces are applied.
+    :param refsafe:
+        This flag enables a safety mechanism that prevents instabilities due to
+        solref[0] being too small compared to the simulation timestep. Recall
+        that solref[0] is the stiffness of the virtual spring-damper used for
+        constraint stabilization. If this setting is enabled, the solver uses
+        max(solref[0], 2*timestep) in place of solref[0] separately for each
+        active constraint.
+    :param sensornoise:
+        This flag enables the simulation of sensor noise. When disabled (which
+        is the default) noise is not added to sensordata, even if the sensors
+        specify non-zero noise amplitudes. When enabled, zero-mean Gaussian
+        noise is added to the underlying deterministic sensor data. Its
+        standard deviation is determined by the noise parameter of each sensor.
+    :param warmstart:
+        This flag disables warm-starting of the constraint solver. By default
+        the solver uses the solution (i.e. the constraint force) from the
+        previous time step to initialize the iterative optimization. This
+        feature should be disabled when evaluating the dynamics at a collection
+        of states that do not form a trajectory - in which case warm starts
+        make no sense and are likely to slow down the solver.
     """
     def __init__(
         self,
@@ -214,6 +565,78 @@ class Size(Element):
     the number of elements in the model. Unlike the fields of mjOption which
     can be modified at runtime, sizes are structural parameters and should not
     be modified after compilation.
+
+    :param nconmax:
+        This attribute specifies the maximum number of contacts (both
+        frictional and frictionless) that can be handled at runtime. If the
+        number of active contacts is about to exceed this value, the extra
+        contacts are discarded and a warning is generated. The actual number of
+        contacts is stored in mjData.ncon. If this value is negative, the
+        compiler will use a heuristic to guess an appropriate number.
+    :param njmax:
+        This and the next two attributes specify the maximum sizes of the
+        dynamic arrays in mjData, i.e. arrays whose effective length varies at
+        runtime. This attribute specifies the maximum number of scalar
+        constraints (or equivalently, rows of the constraint Jacobian) that can
+        be handled at runtime. If the number of active constraints is about to
+        exceed this maximum (usually because too many contacts become active)
+        the extra constraints are discarded and a warning is generated. The
+        number of active constraints is stored in mjData.nefc. The default
+        setting of -1 instructs the compiler to guess how much space to
+        allocate (using heuristics that can be improved). This default is
+        effectively an undefined state. If the user specifies a positive value,
+        the compiler heuristics are disabled and the specified value is used.
+        Modern computers have sufficient memory to handle very large models
+        (larger than one would normally have the patience to simulate) so
+        tuning this setting aggressively is not necessary. When size-related
+        warnings or errors are generated, simply increase the value of the
+        corresponding attribute.
+    :param nkey:
+        The number of key frames allocated in mjModel is the larger of this
+        value and the number of key elements below. Note that the interactive
+        simulator has the ability to take snapshots of the system state and
+        save them as key frames.
+    :param nstack:
+        This attribute specifies the size of the pre-allocated stack in mjData,
+        in units of sizeof(mjtNum) which is currently defined as double; thus
+        the size in bytes is 8 times larger. The custom stack is used by all
+        MuJoCo functions that need dynamically allocated memory. We do not use
+        heap memory allocation at runtime, so as to speed up processing as well
+        as avoid heap fragmentation. Note that the internal allocator keeps
+        track of how much stack space has ever been utilized, in the field
+        mjData.maxstackuse of mjData. If the stack size is exceeded at runtime,
+        MuJoCo will generate an error. If this value is negative, the compiler
+        will use a heuristic to guess an appropriate number.
+    :param nuser_actuator:
+        The number of custom user parameters added to the definition of each
+        actuator.
+    :param nuser_body:
+        The number of custom user parameters added to the definition of each
+        body. See also User parameters. The parameter values are set via the
+        user attribute of the body element. These values are not accessed by
+        MuJoCo. They can be used to define element properties needed in user
+        callbacks and other custom code.
+    :param nuser_cam:
+        The number of custom user parameters added to the definition of each
+        camera.
+    :param nuser_geom:
+        The number of custom user parameters added to the definition of each
+        geom.
+    :param nuser_jnt:
+        The number of custom user parameters added to the definition of each
+        joint.
+    :param nuser_sensor:
+        The number of custom user parameters added to the definition of each
+        sensor.
+    :param nuser_site:
+        The number of custom user parameters added to the definition of each
+        site.
+    :param nuser_tendon:
+        The number of custom user parameters added to the definition of each
+        tendon.
+    :param nuserdata:
+        The size of the field mjData.userdata of mjData. This field should be
+        used to store custom dynamic variables. See also User parameters.
     """
     def __init__(
         self,
@@ -265,6 +688,7 @@ class Visual(Element):
     the file include mechanism. One can create an XML file with coordinated
     visual settings corresponding to a "theme", and then include this file in
     multiple models.
+
     """
     def __init__(
         self,
@@ -278,6 +702,35 @@ class Global(Element):
          While all settings in mjVisual are global, the settings here could
     not be fit into any of the other subsections. So this is effectively a
     miscellaneous subsection.
+
+    :param fovy:
+        This attribute specifies the vertical field of view of the free camera,
+        i.e. the camera that is always available in the visualizer even if no
+        cameras are explicitly defined in the model. It is always expressed in
+        degrees, regardless of the setting of the angle attribute of compiler,
+        and is also represented in the low level model in degrees. This is
+        because we pass it to OpenGL which uses degrees. The same convention
+        applies to the fovy attribute of the camera element below.
+    :param glow:
+        The value of this attribute is added to the emission coefficient of all
+        geoms attached to the selected body. As a result, the selected body
+        appears to glow.
+    :param ipd:
+        This attribute specifies the inter-pupilary distance of the free
+        camera. It only affects the rendering in stereoscopic mode. The left
+        and right viewpoints are offset by half of this value in the
+        corresponding direction.
+    :param linewidth:
+        This attribute specifies the line-width in the sense of OpenGL. It
+        affects the rendering in wire-frame mode.
+    :param offheight:
+        This attribute specifies the height in pixels of the OpenGL off-screen
+        rendering buffer.
+    :param offwidth:
+        This and the next attribute specify the size in pixels of the off-
+        screen OpenGL rendering buffer. This attribute specifies the width of
+        the buffer. The size of this buffer can also be adjusted at runtime,
+        but it is usually more convenient to set it in the XML.
     """
     def __init__(
         self,
@@ -306,6 +759,49 @@ class Quality(Element):
     The target FPS is 60 Hz; if the number shown in the visualizer is
     substantially lower, this means that the GPU is over-loaded and the
     visualization should somehow be simplified.
+
+    :param numarrows:
+        This attribute specifies the number of arrows in a circular rendering
+        of 3D torque (currently disabled).
+    :param numquads:
+        This attribute specifies the number of rectangles for rendering box
+        faces, automatically-generated planes (as opposed to geom planes which
+        have an element-specific attribute with the same function), and sides
+        of height fields. Even though a geometrically correct rendering can be
+        obtained by setting this value to 1, illumination works better for
+        larger values because we use per-vertex illumination (as opposed to
+        per-fragment).
+    :param numslices:
+        This and the next three attributes specify the density of internally-
+        generated meshes for geometric primitives. Such meshes are only used
+        for rendering, while the collision detector works with the underlying
+        analytic surfaces. This value is passed to the various visualizer
+        functions as the "slices" parameter as used in GLU. It specifies the
+        number of subdivisions around the Z-axis, similar to lines of
+        longitude.
+    :param numstacks:
+        This value of this attribute is passed to the various visualization
+        functions as the "stacks" parameter as used in GLU. It specifies the
+        number of subdivisions along the Z-axis, similar to lines of latitude.
+    :param offsamples:
+        This attribute specifies the number of multi-samples for offscreen
+        rendering. Larger values produce better anti-aliasing but can slow down
+        the GPU. Set this to 0 to disable multi-sampling. Note that this
+        attribute only affects offscreen rendering. For regular window
+        rendering, multi-sampling is specified in an OS-dependent way when the
+        OpenGL context for the window is first created, and cannot be changed
+        from within MuJoCo.
+    :param shadowsize:
+        This attribute specifies the size of the square texture used for shadow
+        mapping. Higher values result is smoother shadows. The size of the area
+        over which a light can cast shadows also affects smoothness, so these
+        settings should be adjusted jointly. The default here is somewhat
+        conservative. Most modern GPUs are able to handle significantly larger
+        textures without slowing down. The OSX version of MuJoCo does not
+        presently render shadows, because Apple does not support the necessary
+        compatibility contexts. When MuJoCo detects that shadow mapping (or any
+        other advanced feature) is not supported by the video driver, it
+        automatically disables that feature.
     """
     def __init__(
         self,
@@ -335,6 +831,18 @@ class Headlight(Element):
     looking. It does not cast shadows (which would be invisible anyway). Note
     that lights are additive, so if explicit lights are defined in the model,
     the intensity of the headlight would normally need to be reduced.
+
+    :param active:
+        This attribute enables and disables the headlight. A value of 0 means
+        disabled, any other value means enabled.
+    :param ambient:
+        The ambient component of the headlight, in the sense of OpenGL. The
+        alpha component here and in the next two attributes is set to 1 and
+        cannot be adjusted.
+    :param diffuse:
+        The diffuse component of the headlight, in the sense of OpenGL.
+    :param specular:
+        The specular component of the headlight, in the sense of OpenGL.
     """
     def __init__(
         self,
@@ -357,6 +865,64 @@ class Map(Element):
     the visualization and built-in mouse perturbations. Unlike the scaling
     quantities in the next element which are specific to spatial extent, the
     quantities here are miscellaneous.
+
+    :param alpha:
+        When transparency is turned on in the visualizer, the geoms attached to
+        all moving bodies are made more transparent. This is done by
+        multiplying the geom-specific alpha values by this value.
+    :param fogend:
+        The end position of the fog is the model extent multiplied by the value
+        of this attribute.
+    :param fogstart:
+        The visualizer can simulate linear fog, in the sense of OpenGL. The
+        start position of the fog is the model extent (see statistic element
+        below) multiplied by the value of this attribute.
+    :param force:
+        This attributes controls the visualization of both contact forces and
+        perturbation forces. The length of the rendered force vector equals the
+        force magnitude multiplied by the value of this attribute and divided
+        by the mean body mass for the model (see statistic element below).
+    :param shadowclip:
+        As mentioned above, shadow quality depends on the size of the shadow
+        texture as well as the area where a given light can cast shadows. For
+        directional lights, the area would be infinite unless we limited it
+        somehow. This attribute specifies the limits, as +/- the model extent
+        multiplied by the present value. These limits define a square in the
+        plane orthogonal to the light direction. If a shadow crosses the
+        boundary of this virtual square, it will disappear abruptly, revealing
+        the edges of the square.
+    :param shadowscale:
+        This attribute plays a similar role as the previous one, but applies to
+        spotlights rather than directional lights. Spotlights have a cutoff
+        angle, limited internally to 80 deg. However this angle is often too
+        large to obtain good quality shadows, and it is necessary to limit the
+        shadow to a smaller cone. The angle of the cone in which shadows can be
+        cast is the light cutoff multiplied by the present value.
+    :param stiffness:
+        This attribute controls the strength of mouse perturbations. The
+        internal perturbation mechanism simulates a mass-spring-damper with
+        critical damping, unit mass, and stiffness given here. Larger values
+        mean that a larger force will be applied for the same displacement
+        between the selected body and the mouse-controlled target.
+    :param stiffnessrot:
+        Same as above but applies to rotational perturbations rather than
+        translational perturbations. Empirically, the rotational stiffness
+        needs to be larger in order for rotational mouse perturbations to have
+        an effect.
+    :param torque:
+        Same as above, but controls the rendering of contact torque and
+        perturbation torque rather than force (currently disabled).
+    :param zfar:
+        The distance to the far clipping plane is the model extent multiplied
+        by the value of this attribute.
+    :param znear:
+        This and the next attribute determine the clipping planes of the OpenGL
+        projection. The near clipping plane is particularly important: setting
+        it too close causes (often severe) loss of resolution in the depth
+        buffer, while setting it too far causes objects of interest to be
+        clipped, making it impossible to zoom in. The distance to the near
+        clipping plane is the model extent multiplied by the value of this
+        attribute.
     """
     def __init__(
         self,
@@ -393,6 +959,57 @@ class Scale(Element):
     decorative objects. In all cases, the rendered size equals the mean body
     size (see statistic element below) multiplied by the value of an attribute
     documented below.
+
+    :param actuatorlength:
+        The length of the arrows used to render actuators acting on scalar
+        joints only.
+    :param actuatorwidth:
+        The radius of the arrows used to render actuators acting on scalar
+        joints only.
+    :param camera:
+        The size of the decorative object used to represent model cameras in
+        the rendering.
+    :param com:
+        The radius of the spheres used to render the centers of mass of
+        kinematic sub-trees.
+    :param connect:
+        The radius of the capsules used to connect bodies and joints, resulting
+        in an automatically generated skeleton.
+    :param constraint:
+        The radius of the capsules used to render violations in spatial
+        constraints.
+    :param contactheight:
+        The height of the cylinders used to render contact points.
+    :param contactwidth:
+        The radius of the cylinders used to render contact points. The normal
+        direction of the cylinder is aligned with the contact normal. Making
+        the cylinder short and wide results in a "pancake" representation of
+        the tangent plane.
+    :param forcewidth:
+        The radius of the arrows used to render contact forces and perturbation
+        forces.
+    :param framelength:
+        The length of the cylinders used to render coordinate frames. The world
+        frame is automatically scaled relative to this setting.
+    :param framewidth:
+        The radius of the cylinders used to render coordinate frames.
+    :param jointlength:
+        The length of the arrows used to render joint axes.
+    :param jointwidth:
+        The radius of the arrows used to render joint axes.
+    :param light:
+        The size of the decorative object used to represent model lights in the
+        rendering.
+    :param selectpoint:
+        The radius of the sphere used to render the selection point (i.e. the
+        point where the user left-double-clicked to select a body). Note that
+        the local and global coordinates of this point can be printed in the 3D
+        view by activating the corresponding rendering flags. In this way, the
+        coordinates of points of interest can be found.
+    :param slidercrank:
+        The radius of the capsules used to render slider-crank mechanisms. The
+        second part of the mechanism is automatically scaled relative to this
+        setting.
     """
     def __init__(
         self,
@@ -440,6 +1057,54 @@ class Rgba(Element):
     "color" to simplify terminology below. All values should be in the range
     [0 1]. An alpha value of 0 disables the rendering of the corresponding
     object.
+
+    :param actuator:
+        Color of the arrows used to render actuators acting on scalar joints.
+    :param camera:
+        Color of the decorative object used to represent model cameras in the
+        rendering.
+    :param com:
+        Color of the spheres used to render sub-tree centers of mass.
+    :param connect:
+        Color of the capsules used to connect bodies and joints, resulting in
+        an automatically generated skeleton.
+    :param constraint:
+        Color of the capsules corresponding to spatial constraint violations.
+    :param contactforce:
+        Color of the arrows used to render contact forces. When splitting of
+        contact forces into normal and tangential components is enabled, this
+        color is used to render the normal components.
+    :param contactfriction:
+        Color of the arrows used to render contact tangential forces, only when
+        splitting is enabled.
+    :param contactpoint:
+        Color of the cylinders used to render contact points.
+    :param contacttorque:
+        Color of the arrows used to render contact torques (currently
+        disabled).
+    :param crankbroken:
+        Color used to render the crank of slide-crank mechanisms, in model
+        configurations where the specified rod length cannot be maintained,
+        i.e. it is "broken".
+    :param fog:
+        When fog is enabled, the color of all pixels fades towards the color
+        specified here. The spatial extent of the fading is controlled by the
+        fogstart and fogend attributes of the map element above.
+    :param force:
+        Color of the arrows used to render perturbation forces.
+    :param inertia:
+        Color of the boxes used to render equivalent body inertias. This is the
+        only rgba setting that has transparency by default, because it is
+        usually desirable to see the geoms inside the inertia box.
+    :param joint:
+        Color of the arrows used to render joint axes.
+    :param light:
+        Color of the decorative object used to represent model lights in the
+        rendering.
+    :param selectpoint:
+        Color of the sphere used to render the selection point.
+    :param slidercrank:
+        Color of slider-crank mechanisms.
     """
     def __init__(
         self,
@@ -490,6 +1155,39 @@ class Statistic(Element):
     override mechanism in the XML because it is sometimes easier to adjust a
     small number of model statistics than a larger number of visual
     parameters.
+
+    :param center:
+        If this attribute is specified, it replaces the value of
+        mjModel.stat.center computed by the compiler. The computed value is the
+        center of the bounding box of the entire model in the initial
+        configuration. This 3D vector is used to center the view of the free
+        camera when the model is first loaded.
+    :param extent:
+        If this attribute is specified, it replaces the value of
+        mjModel.stat.extent computed by the compiler. The computed value is
+        half the side of the bounding box of the model in the initial
+        configuration. At runtime this value is multiplied by some of the
+        attributes of the map element above.
+    :param meaninertia:
+        If this attribute is specified, it replaces the value of
+        mjModel.stat.meaninertia computed by the compiler. The computed value
+        is the average diagonal element of the joint-space inertia matrix when
+        the model is in qpos0. At runtime this value scales the solver cost and
+        gradient used for early termination.
+    :param meanmass:
+        If this attribute is specified, it replaces the value of
+        mjModel.stat.meanmass computed by the compiler. The computed value is
+        the average body mass, not counting the massless world body. At runtime
+        this value scales the perturbation force.
+    :param meansize:
+        If this attribute is specified, it replaces the value of
+        mjModel.stat.meansize computed by the compiler. The computed value is
+        heuristic representing the average body radius. This is not easily
+        determined because bodies may not have geoms with spatial properties.
+        The heuristic is based on the geoms sizes when present, the distances
+        between joints when present, and the sizes of the body equivalent
+        inertia boxes. At runtime this value is multiplied by the attributes of
+        the scale element above.
     """
     def __init__(
         self,
@@ -514,6 +1212,11 @@ class Default(Element):
     settings above. Defaults classes can be nested, inheriting all attribute
     values from their parent. The top-level defaults class is always defined;
     it is called "main" if omitted.
+
+    :param class_:
+        The name of the defaults class. It must be unique among all defaults
+        classes. This name is used to make the class active when creating an
+        actual model element.
     """
     def __init__(
         self,
@@ -528,6 +1231,7 @@ class DefaultMesh(Element):
     """
          This element sets the attributes of the dummy mesh element of the
     defaults class.          The only mesh attribute available here is: scale.
+
     """
     def __init__(
         self,
@@ -541,6 +1245,7 @@ class DefaultMaterial(Element):
          This element sets the attributes of the dummy material element of the
     defaults class.           All material attributes are available here
     except:     name, class.
+
     """
     def __init__(
         self,
@@ -554,6 +1259,7 @@ class DefaultJoint(Element):
          This element sets the attributes of the dummy joint element of the
     defaults class.          All joint attributes are available here except:
     name, class.
+
     """
     def __init__(
         self,
@@ -567,6 +1273,7 @@ class DefaultGeom(Element):
          This element sets the attributes of the dummy geom element of the
     defaults class.          All geom attributes are available here except:
     name, class.
+
     """
     def __init__(
         self,
@@ -580,6 +1287,7 @@ class DefaultSite(Element):
          This element sets the attributes of the dummy site element of the
     defaults class.          All site attributes are available here except:
     name, class.
+
     """
     def __init__(
         self,
@@ -593,6 +1301,7 @@ class DefaultCamera(Element):
          This element sets the attributes of the dummy camera element of the
     defaults class.           All camera attributes are available here except:
     name, class.
+
     """
     def __init__(
         self,
@@ -606,6 +1315,7 @@ class DefaultLight(Element):
          This element sets the attributes of the dummy light element of the
     defaults class.           All light attributes are available here except:
     name, class.
+
     """
     def __init__(
         self,
@@ -619,6 +1329,7 @@ class DefaultPair(Element):
          This element sets the attributes of the dummy pair element of the
     defaults class.          All pair attributes are available here except:
     class, geom1, geom2.
+
     """
     def __init__(
         self,
@@ -635,6 +1346,7 @@ class DefaultEquality(Element):
     attributes common to all equality constraint types, which is why we do not
     make a distinction between types.          The equality sub-element
     attributes available here are:     active, solref, solimp.
+
     """
     def __init__(
         self,
@@ -650,6 +1362,7 @@ class DefaultTendon(Element):
     have types, but here we are setting attributes common to all types.
     All tendon sub-element attributes are available here except:     name,
     class.
+
     """
     def __init__(
         self,
@@ -663,6 +1376,7 @@ class DefaultGeneral(Element):
          This element sets the attributes of the dummy general element of the
     defaults class.          All general attributes are available here except:
     name, class, joint, jointinparent, site, tendon, slidersite, cranksite.
+
     """
     def __init__(
         self,
@@ -679,6 +1393,7 @@ class DefaultMotor(Element):
     underlying attributes, replacing any previous settings.           All
     motor attributes are available here except:     name, class, joint,
     jointinparent, site, tendon, slidersite, cranksite.
+
     """
     def __init__(
         self,
@@ -691,6 +1406,7 @@ class DefaultPosition(Element):
     """
          All position attributes are available here except:     name, class,
     joint, jointinparent, site, tendon, slidersite, cranksite.
+
     """
     def __init__(
         self,
@@ -703,6 +1419,7 @@ class DefaultVelocity(Element):
     """
          All velocity attributes are available here except:     name, class,
     joint, jointinparent, site, tendon, slidersite, cranksite.
+
     """
     def __init__(
         self,
@@ -715,6 +1432,7 @@ class DefaultCylinder(Element):
     """
          All cylinder attributes are available here except:     name, class,
     joint, jointinparent, site, tendon, slidersite, cranksite.
+
     """
     def __init__(
         self,
@@ -727,6 +1445,7 @@ class DefaultMuscle(Element):
     """
          All muscle attributes are available here except:     name, class,
     joint, jointinparent, site, tendon, slidersite, cranksite.
+
     """
     def __init__(
         self,
@@ -739,6 +1458,7 @@ class Custom(Element):
     """
          This is a grouping element for custom numeric and text elements. It
     does not have attributes.
+
     """
     def __init__(
         self,
@@ -750,6 +1470,21 @@ class Custom(Element):
 class Numeric(Element):
     """
          This element creates a custom numeric array in mjModel.
+
+    :param name:
+        The name of the array. This attribute is required because the only way
+        to find a custom element of interest at runtime is through its name.
+    :param data:
+        Numeric data to be copied into mjModel. If size is specified, the
+        length of the array given here cannot exceed the specified size. If the
+        length of the array is smaller, the missing components are set to 0.
+        Note that custom arrays can be created for storing information at
+        runtime - which is why data initialization is optional. It becomes
+        required only when the array size is omitted.
+    :param size:
+        If specified this attribute sets the size of the data array, in
+        doubles. If this attribute is not specified, the size will be inferred
+        from the actual data array below.
     """
     def __init__(
         self,
@@ -769,6 +1504,11 @@ class Text(Element):
          This element creates a custom text field in mjModel. It could be used
     to store keyword commands for user callbacks and other custom
     computations.
+
+    :param data:
+        Custom text to be copied into mjModel.
+    :param name:
+        Name of the custom text field.
     """
     def __init__(
         self,
@@ -785,6 +1525,9 @@ class Tuple(Element):
     """
          This element creates a custom tuple, which is a list of MuJoCo
     objects. The list is created by referencing the desired objects by name.
+
+    :param name:
+        Name of the custom tuple.
     """
     def __init__(
         self,
@@ -798,6 +1541,16 @@ class Tuple(Element):
 class Tupleelement(Element):
     """
          This adds an element to the tuple.
+
+    :param objname:
+        Name of the object being added. The type and name must reference a
+        named MuJoCo element defined somewhere in the model. Tuples can also be
+        referenced (including self-references).
+    :param objtype:
+        Type of the object being added.
+    :param prm:
+        Real-valued parameter associated with this element of the tuple. Its
+        use is up to the user.
     """
     def __init__(
         self,
@@ -818,6 +1571,7 @@ class Asset(Element):
     attributes. Assets are created in the model so that they can be referenced
     from other model elements; recall the discussion of Assets in the Overview
     chapter.
+
     """
     def __init__(
         self,
@@ -839,6 +1593,265 @@ class Texture(Element):
     Alternatively the data can be generated by the compiler as a procedural
     texture. Because different texture types require different parameters,
     only a subset of the attributes below are used for any given texture.
+
+    :param builtin:
+        This and the remaining attributes control the generation of procedural
+        textures. If the value of this attribute is different from "none", the
+        texture is treated as procedural and any file names are ignored. The
+        keywords have the following meaning:                   The gradient
+        type generates a color gradient from rgb1 to rgb2. The interpolation in
+        color space is done through a sigmoid function. For cube and skybox
+        textures the gradient is along the +Y axis, i.e. from top to bottom for
+        skybox rendering.                   The checker type generates a 2-by-2
+        checker pattern with alternating colors given by rgb1 to rgb2. This is
+        suitable for rendering ground planes and also for marking objects with
+        rotational symmetries. Note that 2d textures can be scaled so as to
+        repeat the pattern as many times as necessary. For cube and skybox
+        textures, the checker pattern is painted on each side of the cube.
+        The flat type fills the entire texture with rgb1, except for the bottom
+        face of cube and skybox textures which is filled with rgb2.
+    :param file:
+        If this attribute is specified, and the builtin attribute below is set
+        to "none", the texture data is loaded from a single PNG file. See the
+        texturedir attribute of compiler regarding the file path.
+    :param fileback:
+        These attributes are used to load the six sides of a cube or skybox
+        texture from separate PNG files, but only if the file attribute is
+        omitted and the builtin attribute is set to "none". If any one of these
+        attributes are omitted, the corresponding side is filled with the color
+        specified by the rgb1 attribute. The coordinate frame here is unusual.
+        When a skybox is viewed with the default free camera in its initial
+        configuration, the Right, Left, Up, Down sides appear where one would
+        expect them. The Back side appears in front of the viewer, because the
+        viewer is in the middle of the box and is facing its back. There is
+        however a complication. In MuJoCo the +Z axis points up, while existing
+        skybox textures (which are non-trivial to design) tend to assume that
+        the +Y axis points up. Changing coordinates cannot be done by merely
+        renaming files; instead one would have to transpose and/or mirror some
+        of the images. To avoid this complication, we render the skybox rotated
+        by 90 deg around the +X axis, in violation of our convention. However
+        we cannot do the same for regular objects. Thus the mapping of skybox
+        and cube textures on regular objects, expressed in the local frame of
+        the object, is as follows:                  Right = +X, Left = -X, Up =
+        +Y, Down = -Y, Front = +Z, Back = -Z.
+    :param filedown:
+        These attributes are used to load the six sides of a cube or skybox
+        texture from separate PNG files, but only if the file attribute is
+        omitted and the builtin attribute is set to "none". If any one of these
+        attributes are omitted, the corresponding side is filled with the color
+        specified by the rgb1 attribute. The coordinate frame here is unusual.
+        When a skybox is viewed with the default free camera in its initial
+        configuration, the Right, Left, Up, Down sides appear where one would
+        expect them. The Back side appears in front of the viewer, because the
+        viewer is in the middle of the box and is facing its back. There is
+        however a complication. In MuJoCo the +Z axis points up, while existing
+        skybox textures (which are non-trivial to design) tend to assume that
+        the +Y axis points up. Changing coordinates cannot be done by merely
+        renaming files; instead one would have to transpose and/or mirror some
+        of the images. To avoid this complication, we render the skybox rotated
+        by 90 deg around the +X axis, in violation of our convention. However
+        we cannot do the same for regular objects. Thus the mapping of skybox
+        and cube textures on regular objects, expressed in the local frame of
+        the object, is as follows:                  Right = +X, Left = -X, Up =
+        +Y, Down = -Y, Front = +Z, Back = -Z.
+    :param filefront:
+        These attributes are used to load the six sides of a cube or skybox
+        texture from separate PNG files, but only if the file attribute is
+        omitted and the builtin attribute is set to "none". If any one of these
+        attributes are omitted, the corresponding side is filled with the color
+        specified by the rgb1 attribute. The coordinate frame here is unusual.
+        When a skybox is viewed with the default free camera in its initial
+        configuration, the Right, Left, Up, Down sides appear where one would
+        expect them. The Back side appears in front of the viewer, because the
+        viewer is in the middle of the box and is facing its back. There is
+        however a complication. In MuJoCo the +Z axis points up, while existing
+        skybox textures (which are non-trivial to design) tend to assume that
+        the +Y axis points up. Changing coordinates cannot be done by merely
+        renaming files; instead one would have to transpose and/or mirror some
+        of the images. To avoid this complication, we render the skybox rotated
+        by 90 deg around the +X axis, in violation of our convention. However
+        we cannot do the same for regular objects. Thus the mapping of skybox
+        and cube textures on regular objects, expressed in the local frame of
+        the object, is as follows:                  Right = +X, Left = -X, Up =
+        +Y, Down = -Y, Front = +Z, Back = -Z.
+    :param fileleft:
+        These attributes are used to load the six sides of a cube or skybox
+        texture from separate PNG files, but only if the file attribute is
+        omitted and the builtin attribute is set to "none". If any one of these
+        attributes are omitted, the corresponding side is filled with the color
+        specified by the rgb1 attribute. The coordinate frame here is unusual.
+        When a skybox is viewed with the default free camera in its initial
+        configuration, the Right, Left, Up, Down sides appear where one would
+        expect them. The Back side appears in front of the viewer, because the
+        viewer is in the middle of the box and is facing its back. There is
+        however a complication. In MuJoCo the +Z axis points up, while existing
+        skybox textures (which are non-trivial to design) tend to assume that
+        the +Y axis points up. Changing coordinates cannot be done by merely
+        renaming files; instead one would have to transpose and/or mirror some
+        of the images. To avoid this complication, we render the skybox rotated
+        by 90 deg around the +X axis, in violation of our convention. However
+        we cannot do the same for regular objects. Thus the mapping of skybox
+        and cube textures on regular objects, expressed in the local frame of
+        the object, is as follows:                  Right = +X, Left = -X, Up =
+        +Y, Down = -Y, Front = +Z, Back = -Z.
+    :param fileright:
+        These attributes are used to load the six sides of a cube or skybox
+        texture from separate PNG files, but only if the file attribute is
+        omitted and the builtin attribute is set to "none". If any one of these
+        attributes are omitted, the corresponding side is filled with the color
+        specified by the rgb1 attribute. The coordinate frame here is unusual.
+        When a skybox is viewed with the default free camera in its initial
+        configuration, the Right, Left, Up, Down sides appear where one would
+        expect them. The Back side appears in front of the viewer, because the
+        viewer is in the middle of the box and is facing its back. There is
+        however a complication. In MuJoCo the +Z axis points up, while existing
+        skybox textures (which are non-trivial to design) tend to assume that
+        the +Y axis points up. Changing coordinates cannot be done by merely
+        renaming files; instead one would have to transpose and/or mirror some
+        of the images. To avoid this complication, we render the skybox rotated
+        by 90 deg around the +X axis, in violation of our convention. However
+        we cannot do the same for regular objects. Thus the mapping of skybox
+        and cube textures on regular objects, expressed in the local frame of
+        the object, is as follows:                  Right = +X, Left = -X, Up =
+        +Y, Down = -Y, Front = +Z, Back = -Z.
+    :param fileup:
+        These attributes are used to load the six sides of a cube or skybox
+        texture from separate PNG files, but only if the file attribute is
+        omitted and the builtin attribute is set to "none". If any one of these
+        attributes are omitted, the corresponding side is filled with the color
+        specified by the rgb1 attribute. The coordinate frame here is unusual.
+        When a skybox is viewed with the default free camera in its initial
+        configuration, the Right, Left, Up, Down sides appear where one would
+        expect them. The Back side appears in front of the viewer, because the
+        viewer is in the middle of the box and is facing its back. There is
+        however a complication. In MuJoCo the +Z axis points up, while existing
+        skybox textures (which are non-trivial to design) tend to assume that
+        the +Y axis points up. Changing coordinates cannot be done by merely
+        renaming files; instead one would have to transpose and/or mirror some
+        of the images. To avoid this complication, we render the skybox rotated
+        by 90 deg around the +X axis, in violation of our convention. However
+        we cannot do the same for regular objects. Thus the mapping of skybox
+        and cube textures on regular objects, expressed in the local frame of
+        the object, is as follows:                  Right = +X, Left = -X, Up =
+        +Y, Down = -Y, Front = +Z, Back = -Z.
+    :param gridlayout:
+        When a cube or skybox texture is loaded from a single PNG file, and the
+        grid size is different from "1 1", this attribute specifies which grid
+        cells are used and which side of the cube they correspond to. There are
+        many skybox textures available online as composite images, but they do
+        not use the same convention, which is why we have designed a flexible
+        mechanism for decoding them. The string specified here must be composed
+        of characters from the set {'.', 'R', 'L', 'U', 'D', 'F', 'B'}. The
+        number of characters must equal the product of the two grid sizes. The
+        grid is scanned in row-major order. The '.' character denotes an unused
+        cell. The other characters are the first letters of Right, Left, Up,
+        Down, Front, Back; see below for coordinate frame description. If the
+        symbol for a given side appears more than once, the last definition is
+        used. If a given side is omitted, it is filled with the color specified
+        by the rgb1 attribute. For example, the desert landscape below can be
+        loaded as a skybox or a cube map using gridsize = "3 4" and gridlayout
+        = ".U..LFRB.D.." The full-resulotion image file without the markings
+        can be downloaded here.
+    :param gridsize:
+        When a cube or skybox texture is loaded from a single PNG file, this
+        attribute and the next specify how the six square sides of the texture
+        cube are obtained from the single image. The default setting "1 1"
+        means that the same image is repeated on all sides of the cube.
+        Otherwise the image is interpreted as a grid from which the six sides
+        are extracted. The two integers here correspond to the number of rows
+        and columns in the grid. Each integer must be positive and the product
+        of the two cannot exceed 12. The number of rows and columns in the
+        image must be integer multiples of the number of rows and columns in
+        the grid, and these two multiples must be equal, so that the extracted
+        images are square.
+    :param height:
+        The height of the procedural texture, i.e. the number of rows in the
+        image.
+    :param mark:
+        Procedural textures can be marked with the markrgb color, on top of the
+        colors determined by the builtin type. "edge" means that the edges of
+        all texture images are marked. "cross" means that a cross is marked in
+        the middle of each image. "random" means that randomly chosen pixels
+        are marked. All markings are one-pixel wide, thus the markings appear
+        larger and more diffuse on smaller textures.
+    :param markrgb:
+        The color used for procedural texture markings.
+    :param name:
+        As with all other assets, a texture must have a name in order to be
+        referenced. However if the texture is loaded from a single file with
+        the file attribute, the explicit name can be omitted and the file name
+        (without the path and extension) becomes the texture name. If the name
+        after parsing is empty and the texture type is not "skybox", the
+        compiler will generate an error.
+    :param random:
+        When the mark attribute is set to "random", this attribute determines
+        the probability of turning on each pixel. Note that larger textures
+        have more pixels, and the probability here is applied independently to
+        each pixel - thus the texture size and probability need to be adjusted
+        jointly. Together with a gradient skybox texture, this can create the
+        appearance of a night sky with stars.
+    :param rgb1:
+        The first color used for procedural texture generation. This color is
+        also used to fill missing sides of cube and skybox textures loaded from
+        files. The components of this and all other RGB(A) vectors should be in
+        the range [0 1].
+    :param rgb2:
+        The second color used for procedural texture generation.
+    :param type:
+        This attribute determines how the texture is represented and mapped to
+        objects. It also determines which of the remaining attributes are
+        relevant. The keywords have the following meaning:
+        The cube type is the most common. It has the effect of shrink-wrapping
+        a texture cube over an object. Apart from the adjustment provided by
+        the texuniform attribute of material, the process is automatic.
+        Internally the GPU constructs a ray from the center of the object to
+        each pixel (or rather fragment), finds the intersection of this ray
+        with the cube surface (the cube and the object have the same center),
+        and uses the corresponding texture color. The six square images
+        defining the cube can be the same or different; if they are the same,
+        only one copy is stored in mjModel. There are four mechanisms for
+        specifying the texture data:                             Single PNG
+        file (specified with the file attribute) containing a square image
+        which is repeated on each side of the cube. This is the most common
+        approach. If for example the goal is to create the appearance of wood,
+        repeating the same image on all sides is sufficient.
+        Single PNG file containing a composite image from which the six squares
+        are extracted by the compiler. The layout of the composite image is
+        determined by the gridsize and gridlayout attributes.
+        Six separate PNG files specified with the attributes fileright,
+        fileleft etc, each containing one square image.
+        Procedural texture generated internally. The type of procedural texture
+        is determined by the builtin attribute. The texture data also depends
+        on a number of parameters documented below.                        The
+        skybox type is very similar to cube mapping, and in fact the texture
+        data is specified in exactly the same way. The only difference is that
+        the visualizer uses the first such texture defined in the model to
+        render a skybox. This is a large box centered at the camera and always
+        moving with it, with size determined automatically from the far
+        clipping plane. The idea is that images on the skybox appear
+        stationary, as if they are infinitely far away. If such a texture is
+        referenced from a material applied to a regular object, the effect is
+        equivalent to a cube map. Note however that the images suitable for
+        skyboxes are rarely suitable for texturing objects.
+        The 2d type may be the most familiar to users, however it is only
+        suitable for planes and height fields. This is because the texture
+        coordinate generator is trying to map a 2D image to 3D space, and as a
+        result there are entire curves on the object surface that correspond to
+        the same texture pixel. For a box geom for example, the two faces whose
+        normals are aligned with the Z axis of the local frame appear normal,
+        while the other four faces appear stretched. For planes this is not an
+        issue because the plane is always normal to the local Z axis. For
+        height fields the sides enclosing the terrain map appear stretched, but
+        in that case the effect is actually desirable. 2d textures can be
+        rectangular, unlike the sides of cube textures which must be square.
+        The scaling can be controlled with the texrepeat attribute of material.
+        The data can be loaded from a single PNG file or created procedurally.
+    :param width:
+        The width of the procedural texture, i.e. the number of columns in the
+        image. For cube and skybox procedural textures the width and height
+        must be equal. Larger values usually result in higher quality images,
+        although in some cases (e.g. checker patterns) small values are
+        sufficient.
     """
     def __init__(
         self,
@@ -891,6 +1904,51 @@ class Hfield(Element):
     referenced from geoms with type "hfield". A height field, also known as
     terrain map, is a 2D matrix of elevation data. The data can be specified
     in one of three ways:
+
+    :param size:
+        The four numbers here are (radius_x, radius_y, elevation_z, base_z).
+        The height field is centered at the referencing geom's local frame.
+        Elevation is in the +Z direction. The first two numbers specify the X
+        and Y extent (or "radius") of the rectangle over which the height field
+        is defined. This may seem unnatural for rectangles, but it is natural
+        for spheres and other geom types, and we prefer to use the same
+        convention throughout the model. The third number is the maximum
+        elevation; it scales the elevation data which is normalized to [0-1].
+        Thus the minimum elevation point is at Z=0 and the maximum elevation
+        point is at Z=elevation_z. The last number is the depth of a box in the
+        -Z direction serving as a "base" for the height field. Without this
+        automatically generated box, the height field would have zero thickness
+        at places there the normalized elevation data is zero. Unlike planes
+        which impose global unilateral constraints, height fields are treated
+        as unions of regular geoms, so there is no notion of being "under" the
+        height field. Instead a geom is either inside or outside the height
+        field - which is why the inside part must have non-zero thickness. The
+        example below is the MATLAB "peaks" surface saved in our custom height
+        field format, and loaded as an asset with size = "1 1 1 0.1". The
+        horizontal size of the box is 2, the difference between the maximum and
+        minimum elevation is 1, and the depth of the base added below the
+        minimum elevation point is 0.1.
+    :param file:
+        If this attribute is specified, the elevation data is loaded from the
+        given file. If the file extension is ".png", not case-sensitive, the
+        file is treated as a PNG file. Otherwise it is treated as a binary file
+        in the above custom format. The number of rows and columns in the data
+        are determined from the file contents. Loading data from a file and
+        setting nrow or ncol below to non-zero values results is compile error,
+        even if these settings are consistent with the file contents.
+    :param name:
+        Name of the height field, used for referencing. If the name is omitted
+        and a file name is specified, the height field name equals the file
+        name without the path and extension.
+    :param ncol:
+        This attribute specifies the number of columns in the elevation data
+        matrix.
+    :param nrow:
+        This attribute and the next are used to allocate a height field in
+        mjModel and leave the elevation data undefined (i.e. set to 0). This
+        attribute specifies the number of rows in the elevation data matrix.
+        The default value of 0 means that the data will be loaded from a file,
+        which will be used to infer the size of the matrix.
     """
     def __init__(
         self,
@@ -956,6 +2014,20 @@ class Mesh(Element):
     human upper arm. If the mesh vertex data were not designed in the above
     convention, we would have to use the geom position and orientation to
     compensate, but in practice this is rarely needed.
+
+    :param file:
+        The STL file from which the mesh will be loaded. The path is determined
+        as described in the meshdir attribute of compiler.
+    :param class_:
+        Defaults class for setting unspecified attributes (only scale in this
+        case).
+    :param name:
+        Name of the mesh, used for referencing. If omitted, the mesh name
+        equals the file name without the path and extension.
+    :param scale:
+        This attribute specifies the scaling that will be applied to the vertex
+        data along each coordinate axis. Negative values are allowed, resulting
+        in flipping the mesh along the corresponding axis.
     """
     def __init__(
         self,
@@ -982,6 +2054,73 @@ class Material(Element):
     appearance properties beyond color. However once a material is created, it
     is more natural the specify the color using the material, so that all
     appearance properties are grouped together.
+
+    :param name:
+        Name of the material, used for referencing.
+    :param class_:
+        Defaults class for setting unspecified attributes.
+    :param emission:
+        Emission in OpenGL has the RGBA format, however we only provide a
+        scalar setting. The RGB components of the OpenGL emission vector are
+        the RGB components of the material color multiplied by the value
+        specified here. The alpha component is 1.
+    :param reflectance:
+        This attribute should be in the range [0 1]. If the value is greater
+        than 0, and the material is applied to a plane or a box geom, the
+        renderer will simulate reflectance. The larger the value, the stronger
+        the reflectance. For boxes, only the face in the direction of the local
+        +Z axis is reflective. Simulating reflectance properly requires ray-
+        tracing which cannot (yet) be done in real-time. We are using the
+        stencil buffer and suitable projections instead. Only the first
+        reflective geom in the model is rendered as such. This adds one extra
+        rendering pass through all geoms, in addition to the extra rendering
+        pass added by each shadow-casting light.
+    :param rgba:
+        Color and transparency of the material. All components should be in the
+        range [0 1]. Note that textures are applied in GL_MODULATE mode,
+        meaning that the texture color and the color specified here are
+        multiplied component-wise. Thus the default value of "1 1 1 1" has the
+        effect of leaving the texture unchanged. When the material is applied
+        to a model element which defines its own local rgba attribute, the
+        local definition has precedence. Note that this "local" definition
+        could in fact come from a defaults class. The remaining material
+        properties always apply.
+    :param shininess:
+        Shininess in OpenGL is a number between 0 and 128. The value given here
+        is multiplied by 128 before passing it to OpenGL, so it should be in
+        the range [0 1]. Larger values correspond to tighter specular highlight
+        (thus reducing the overall amount of highlight but making it more
+        salient visually). This interacts with the specularity setting; see
+        OpenGL documentation for details.
+    :param specular:
+        Specularity in OpenGL has the RGBA format, however we only provide a
+        scalar setting. The RGB components of the OpenGL specularity vector are
+        all equal to the value specified here. The alpha component is 1. This
+        value should be in the range [0 1].
+    :param texrepeat:
+        This attribute applies to textures of type "2d". It specifies how many
+        times the texture image is repeated, relative to either the object size
+        or the spatial unit, as determined by the next attribute.
+    :param texture:
+        If this attribute is specified, the material has a texture associated
+        with it. Referencing the material from a model element will cause the
+        texture to be applied to that element. Note that the value of this
+        attribute is the name of a texture asset, not a texture file name.
+        Textures cannot be loaded in the material definition; instead they must
+        be loaded explicitly via the texture element and then referenced here.
+    :param texuniform:
+        For cube textures, this attribute controls how cube mapping is applied.
+        The default value "false" means apply cube mapping directly, using the
+        actual size of the object. The value "true" maps the texture to a unit
+        object before scaling it to its actual size (geometric primitives are
+        created by the renderer as unit objects and then scaled). In some cases
+        this leads to more uniform texture appearance, but in general, which
+        settings produces better results depends on the texture and the object.
+        For 2d textures, this attribute interacts with texrepeat above. Let
+        texrepeat be N. The default value "false" means that the 2d texture is
+        repeated N times over the (z-facing side of the) object. The value
+        "true" means that the 2d texture is repeated N times over one spatial
+        unit, regardless of object size.
     """
     def __init__(
         self,
@@ -1019,6 +2158,97 @@ class Body(Element):
     have any attributes. It corresponds to the origin of the world frame,
     within which the rest of the kinematic tree is defined. Its body name is
     automatically defined as "world".
+
+    :param childclass:
+        If this attribute is present, all descendant elements that admit a
+        defaults class will use the class specified here, unless they specify
+        their own class or another body with a childclass attribute is
+        encountered along the chain of nested bodies. Recall Default settings.
+    :param mocap:
+        If this attribute is "true", the body is labeled as a mocap body. This
+        is allowed only for bodies that are children of the world body and have
+        no joints. Such bodies are fixed from the viewpoint of the dynamics,
+        but nevertheless the forward kinematics set their position and
+        orientation from the fields mjData.mocap_pos and mjData.mocap_quat at
+        each time step. The size of these arrays is adjusted by the compiler so
+        as to match the number of mocap bodies in the model. This mechanism can
+        be used to stream motion capture data into the simulation; an example
+        application in the built-in motion capture functionality of MuJoCo
+        HAPTIX. Mocap bodies can also be moved via mouse perturbations in the
+        interactive visualizer, even in dynamic simulation mode. This can be
+        useful for creating props with adjustable position and orientation. See
+        also the mocap attribute of flag.
+    :param name:
+        Name of the body.
+    :param pos:
+        The 3D position of the body frame, in local or global coordinates as
+        determined by the coordinate attribute of compiler. Recall the earlier
+        discussion of local and global coordinates in Coordinate frames. In
+        local coordinates, if the body position is left undefined it defaults
+        to (0,0,0). In global coordinates, an undefined body position is
+        inferred by the compiler through the following steps:
+        If the inertial frame is not defined via the inertial element, it is
+        inferred from the geoms attached to the body. If there are no geoms,
+        the inertial frame remains undefined. This step is applied in both
+        local and global coordinates.                               If both the
+        body frame and the inertial frame are undefined, a compile error is
+        generated.                                If one of these two frames is
+        defined and the other is not, the defined one is copied into the
+        undefined one. At this point both frames are defined, in global
+        coordinates.                               The inertial frame as well
+        as all elements defined in the body are converted to local coordinates,
+        relative to the body frame.                        Note that whether a
+        frame is defined or not depends on its pos attribute, which is in the
+        special undefined state by default. Orientation cannot be used to make
+        this determination because it has an internal default (the unit
+        quaternion).
+    :param user:
+        See User parameters.
+    :param axisangle:
+        See Frame orientations. Similar to position, the orientation specified
+        here is interpreted in either local or global coordinates as determined
+        by the coordinate attribute of compiler. Unlike position which is
+        required in local coordinates, the orientation defaults to the unit
+        quaternion, thus specifying it is optional even in local coordinates.
+        If the body frame was copied from the body inertial frame per the above
+        rules, the copy operation applies to both position and orientation, and
+        the setting of the orientation-related attributes is ignored.
+    :param euler:
+        See Frame orientations. Similar to position, the orientation specified
+        here is interpreted in either local or global coordinates as determined
+        by the coordinate attribute of compiler. Unlike position which is
+        required in local coordinates, the orientation defaults to the unit
+        quaternion, thus specifying it is optional even in local coordinates.
+        If the body frame was copied from the body inertial frame per the above
+        rules, the copy operation applies to both position and orientation, and
+        the setting of the orientation-related attributes is ignored.
+    :param quat:
+        See Frame orientations. Similar to position, the orientation specified
+        here is interpreted in either local or global coordinates as determined
+        by the coordinate attribute of compiler. Unlike position which is
+        required in local coordinates, the orientation defaults to the unit
+        quaternion, thus specifying it is optional even in local coordinates.
+        If the body frame was copied from the body inertial frame per the above
+        rules, the copy operation applies to both position and orientation, and
+        the setting of the orientation-related attributes is ignored.
+    :param xyaxes:
+        See Frame orientations. Similar to position, the orientation specified
+        here is interpreted in either local or global coordinates as determined
+        by the coordinate attribute of compiler. Unlike position which is
+        required in local coordinates, the orientation defaults to the unit
+        quaternion, thus specifying it is optional even in local coordinates.
+        If the body frame was copied from the body inertial frame per the above
+        rules, the copy operation applies to both position and orientation, and
+        the setting of the orientation-related attributes is ignored.
+    :param zaxis:
+        See Frame orientations. Similar to position, the orientation specified
+        here is interpreted in either local or global coordinates as determined
+        by the coordinate attribute of compiler. Unlike position which is
+        required in local coordinates, the orientation defaults to the unit
+        quaternion, thus specifying it is optional even in local coordinates.
+        If the body frame was copied from the body inertial frame per the above
+        rules, the copy operation applies to both position and orientation, and
+        the setting of the orientation-related attributes is ignored.
     """
     def __init__(
         self,
@@ -1057,6 +2287,42 @@ class Inertial(Element):
     frame is such that its center coincides with the center of mass of the
     body, and its axes coincide with the principal axes of inertia of the
     body. Thus the inertia matrix is diagonal in this frame.
+
+    :param mass:
+        Mass of the body. Negative values are not allowed. MuJoCo requires the
+        inertia matrix in generalized coordinates to be positive-definite,
+        which can sometimes be achieved even if some bodies have zero mass. In
+        general however there is no reason to use massless bodies. Such bodies
+        are often used in other engines to bypass the limitation that joints
+        cannot be combined, or to attach sensors and cameras. In MuJoCo
+        primitive joint types can be combined, and we have sites which are a
+        more efficient attachment mechanism.
+    :param pos:
+        Position of the inertial frame. This attribute is required even when
+        the inertial properties can be inferred from geoms. This is because the
+        presence of the inertial element itself disabled the automatic
+        inference mechanism.
+    :param diaginertia:
+        Diagonal inertia matrix, expressing the body inertia relative to the
+        inertial frame. If this attribute is omitted, the next attribute
+        becomes required.
+    :param fullinertia:
+        Full inertia matrix M. Since M is 3-by-3 and symmetric, it is specified
+        using only 6 numbers in the following order: M(1,1), M(2,2), M(3,3),
+        M(1,2), M(1,3), M(2,3). The compiler computes the eigenvalue
+        decomposition of M and sets the frame orientation and diagonal inertia
+        accordingly. If non-positive eigenvalues are encountered (i.e. if M is
+        not positive definite) a compile error is generated.
+    :param axisangle:
+        Orientation of the inertial frame. See Frame orientations.
+    :param euler:
+        Orientation of the inertial frame. See Frame orientations.
+    :param quat:
+        Orientation of the inertial frame. See Frame orientations.
+    :param xyaxes:
+        Orientation of the inertial frame. See Frame orientations.
+    :param zaxis:
+        Orientation of the inertial frame. See Frame orientations.
     """
     def __init__(
         self,
@@ -1097,6 +2363,135 @@ class Joint(Element):
     vector mjData.qvel. These two vectors have different dimensionality when
     free or ball joints are used, because such joints represent rotations as
     unit quaternions.
+
+    :param armature:
+        Armature inertia (or rotor inertia) of all degrees of freedom created
+        by this joint. These are constants added to the diagonal of the inertia
+        matrix in generalized coordinates. They make the simulation more
+        stable, and often increase physical realism. This is because when a
+        motor is attached to the system with a transmission that amplifies the
+        motor force by c, the inertia of the rotor (i.e. the moving part of the
+        motor) is amplified by c*c. The same holds for gears in the early
+        stages of planetary gear boxes. These extra inertias often dominate the
+        inertias of the robot parts that are represented explicitly in the
+        model, and the armature attribute is the way to model them.
+    :param axis:
+        This attribute specifies the axis of rotation for hinge joints and the
+        direction of translation for slide joints. It is ignored for free and
+        ball joints. The vector specified here is automatically normalized to
+        unit length as long as its length is greater than 10E-14; otherwise a
+        compile error is generated.
+    :param class_:
+        Defaults class for setting unspecified attributes.
+    :param damping:
+        Damping applied to all degrees of freedom created by this joint. Unlike
+        friction loss which is computed by the constraint solver, damping is
+        simply a force linear in velocity. It is included in the passive
+        forces. Despite this simplicity, larger damping values can make
+        numerical integrators unstable, which is why our Euler integrator
+        handles damping implicitly. See Integration in the Computation chapter.
+    :param frictionloss:
+        Friction loss due to dry friction. This value is the same for all
+        degrees of freedom created by this joint. Semantically friction loss
+        does not make sense for free joints, but the compiler allows it. To
+        enable friction loss, set this attribute to a positive value.
+    :param limited:
+        This attribute specifies if the joint has limits. It interacts with the
+        range attribute below. Both must be set to enable joint limits. If this
+        attribute is "false", any joint range data will be ignored.
+    :param margin:
+        The distance threshold below which limits become active. Recall that
+        the Constraint solver normally generates forces as soon as a constraint
+        becomes active, even if the margin parameter makes that happen at a
+        distance. This attribute together with solreflimit and solimplimit can
+        be used to model a soft joint limit.
+    :param name:
+        Name of the joint.
+    :param pos:
+        Position of the joint, specified in local or global coordinates as
+        determined by the coordinate attribute of compiler. For free joints
+        this attribute is ignored.
+    :param range:
+        The joint limits. Limits can be imposed on all joint types except for
+        free joints. For hinge and ball joints, the range is specified in
+        degrees or radians depending on the coordinate attribute of compiler.
+        For ball joints, the limit is imposed on the angle of rotation
+        (relative to the the reference configuration) regardless of the axis of
+        rotation. Only the second range parameter is used for ball joints; the
+        first range parameter should be set to 0. See the Limit section in the
+        Computation chapter for more information.
+    :param ref:
+        The reference position or angle of the joint. This attribute is only
+        used for slide and hinge joints. It defines the joint value
+        corresponding to the initial model configuration. The amount of spatial
+        transformation that the joint applies at runtime equals the current
+        joint value stored in mjData.qpos minus this reference value stored in
+        mjModel.qpos0. The meaning of these vectors was discussed in the Stand-
+        alone section in the Overview chapter.
+    :param springdamper:
+        When both numbers are positive, the compiler will override any
+        stiffness and damping values specified with the attributes below, and
+        will instead set them automatically so that the resulting mass-spring-
+        damper for this joint has the desired time constant (first value) and
+        damping ratio (second value). This is done by taking into account the
+        joint inertia in the model reference configuration. Note that the
+        format is the same as the solref parameter of the constraint solver.
+    :param springref:
+        The joint position or angle in which the joint spring (if any) achieves
+        equilibrium. Similar to the vector mjModel.qpos0 which stores all joint
+        reference values specified with the ref attribute above, all spring
+        reference values specified with this attribute are stored in the vector
+        mjModel.qpos_spring. The model configuration corresponding to
+        mjModel.qpos_spring is also used to compute the spring reference
+        lengths of all tendons, stored in mjModel.tendon_lengthspring. This is
+        because tendons can also have springs.
+    :param stiffness:
+        Joint stiffness. If this value is positive, a spring will be created
+        with equilibrium position given by springref below. The spring force is
+        computed along with the other passive forces.
+    :param type:
+        Type of the joint. The keywords have the following meaning:
+        The free type creates a free "joint" with three translational and three
+        rotational degrees of freedom. In other words it makes the body
+        floating. The rotation is represented as a unit quaternion. This joint
+        type is only allowed in bodies that are children of the world body. No
+        other joints can be defined in the body if a free joint is defined.
+        Unlike the remaining joint types, free joints do not have a position
+        within the body frame. Instead the joint position is assumed to
+        coincide with the center of the body frame. Thus at runtime the
+        position and orientation data of the free joint correspond to the
+        global position and orientation of the body frame. Free joints cannot
+        have limits.                   The ball type creates a ball joint with
+        three rotational degrees of freedom. The rotation is represented as a
+        unit quaternion. The quaternion (1,0,0,0) corresponds to the initial
+        configuration in which the model is defined. Any other quaternion is
+        interpreted as a 3D rotation relative to this initial configuration.
+        The rotation is around the point defined by the pos attribute below. If
+        a body has a ball joint, it cannot have other rotational joints (ball
+        or hinge). Combining ball joints with slide joints in the same body is
+        allowed.                   The slide type creates a sliding or
+        prismatic joint with one translational degree of freedom. Such joints
+        are defined by a position and a sliding direction. For simulation
+        purposes only the direction is needed; the joint position is used for
+        rendering purposes.                   The hinge type creates a hinge
+        joint with one rotational degree of freedom. The rotation takes place
+        around a specified axis through a specified position. This is the most
+        common type of joint and is therefore the default. Most models contact
+        only hinge and free joints.
+    :param user:
+        See User parameters.
+    :param solimpfriction:
+        Constraint solver parameters for simulating dry friction. See Solver
+        parameters.
+    :param solimplimit:
+        Constraint solver parameters for simulating joint limits. See Solver
+        parameters.
+    :param solreffriction:
+        Constraint solver parameters for simulating dry friction. See Solver
+        parameters.
+    :param solreflimit:
+        Constraint solver parameters for simulating joint limits. See Solver
+        parameters.
     """
     def __init__(
         self,
@@ -1155,6 +2550,9 @@ class Freejoint(Element):
     introduced. It is merely an XML shortcut. The compiler transforms it into
     a regular joint in mjModel. If the XML model is saved, it will appear as a
     regular joint of type "free".
+
+    :param name:
+        Name of the joint.
     """
     def __init__(
         self,
@@ -1184,6 +2582,258 @@ class Geom(Element):
     missing from such a simulation. We do not recommend using such models, but
     knowing that this is possible helps clarify the role of bodies and geoms
     in MuJoCo.
+
+    :param class_:
+        Defaults class for setting unspecified attributes.
+    :param conaffinity:
+        Bitmask for contact filtering; see contype above.
+    :param condim:
+        The dimensionality of the contact space for a dynamically generated
+        contact pair is set to the maximum of the condim values of the two
+        participating geoms. See Contact in the Computation chapter. The
+        allowed values and their meaning are:            condim Description   1
+        Frictionless contact.   3                  Regular frictional contact,
+        opposing slip in the tangent plane.                4
+        Frictional contact, opposing slip in the tangent plane and rotation
+        around the contact normal. This is useful for modeling soft contacts
+        (independent of contact penetration).                6
+        Frictional contact, opposing slip in the tangent plane, rotation around
+        the contact normal and rotation around the two axes of the tangent
+        plane. The latter frictional effects are useful for preventing objects
+        from indefinite rolling.
+    :param contype:
+        This attribute and the next specify 32-bit integer bitmasks used for
+        contact filtering of dynamically generated contact pairs. See Collision
+        detection in the Computation chapter. Two geoms can collide if the
+        contype of one geom is compatible with the conaffinity of the other
+        geom or vice versa. Compatible means that the two bitmasks have a
+        common bit set to 1.
+    :param density:
+        Material density used to compute the geom mass and inertia. The
+        computation is based on the geom shape and the assumption of uniform
+        density. The internal default of 1000 is the density of water in SI
+        units. This attribute is used only when the mass attribute above is
+        unspecified.
+    :param fitscale:
+        This attribute is used only when a primitive geometric type is being
+        fitted to a mesh asset. The scale specified here is relative to the
+        output of the automated fitting procedure. The default value of 1
+        leaves the result unchanged, a value of 2 makes all sizes of the fitted
+        geom two times larger.
+    :param friction:
+        Contact friction parameters for dynamically generated contact pairs.
+        The first number is the sliding friction, acting along both axes of the
+        tangent plane. The second number is the torsional friction, acting
+        around the contact normal. The third number is the rolling friction,
+        acting around both axes of the tangent plane. The friction parameters
+        for the contact pair are computed as the element-wise maximum of the
+        geom-specific parameters. See also Parameters section in the
+        Computation chapter.
+    :param fromto:
+        This attribute can only be used with capsule and cylinder geoms. It
+        provides an alternative specification of the geom length as well as the
+        frame position and orientation. The six numbers are the 3D coordinates
+        of one point followed by the 3D coordinates of another point. The
+        cylinder geom (or cylinder part of the capsule geom) connects these two
+        points, with the +Z axis of the geom's frame oriented from the first
+        towards the second point. The frame orientation is obtained with the
+        same procedure as the zaxis attribute described in Frame orientations.
+        The frame position is in the middle between the two points. If this
+        attribute is specified, the remaining position and orientation-related
+        attributes are ignored.
+    :param gap:
+        This attribute is used to enable the generation of inactive contacts,
+        i.e. contacts that are ignored by the constraint solver but are
+        included in mjData.contact for the purpose of custom computations. When
+        this value is positive, geom distances between margin and margin-gap
+        correspond to such inactive contacts.
+    :param group:
+        This attribute specifies an integer group to which the geom belongs.
+        The only effect on the physics is at compile time, when body masses and
+        inertias are inferred from geoms selected based on their group; see
+        inertiagrouprange attribute of compiler. At runtime this attribute is
+        used by the visualizer to enable and disable the rendering of entire
+        geom groups. It can also be used as a tag for custom computations.
+    :param hfield:
+        This attribute must be specified if and only if the geom type is
+        "hfield". It references the height field asset to be instantiated at
+        the position and orientation of the geom frame.
+    :param margin:
+        Distance threshold below which contacts are detected and included in
+        the global array mjData.contact. This however does not mean that
+        contact force will be generated. A contact is considered active only if
+        the distance between the two geom surfaces is below margin-gap. Recall
+        that constraint impedance can be a function of distance, as explained
+        in Solver parameters. The quantity this function is applied to is the
+        distance between the two geoms minus the margin plus the gap.
+    :param mass:
+        If this attribute is specified, the density attribute below is ignored
+        and the geom density is computed from the given mass, using the geom
+        shape and the assumption of uniform density. The computed density is
+        then used to obtain the geom inertia. Recall that the geom mass and
+        inerta are only used during compilation, to infer the body mass and
+        inertia if necessary. At runtime only the body inertial properties
+        affect the simulation; the geom mass and inertia are not even saved in
+        mjModel.
+    :param material:
+        If specified, this attribute applies a material to the geom. The
+        material determines the visual properties of the geom. The only
+        exception is color: if the rgba attribute below is different from its
+        internal default, it takes precedence while the remaining material
+        properties are still applied. Note that if the same material is
+        referenced from multiple geoms (as well as sites and tendons) and the
+        user changes some of its properties at runtime, these changes will take
+        effect immediately for all model elements referencing the material.
+        This is because the compiler saves the material and its properties as a
+        separate element in mjModel, and the elements using this material only
+        keep a reference to it.
+    :param mesh:
+        If the geom type is "mesh", this attribute is required. It references
+        the mesh asset to be instantiated. This attribute can also be specified
+        if the geom type corresponds to a geometric primitive, namely one of
+        "sphere", "capsule", "cylinder", "ellipsoid", "box". In that case the
+        primitive is automatically fitted to the mesh asset referenced here.
+        The fitting procedure uses either the equivalent inertia box or the
+        axis-aligned bounding box of the mesh, as determined by the attribute
+        fitaabb of compiler. The resulting size of the fitted geom is usually
+        what one would expect, but if not, it can be further adjusted with the
+        fitscale attribute below. In the compiled mjModel the geom is
+        represented as a regular geom of the specified primitive type, and
+        there is no reference to the mesh used for fitting.
+    :param name:
+        Name of the geom.
+    :param pos:
+        Position of the geom frame, in local or global coordinates as
+        determined by the coordinate attribute of compiler.
+    :param rgba:
+        Instead of creating material assets and referencing them, this
+        attribute can be used to set color and transparency only. This is not
+        as flexible as the material mechanism, but is more convenient and is
+        often sufficient. If the value of this attribute is different from the
+        internal default, it takes precedence over the material.
+    :param size:
+        Geom size parameters. The number of required parameters and their
+        meaning depends on the geom type as documented under the type
+        attribute. Here we only provide a summary. All required size parameters
+        must be positive; the internal defaults correspond to invalid settings.
+        Note that when a non-mesh geom type references a mesh, a geometric
+        primitive of that type is fitted to the mesh. In that case the sizes
+        are obtained from the mesh, and the geom size parameters are ignored.
+        Thus the number and description of required size parameters in the
+        table below only apply to geoms that do not reference meshes.
+        Type Number Description   plane 3 X half-size; Y half-size; spacing
+        between square grid lines for rendering.   hfield 0 The geom sizes are
+        ignored and the height field sizes are used instead.   sphere 1 Radius
+        of the sphere.   capsule 1 or 2 Radius of the capsule; half-length of
+        the cylinder part when not using the fromto specification.   ellipsoid
+        3 X radius; Y radius; Z radius.  cylinder 1 or 2 Radius of the
+        cylinder; half-length of the cylinder when not using the fromto
+        specification.  box 3 X half-size; Y half-size; Z half-size.   mesh 0
+        The geom sizes are ignored and the mesh sizes are used instead.
+    :param solmix:
+        This attribute specifies the weight used for averaging of constraint
+        solver parameters. Recall that the solver parameters for a dynamically
+        generated geom pair are obtained as a weighted average of the geom-
+        specific parameters.
+    :param type:
+        Type of geometric shape. The keywords have the following meaning:
+        The plane type defines a plane which is infinite for collision
+        detection purposes. It can only be attached to the world body. The
+        plane passes through a point specified via the pos attribute. It is
+        normal to the Z axis of the geom's local frame. The +Z direction
+        corresponds to empty space. Thus the position and orientation defaults
+        of (0,0,0) and (1,0,0,0) would create a ground plane at Z=0 elevation,
+        with +Z being the vertical direction in the world (which is MuJoCo's
+        convention). Since the plane is infinite, it could have been defined
+        using any other point in the plane. The specified position however has
+        additional meaning with regard to rendering. Planes are rendered as
+        rectangles of finite size, as determined by the size attribute. This
+        rectangle is centered at the specified position. Three size parameters
+        are required. The first two specify the half-size of the rectangle
+        along the X and Y axes. The third size parameter is unusual: it
+        specifies the spacing between the grid subdivisions of the plane for
+        rendering purposes. The subdivisions are revealed in wireframe
+        rendering mode, but in general they should not be used to paint a grid
+        over the ground plane (textures should be used for that purpose).
+        Instead their role is to improve lighting and shadows, similar to the
+        subdivisions used to render boxes. When planes are viewed from the
+        back, the are automatically made semi-transparent. Planes and the +Z
+        faces of boxes are the only surfaces that can show reflections, if the
+        material applied to the geom has positive reflection.
+        The hfield type defines a height field geom. The geom must reference
+        the desired height field asset with the hfield attribute below. The
+        position and orientation of the geom set the position and orientation
+        of the height field. The size of the geom is ignored, and the size
+        parameters of the height field asset are used instead. See the
+        description of the hfield element. Similar to planes, height field
+        geoms can only be attached to the world body.                   The
+        sphere type defines a sphere. This and the next four types correspond
+        to built-in geometric primitives. These primitives are treated as
+        analytic surfaces for collision detection purposes, in many cases
+        relying on custom pair-wise collision routines. Models including only
+        planes, spheres, capsules and boxes are the most efficient in terms of
+        collision detection. Other geom types invoke the general-purpose convex
+        collider. The sphere is centered at the geom's position. Only one size
+        parameter is used, specifying the radius of the sphere. Rendering of
+        geometric primitives is done with automatically generated meshes whose
+        density can be adjusted via quality. The sphere mesh is triangulated
+        along the lines of latitude and longitude, with the Z axis passing
+        through the north and south pole. This can be useful in wireframe mode
+        for visualizing frame orientation.                   The capsule type
+        defines a capsule, which is a cylinder capped with two half-spheres. It
+        is oriented along the Z axis of the geom's frame. When the geom frame
+        is specified in the usual way, two size parameters are required: the
+        radius of the capsule followed by the half-height of the cylinder part.
+        However capsules as well as cylinders can also be thought of as
+        connectors, allowing an alternative specification with the fromto
+        attribute below. In that case only one size parameter is required,
+        namely the radius of the capsule.                   The ellipsoid type
+        defines a ellipsoid. This is a sphere scaled separately along the X, Y
+        and Z axes of the local frame. It requires three size parameters,
+        corresponding to the three radii. Note that even though ellipsoids are
+        smooth, their collisions are handled via the general-purpose convex
+        collider. The only exception are plane-ellipsoid collisions which are
+        computed analytically.                   The cylinder type defines a
+        cylinder. It requires two size parameters: the radius and half-height
+        of the cylinder. The cylinder is oriented along the Z axis of the
+        geom's frame. It can alternatively be specified with the fromto
+        attribute below.                    The box type defines a box. Three
+        size parameters are required, corresponding to the half-sizes of the
+        box along the X, Y and Z axes of the geom's frame. Note that box-box
+        collisions are the only pair-wise collision type that can generate a
+        large number of contact points, up to 8 depending on the configuration.
+        The contact generation itself is fast but this can slow down the
+        constraint solver. As an alternative, we provide the boxconvex
+        attribute in flag which causes the general-purpose convex collider to
+        be used instead, yielding at most one contact point per geom pair.
+        The mesh type defines a mesh. The geom must reference the desired mesh
+        asset with the mesh attribute. Note that mesh assets can also be
+        referenced from other geom types, causing primitive shapes to be
+        fitted; see below. The size is determined by the mesh asset and the
+        geom size parameters are ignored. Unlike all other geoms, the position
+        and orientation of mesh geoms after compilation do not equal the
+        settings of the corresponding attributes here. Instead they are offset
+        by the translation and rotation that were needed to center and align
+        the mesh asset in its own coordinate frame. Recall the discussion of
+        centering and alignment in the mesh element.
+    :param user:
+        See User parameters.
+    :param axisangle:
+        Orientation of the geom frame. See Frame orientations.
+    :param euler:
+        Orientation of the geom frame. See Frame orientations.
+    :param quat:
+        Orientation of the geom frame. See Frame orientations.
+    :param solimp:
+        Constraint solver parameters for contact simulation. See Solver
+        parameters.
+    :param solref:
+        Constraint solver parameters for contact simulation. See Solver
+        parameters.
+    :param xyaxes:
+        Orientation of the geom frame. See Frame orientations.
+    :param zaxis:
+        Orientation of the geom frame. See Frame orientations.
     """
     def __init__(
         self,
@@ -1261,6 +2911,39 @@ class Site(Element):
     of the available geom types. However sites can be used in some places
     where geoms are not allowed: mounting sensors, specifying via-points of
     spatial tendons, constructing slider-crank transmissions for actuators.
+
+    :param class_:
+        Defaults class for setting unspecified attributes.
+    :param group:
+        Integer group to which the site belongs. This attribute can be used for
+        custom tags. It is also used by the visualizer to enable and disable
+        the rendering of entire groups of sites.
+    :param material:
+        Material used to specify the visual properties of the site.
+    :param name:
+        Name of the site.
+    :param pos:
+        Position of the site frame.
+    :param rgba:
+        Color and transparency. If this value is different from the internal
+        default, it overrides the corresponding material properties.
+    :param size:
+        Sizes of the geometric shape representing the site.
+    :param type:
+        Type of geometric shape. This is used for rendering, and also
+        determines the active sensor zone for touch sensors.
+    :param user:
+        See User parameters.
+    :param axisangle:
+        Orientation of the site frame. See Frame orientations.
+    :param euler:
+        Orientation of the site frame. See Frame orientations.
+    :param quat:
+        Orientation of the site frame. See Frame orientations.
+    :param xyaxes:
+        Orientation of the site frame. See Frame orientations.
+    :param zaxis:
+        Orientation of the site frame. See Frame orientations.
     """
     def __init__(
         self,
@@ -1314,6 +2997,64 @@ class Camera(Element):
     frame. The camera is looking along the -Z axis of its frame. The +X axis
     points to the right, and the +Y axis points up. Thus the frame position
     and orientation are the key adjustments that need to be made here.
+
+    :param class_:
+        Defaults class for setting unspecified attributes.
+    :param fovy:
+        Vertical field of view of the camera, expressed in degrees regardless
+        of the global angle setting. The horizontal field of view is computed
+        automatically given the window size and the vertical field of view.
+    :param ipd:
+        Inter-pupilary distance. This attribute only has an effect during
+        stereoscopic rendering. It specifies the distance between the left and
+        right viewpoints. Each viewpoint is shifted by +/- half of the distance
+        specified here, along the X axis of the camera frame.
+    :param mode:
+        This attribute specifies how the camera position and orientation in
+        world coordinates are computed in forward kinematics (which in turn
+        determine what the camera sees). "fixed" means that the position and
+        orientation specified below are fixed relative to the parent (i.e. the
+        body where the camera is defined). "track" means that the camera
+        position is at a constant offset from the parent in world coordinates,
+        while the camera orientation is constant in world coordinates. These
+        constants are determined by applying forward kinematics in qpos0 and
+        treating the camera as fixed. Tracking can be used for example to
+        position a camera above a body, point it down so it sees the body, and
+        have it always remain above the body no matter how the body translates
+        and rotates. "trackcom" is similar to "track" but the constant spatial
+        offset is defined relative to the center of mass of the kinematic
+        subtree starting at the parent body. This can be used to keep an entire
+        mechanism in view. Note that the subtree center of mass for the world
+        body is the center of mass of the entire model. So if a camera is
+        defined in the world body in mode "trackcom", it will track the entire
+        model. "targetbody" means that the camera position is fixed in the
+        parent body, while the camera orientation is adjusted so that it always
+        points towards the targeted body (which is specified with the target
+        attribute below). This can be used for example to model an eye that
+        fixates a moving object; the object will be the target, and the
+        camera/eye will be defined in the body corresponding to the head.
+        "targetbodycom" is the same as "targetbody" but the camera is oriented
+        towards the center of mass of the subtree starting at the target body.
+    :param name:
+        Name of the camera.
+    :param pos:
+        Position of the camera frame.
+    :param target:
+        When the camera mode is "targetbody" or "targetbodycom", this attribute
+        becomes required. It specifies which body should be targeted by the
+        camera. In all other modes this attribute is ignored.
+    :param user:
+        See User parameters.
+    :param axisangle:
+        Orientation of the camera frame. See Frame orientations.
+    :param euler:
+        Orientation of the camera frame. See Frame orientations.
+    :param quat:
+        Orientation of the camera frame. See Frame orientations.
+    :param xyaxes:
+        Orientation of the camera frame. See Frame orientations.
+    :param zaxis:
+        Orientation of the camera frame. See Frame orientations.
     """
     def __init__(
         self,
@@ -1360,6 +3101,72 @@ class Light(Element):
     active simultaneously is 8, counting the headlight. The light is shining
     along the direction specified by the dir attribute. It does not have a
     full spatial frame with three orthogonal axes.
+
+    :param active:
+        The light is active if this attribute is "true". This can be used at
+        runtime to turn lights on and off.
+    :param ambient:
+        The ambient color of the light.
+    :param attenuation:
+        These are the constant, linear and quadratic attenuation coefficients
+        in OpenGL. The default corresponds to no attenuation. See the OpenGL
+        documentation for more information on this and all other OpenGL-related
+        properties.
+    :param castshadow:
+        If this attribute is "true" the light will cast shadows. More
+        precisely, the geoms illuminated by the light will cast shadows,
+        however this is a property of lights rather than geoms. Since each
+        shadow-casting light causes one extra rendering pass through all geoms,
+        this attribute should be used with caution. Higher quality of the
+        shadows is achieved by increasing the value of the shadowsize attribute
+        of quality, as well as positioning spotlights closer to the surface on
+        which shadows appear, and limiting the volume in which shadows are
+        cast. For spotlights this volume is a cone, whose angle is the cutoff
+        attribute below multiplied by the shadowscale attribute of map. For
+        directional lights this volume is a box, whose half-sizes in the
+        directions orthogonal to the light are the model extent multiplied by
+        the shadowclip attribute of map. The model extent is computed by the
+        compiler but can also be overridden by specifying the extent attribute
+        of statistic. Internally the shadow-mapping mechanism renders the scene
+        from the light viewpoint (as if it were a camera) into a depth texture,
+        and then renders again from the camera viewpoint, using the depth
+        texture to create shadows. The internal rendering pass uses the same
+        near and far clipping planes as regular rendering, i.e. these clipping
+        planes bound the cone or box shadow volume in the light direction. As a
+        result, some shadows (especially those very close to the light) may be
+        clipped.
+    :param class_:
+        Defaults class for setting unspecified attributes.
+    :param cutoff:
+        Cutoff angle for spotlights, always in degrees regardless of the global
+        angle setting.
+    :param diffuse:
+        The diffuse color of the light.
+    :param dir:
+        Direction of the light.
+    :param directional:
+        The light is directional if this attribute is "true", otherwise it is a
+        spotlight.
+    :param exponent:
+        Exponent for spotlights. This setting controls the softness of the
+        spotlight cutoff.
+    :param mode:
+        This is identical to the mode attribute of camera above. It specifies
+        the how the light position and orientation in world coordinates are
+        computed in forward kinematics (which in turn determine what the light
+        illuminates).
+    :param name:
+        Name of the light.
+    :param pos:
+        Position of the light. This attribute only affects the rendering for
+        spotlights, but it should also be defined for directional lights
+        because we render the cameras as decorative elements.
+    :param specular:
+        The specular color of the light.
+    :param target:
+        This is identical to the target attribute of camera above. It specifies
+        which body should be targeted in "targetbody" and "targetbodycom"
+        modes.
     """
     def __init__(
         self,
@@ -1404,6 +3211,7 @@ class Contact(Element):
     groups elements that are used to adjust the generation of candidate
     contact pairs for collision checking. Collision detection was described in
     detail in the Computation chapter, thus the description here is brief.
+
     """
     def __init__(
         self,
@@ -1421,6 +3229,43 @@ class Pair(Element):
     specify all their properties explicitly or through defaults, and the
     properties of the individual geoms are not used. Anisotropic friction can
     only be created with this element.
+
+    :param geom1:
+        The name of the first geom in the pair.
+    :param geom2:
+        The name of the second geom in the pair. The contact force vector
+        computed by the solver and stored in mjData.efc_force points from the
+        first towards the second geom by convention. The forces applied to the
+        system are of course equal and opposite, so the order of geoms does not
+        affect the physics.
+    :param class_:
+        Defaults class for setting unspecified attributes.
+    :param condim:
+        The dimensionality of the contacts generated by this geom pair.
+    :param friction:
+        The friction coefficients of the contacts generated by this geom pair.
+        Making the first two coefficients different results in anisotropic
+        tangential friction. Making the last two coefficients different results
+        in anisotropic rolling friction. The length of this array is not
+        enforced by the parser, and can be smaller than 5. This is because some
+        of the coefficients may not be used, depending on the contact
+        dimensionality. Unspecified coefficients remain equal to their
+        defaults.
+    :param gap:
+        This attribute is used to enable the generation of inactive contacts,
+        i.e. contacts that are ignored by the constraint solver but are
+        included in mjData.contact for the purpose of custom computations. When
+        this value is positive, geom distances between margin and margin-gap
+        correspond to such inactive contacts.
+    :param margin:
+        Distance threshold below which contacts are detected and included in
+        the global array mjData.contact.
+    :param solimp:
+        Constraint solver parameters for contact simulation. See Solver
+        parameters.
+    :param solref:
+        Constraint solver parameters for contact simulation. See Solver
+        parameters.
     """
     def __init__(
         self,
@@ -1458,6 +3303,11 @@ class Exclude(Element):
     of option is set to "all" or "dynamic". Setting this attribute to
     "predefined" disables the exclusion mechanism and the geom pairs defined
     with the pair element above are checked for collisions.
+
+    :param body1:
+        The name of the first body in the pair.
+    :param body2:
+        The name of the second body in the pair.
     """
     def __init__(
         self,
@@ -1477,6 +3327,7 @@ class Equality(Element):
     detailed description of equality constraints. Several attributes are
     common to all equality constraint types, thus we document them only once,
     under the connect element.
+
     """
     def __init__(
         self,
@@ -1491,6 +3342,41 @@ class EqualityConnect(Element):
     at a point. The point is not necessarily within the geoms volumes of
     either body. This constraint can be used to define ball joints outside the
     kinematic tree.
+
+    :param anchor:
+        Coordinates of the 3D anchor point where the two bodies are connected.
+        In the compiled mjModel the anchor is stored twice, relative to the
+        local frame of each body. At runtime this yields two global points
+        computed by forward kinematics; the constraint solver pushes these
+        points towards each other. In the MJCF model however only one point is
+        given. We assume that the equality constraint is exactly satisfied in
+        the configuration in which the model is defined (this applies to all
+        other constraint types as well). The compiler uses the single anchor
+        specified in the MJCF model to compute the two body-relative anchor
+        points in mjModel. If the MJCF model is in global coordinates, as
+        determined by the coordinate attribute of compiler, the anchor is
+        specified in global coordinates. Otherwise the anchor is specified
+        relative to the local coordinate frame of the first body.
+    :param body1:
+        Name of the first body participating in the constraint.
+    :param active:
+        If this attribute is set to "true", the constraint is active and the
+        constraint solver will try to enforce it. The corresponding field in
+        mjModel is mjData.eq_active. This field can be used at runtime to turn
+        specific constraints on an off.
+    :param body2:
+        Name of the second body participating in the constraint. If this
+        attribute is omitted, the second body is the world body.
+    :param class_:
+        Defaults class for setting unspecified attributes.
+    :param name:
+        Name of the equality constraint.
+    :param solimp:
+        Constraint solver parameters for equality constraint simulation. See
+        Solver parameters.
+    :param solref:
+        Constraint solver parameters for equality constraint simulation. See
+        Solver parameters.
     """
     def __init__(
         self,
@@ -1525,6 +3411,24 @@ class EqualityWeld(Element):
     one in which the model was defined. Note that two bodies can also be
     welded together rigidly, by defining one body as a child of the other
     body, without any joint elements in the child body.
+
+    :param body1:
+        Name of the first body.
+    :param body2:
+        Name of the second body. If this attribute is omitted, the second body
+        is the world body. Welding a body to the world and changing the
+        corresponding component of mjModel.eq_active at runtime can be used to
+        fix the body temporarily.
+    :param active:
+        Same as in connect element.
+    :param class_:
+        Same as in connect element.
+    :param name:
+        Same as in connect element.
+    :param solimp:
+        Same as in connect element.
+    :param solref:
+        Same as in connect element.
     """
     def __init__(
         self,
@@ -1552,6 +3456,30 @@ class EqualityJoint(Element):
          This element constrains the position or angle of one joint to be a
     quartic polynomial of another joint. Only scalar joint types (slide and
     hinge) can be used.
+
+    :param joint1:
+        Name of the first joint.
+    :param joint2:
+        Name of the second joint. If this attribute is omitted, the first joint
+        is fixed to a constant.
+    :param polycoef:
+        Coefficients a0 ... a4 of the quartic polynomial. If the two joint
+        values are y and x, and their reference positions (corresponding to the
+        joint values in the initial model configuration) are y0 and x0, the
+        constraint is:                   y-y0 = a0 + a1*(x-x0) + a2*(x-x0)^2 +
+        a3*(x-x0)^3 + a4*(x-x0)^4                   Omitting the second joint
+        is equivalent to setting x = x0, in which case the constraint is y = y0
+        + a0.
+    :param active:
+        Same as in connect element.
+    :param class_:
+        Same as in connect element.
+    :param name:
+        Same as in connect element.
+    :param solimp:
+        Same as in connect element.
+    :param solref:
+        Same as in connect element.
     """
     def __init__(
         self,
@@ -1580,6 +3508,25 @@ class EqualityTendon(Element):
     """
          This element constrains the length of one tendon to be a quartic
     polynomial of another tendon.
+
+    :param tendon1:
+        Name of the first tendon.
+    :param polycoef:
+        Same as in the equality/ joint element above, but applied to tendon
+        lengths instead of joint positions.
+    :param tendon2:
+        Name of the second tendon. If this attribute is omitted, the first
+        tendon is fixed to a constant.
+    :param active:
+        Same as in connect element.
+    :param class_:
+        Same as in connect element.
+    :param name:
+        Same as in connect element.
+    :param solimp:
+        Same as in connect element.
+    :param solref:
+        Same as in connect element.
     """
     def __init__(
         self,
@@ -1613,6 +3560,24 @@ class EqualityDistance(Element):
     collision detector. For geom pairs handled by the general-purpose convex
     collider, large distance values in this constraint are handled
     approximately, due to the nature of the underlying collision algorithm.
+
+    :param geom1:
+        Name of the first geom.
+    :param geom2:
+        Name of the second geom.
+    :param distance:
+        Desired distance between the two geom surfaces. The constraint solver
+        enforces this distance softly.
+    :param active:
+        Same as in connect element.
+    :param class_:
+        Same as in connect element.
+    :param name:
+        Same as in connect element.
+    :param solimp:
+        Same as in connect element.
+    :param solref:
+        Same as in connect element.
     """
     def __init__(
         self,
@@ -1645,6 +3610,7 @@ class Tendon(Element):
     impose length limits, simulate spring, damping and dry friction forces, as
     well as attach actuators to them. When used in equality constraints,
     tendons can also represent different forms of mechanical coupling.
+
     """
     def __init__(
         self,
@@ -1665,6 +3631,64 @@ class Spatial(Element):
     the tendon level. The following example illustrates a multi-branch tendon
     acting as a finger extensor, with a counter-weight instead of an actuator.
     tendon.xml
+
+    :param class_:
+        Defaults class for setting unspecified attributes.
+    :param damping:
+        Damping coefficient. A positive value generates a damping force (linear
+        in velocity) acting along the tendon. Unlike joint damping which is
+        integrated implicitly by the Euler method, tendon damping is not
+        integrated implicitly, thus joint damping should be used if possible.
+    :param frictionloss:
+        Friction loss caused by dry friction. To enable friction loss, set this
+        attribute to a positive value.
+    :param limited:
+        If this attribute is "true", the length limits defined by the range
+        attribute below are imposed by the constraint solver.
+    :param margin:
+        The limit constraint becomes active when the absolute value of the
+        difference between the tendon length and either limit of the specified
+        range falls below this margin. Similar to contacts, the margin
+        parameter is subtracted from the difference between the range limit and
+        the tendon length. The resulting constraint distance is always negative
+        when the constraint is active. This quantity is used to compute
+        constraint impedance as a function of distance, as explained in Solver
+        parameters.
+    :param material:
+        Material used to set the appearance of the tendon.
+    :param name:
+        Name of the tendon.
+    :param range:
+        Range of allowed tendon lengths. To enable length limits, set the
+        limited attribute to "true" in addition to defining the present value.
+    :param rgba:
+        Color and transparency of the tendon. When this value is different from
+        the internal default, it overrides the corresponding material
+        properties.
+    :param stiffness:
+        Stiffness coefficient. A positive value generates a spring force
+        (linear in position) acting along the tendon. The equilibrium length of
+        the spring corresponds to the tendon length when the model is in its
+        initial configuration.
+    :param user:
+        See User parameters.
+    :param width:
+        Radius of the cross-section area of the spatial tendon, used for
+        rendering. The compiler requires this value to be positive. Parts of
+        the tendon that wrap around geom obstacles are rendered with reduced
+        width.
+    :param solimpfriction:
+        Constraint solver parameters for simulating dry friction in the tendon.
+        See Solver parameters.
+    :param solimplimit:
+        Constraint solver parameters for simulating tendon limits. See Solver
+        parameters.
+    :param solreffriction:
+        Constraint solver parameters for simulating dry friction in the tendon.
+        See Solver parameters.
+    :param solreflimit:
+        Constraint solver parameters for simulating tendon limits. See Solver
+        parameters.
     """
     def __init__(
         self,
@@ -1709,6 +3733,9 @@ class SpatialSite(Element):
     """
          This attribute specifies a site that the tendon path has to pass
     through. Recall that sites are rigidly attached to bodies.
+
+    :param site:
+        The name of the site that the tendon must pass through.
     """
     def __init__(
         self,
@@ -1727,6 +3754,16 @@ class SpatialGeom(Element):
     computed analytically, which is why we restrict the geom types allowed
     here to spheres and cylinders. The latter are treated as having infinite
     length for tendon wrapping purposes.
+
+    :param geom:
+        The name of a geom that acts as an obstacle for the tendon path. Only
+        sphere and cylinder geoms can be referenced here.
+    :param sidesite:
+        To prevent the tendon path from snapping from one side of the geom to
+        the other as the model configuration varies, the user can define a
+        preferred "side" of the geom. At runtime, the wrap that is closer to
+        the specified site is automatically selected. Specifying a side site is
+        often needed in practice.
     """
     def __init__(
         self,
@@ -1751,6 +3788,18 @@ class SpatialPulley(Element):
     overall tendon length. This is why the spatial relations among branches
     are not relevant to the simulation. The tendon.xml example above
     illustrated the use of pulleys.
+
+    :param divisor:
+        The length of the tendon branch started by the pulley element is
+        divided by the value specified here. For a physical pulley that splits
+        a single branch into two parallel branches, the common branch would
+        have divisor value of 1 and the two branches following the pulley would
+        have divisor values of 2. If one of them is further split by another
+        pulley, each new branch would have divisor value of 4 and so on. Note
+        that in MJCF each branch starts with a pulley, thus a single physical
+        pulley is modeled with two MJCF pulleys. If no pulley elements are
+        included in the tendon path, the first and only branch has divisor
+        value of 1.
     """
     def __init__(
         self,
@@ -1770,6 +3819,37 @@ class Fixed(Element):
     it in MuJoCo. Presently the only such function is a fixed linear
     combination. The attributes of fixed tendons are a subset of the
     attributes of spatial tendons and have the same meaning as above.
+
+    :param class_:
+        Same as in the spatial element.
+    :param damping:
+        Same as in the spatial element.
+    :param frictionloss:
+        Same as in the spatial element.
+    :param limited:
+        Same as in the spatial element.
+    :param margin:
+        Same as in the spatial element.
+    :param name:
+        Same as in the spatial element.
+    :param range:
+        Same as in the spatial element.
+    :param solimpfriction:
+        Constraint solver parameters for simulating dry friction in the tendon.
+        See Solver parameters.
+    :param solimplimit:
+        Constraint solver parameters for simulating tendon limits. See Solver
+        parameters.
+    :param solreffriction:
+        Constraint solver parameters for simulating dry friction in the tendon.
+        See Solver parameters.
+    :param solreflimit:
+        Constraint solver parameters for simulating tendon limits. See Solver
+        parameters.
+    :param stiffness:
+        Same as in the spatial element.
+    :param user:
+        Same as in the spatial element.
     """
     def __init__(
         self,
@@ -1809,6 +3889,13 @@ class FixedJoint(Element):
          This element adds a joint to the computation of the fixed tendon
     length. The position or angle of each included joint is multiplied by the
     corresponding coef value, and added up to obtain the tendon length.
+
+    :param coef:
+        Scalar coefficient multiplying the position or angle of the specified
+        joint.
+    :param joint:
+        Name of the joint to be added to the fixed tendon. Only scalar joints
+        (slide and hinge) can be referenced here.
     """
     def __init__(
         self,
@@ -1828,6 +3915,7 @@ class Actuator(Element):
     Actuator shortcuts discussed earlier in this chapter. The first 13
     attributes of all actuator-related elements below are the same, so we
     document them only once, under the general actuator.
+
     """
     def __init__(
         self,
@@ -1840,6 +3928,123 @@ class General(Element):
     """
          This element creates a general actuator, providing full access to all
     actuator components and allowing the user to specify them independently.
+
+    :param biasprm:
+        Bias parameters. The affine bias type uses all three of them. The
+        length of this array is not enforced by the parser, so the user can
+        enter as many parameters as needed (when using callbacks).
+    :param biastype:
+        The keywords have the following meaning:            Keyword Description
+        none bias_term = 0   affine bias_term = biasprm[0] + biasprm[1]*length
+        + biasprm[2]*velocity   user bias_term = mjcb_act_bias(...)
+    :param class_:
+        Active defaults class. See Default settings.
+    :param cranklength:
+        Used only for the slider-crank transmission type. Specifies the length
+        of the connecting rod. The compiler expects this value to be positive
+        when a slider-crank transmission is present.
+    :param cranksite:
+        If specified, the actuator acts on a slider-crank mechanism which is
+        implicitly determined by the actuator (i.e. it is not a separate model
+        element). The specified site corresponds to the pin joining the crank
+        and the connecting rod. The actuator length equals the position of the
+        slider-crank mechanism times the gear ratio.
+    :param ctrllimited:
+        If true, the control input to this actuator is automatically clamped to
+        ctrlrange at runtime. If false, control input clamping is disabled.
+        Note that control input clamping can also be globally disabled with the
+        clampctrl attribute of option/ flag.
+    :param ctrlrange:
+        Range for clamping the control input. The compiler expects the first
+        value to be smaller than the second value.
+    :param dynprm:
+        Activation dynamics parameters. The built-in activation types use only
+        the first parameter, but we provide additional parameters in case user
+        callbacks implement a more elaborate model. The length of this array is
+        not enforced by the parser, so the user can enter as many parameters as
+        needed.
+    :param dyntype:
+        Activation dynamics type for the actuator. The available dynamics types
+        were already described in the Actuation model section. Repeating that
+        description in somewhat different notation (corresponding to the
+        mjModel and mjData fields involved) we have:            Keyword
+        Description   none No internal state   integrator act_dot = ctrl
+        filter act_dot = (ctrl - act) / dynprm[0]   user act_dot =
+        mjcb_act_dyn(...)
+    :param forcelimited:
+        If true, the force output of this actuator is automatically clamped to
+        forcerange at runtime. If false, force output clamping is disabled.
+    :param forcerange:
+        Range for clamping the force output. The compiler expects the first
+        value to be no greater than the second value.
+    :param gainprm:
+        Gain parameters. The built-in gain types use only the first parameter,
+        but we provide additional parameters in case user callbacks implement a
+        more elaborate model. The length of this array is not enforced by the
+        parser, so the user can enter as many parameters as needed.
+    :param gaintype:
+        The gain and bias together determine the output of the force generation
+        mechanism, which is currently assumed to be affine. As already
+        explained in Actuation model, the general formula is: scalar_force =
+        gain_term * (act or ctrl) + bias_term.                  The formula
+        uses the activation state when present, and the control otherwise. The
+        keywords have the following meaning:            Keyword Description
+        fixed gain_term = gainprm[0]   user gain_term = mjcb_act_gain(...)
+    :param gear:
+        This attribute scales the length (and consequently moment arms,
+        velocity and force) of the actuator, for all transmission types. It is
+        different from the gain in the force generation mechanism, because the
+        gain only scales the force output and does not affect the length,
+        moment arms and velocity. For actuators with scalar transmission, only
+        the first element of this vector is used. The remaining elements are
+        needed for joint, jointinparent and site transmissions where this
+        attribute is used to specify 3D force and torque axes.
+    :param joint:
+        This and the next four attributes determine the type of actuator
+        transmission. All of them are optional, and exactly one of them must be
+        specified. If this attribute is specified, the actuator acts on the
+        given joint. For hinge and slide joints, the actuator length equals the
+        joint position/angle times the first element of gear. For ball joints,
+        the first three elements of gear define a 3d rotation axis in the child
+        frame around which the actuator produces torque. The actuator length is
+        defined as the dot-product between this gear axis and the angle-axis
+        representation of the joint quaternion position. For free joints, gear
+        defines a 3d translation axis in the world frame followed by a 3d
+        rotation axis in the child frame. The actuator generates force and
+        torque relative to the specified axes. The actuator length for free
+        joints is defined as zero (so it should not be used with position
+        servos).
+    :param jointinparent:
+        Identical to joint, except that for ball and free joints, the 3d
+        rotation axis given by gear is defined in the parent frame (which is
+        the world frame for free joints) rather than the child frame.
+    :param name:
+        Element name. See Naming elements.
+    :param site:
+        This actuator can applies force and torque at a site. The gear vector
+        defines a 3d translation axis followed by a 3d rotation axis. Both are
+        defined in the site's frame. This can be used to model jets and
+        propellers. The effect is similar to actuating a free joint, and the
+        actuator length is again defined as zero. One difference from the joint
+        and jointinparent transmissions above is that here the actuator
+        operates on a site rather than a joint, but this difference disappears
+        when the site is defined at the frame origin of the free-floating body.
+        The other difference is that for site transmissions both the
+        translation and rotation axes are defined in local coordinates. In
+        contrast, translation is global and rotation is local for joint, and
+        both translation and rotation are global for jointinparent.
+    :param slidersite:
+        Used only for the slider-crank transmission type. The specified site is
+        the pin joining the slider and the connecting rod. The slider moves
+        along the z-axis of the slidersite frame. Therefore the site should be
+        oriented as needed when it is defined in the kinematic tree; its
+        orientation cannot be changed in the actuator definition.
+    :param tendon:
+        If specified, the actuator acts on the given tendon. The actuator
+        length equals the tendon length times the gear ratio. Both spatial and
+        fixed tendons can be used.
+    :param user:
+        See User parameters.
     """
     def __init__(
         self,
@@ -1904,6 +4109,123 @@ class Motor(Element):
     Setting Attribute Setting   dyntype none dynprm 1 0 0   gaintype fixed
     gainprm 1 0 0   biastype none biasprm 0 0 0         This element does not
     have custom attributes. It only has common attributes, which are:
+
+    :param biasprm:
+        Bias parameters. The affine bias type uses all three of them. The
+        length of this array is not enforced by the parser, so the user can
+        enter as many parameters as needed (when using callbacks).
+    :param biastype:
+        The keywords have the following meaning:            Keyword Description
+        none bias_term = 0   affine bias_term = biasprm[0] + biasprm[1]*length
+        + biasprm[2]*velocity   user bias_term = mjcb_act_bias(...)
+    :param class_:
+        Active defaults class. See Default settings.
+    :param cranklength:
+        Used only for the slider-crank transmission type. Specifies the length
+        of the connecting rod. The compiler expects this value to be positive
+        when a slider-crank transmission is present.
+    :param cranksite:
+        If specified, the actuator acts on a slider-crank mechanism which is
+        implicitly determined by the actuator (i.e. it is not a separate model
+        element). The specified site corresponds to the pin joining the crank
+        and the connecting rod. The actuator length equals the position of the
+        slider-crank mechanism times the gear ratio.
+    :param ctrllimited:
+        If true, the control input to this actuator is automatically clamped to
+        ctrlrange at runtime. If false, control input clamping is disabled.
+        Note that control input clamping can also be globally disabled with the
+        clampctrl attribute of option/ flag.
+    :param ctrlrange:
+        Range for clamping the control input. The compiler expects the first
+        value to be smaller than the second value.
+    :param dynprm:
+        Activation dynamics parameters. The built-in activation types use only
+        the first parameter, but we provide additional parameters in case user
+        callbacks implement a more elaborate model. The length of this array is
+        not enforced by the parser, so the user can enter as many parameters as
+        needed.
+    :param dyntype:
+        Activation dynamics type for the actuator. The available dynamics types
+        were already described in the Actuation model section. Repeating that
+        description in somewhat different notation (corresponding to the
+        mjModel and mjData fields involved) we have:            Keyword
+        Description   none No internal state   integrator act_dot = ctrl
+        filter act_dot = (ctrl - act) / dynprm[0]   user act_dot =
+        mjcb_act_dyn(...)
+    :param forcelimited:
+        If true, the force output of this actuator is automatically clamped to
+        forcerange at runtime. If false, force output clamping is disabled.
+    :param forcerange:
+        Range for clamping the force output. The compiler expects the first
+        value to be no greater than the second value.
+    :param gainprm:
+        Gain parameters. The built-in gain types use only the first parameter,
+        but we provide additional parameters in case user callbacks implement a
+        more elaborate model. The length of this array is not enforced by the
+        parser, so the user can enter as many parameters as needed.
+    :param gaintype:
+        The gain and bias together determine the output of the force generation
+        mechanism, which is currently assumed to be affine. As already
+        explained in Actuation model, the general formula is: scalar_force =
+        gain_term * (act or ctrl) + bias_term.                  The formula
+        uses the activation state when present, and the control otherwise. The
+        keywords have the following meaning:            Keyword Description
+        fixed gain_term = gainprm[0]   user gain_term = mjcb_act_gain(...)
+    :param gear:
+        This attribute scales the length (and consequently moment arms,
+        velocity and force) of the actuator, for all transmission types. It is
+        different from the gain in the force generation mechanism, because the
+        gain only scales the force output and does not affect the length,
+        moment arms and velocity. For actuators with scalar transmission, only
+        the first element of this vector is used. The remaining elements are
+        needed for joint, jointinparent and site transmissions where this
+        attribute is used to specify 3D force and torque axes.
+    :param joint:
+        This and the next four attributes determine the type of actuator
+        transmission. All of them are optional, and exactly one of them must be
+        specified. If this attribute is specified, the actuator acts on the
+        given joint. For hinge and slide joints, the actuator length equals the
+        joint position/angle times the first element of gear. For ball joints,
+        the first three elements of gear define a 3d rotation axis in the child
+        frame around which the actuator produces torque. The actuator length is
+        defined as the dot-product between this gear axis and the angle-axis
+        representation of the joint quaternion position. For free joints, gear
+        defines a 3d translation axis in the world frame followed by a 3d
+        rotation axis in the child frame. The actuator generates force and
+        torque relative to the specified axes. The actuator length for free
+        joints is defined as zero (so it should not be used with position
+        servos).
+    :param jointinparent:
+        Identical to joint, except that for ball and free joints, the 3d
+        rotation axis given by gear is defined in the parent frame (which is
+        the world frame for free joints) rather than the child frame.
+    :param name:
+        Element name. See Naming elements.
+    :param site:
+        This actuator can applies force and torque at a site. The gear vector
+        defines a 3d translation axis followed by a 3d rotation axis. Both are
+        defined in the site's frame. This can be used to model jets and
+        propellers. The effect is similar to actuating a free joint, and the
+        actuator length is again defined as zero. One difference from the joint
+        and jointinparent transmissions above is that here the actuator
+        operates on a site rather than a joint, but this difference disappears
+        when the site is defined at the frame origin of the free-floating body.
+        The other difference is that for site transmissions both the
+        translation and rotation axes are defined in local coordinates. In
+        contrast, translation is global and rotation is local for joint, and
+        both translation and rotation are global for jointinparent.
+    :param slidersite:
+        Used only for the slider-crank transmission type. The specified site is
+        the pin joining the slider and the connecting rod. The slider moves
+        along the z-axis of the slidersite frame. Therefore the site should be
+        oriented as needed when it is defined in the kinematic tree; its
+        orientation cannot be changed in the actuator definition.
+    :param tendon:
+        If specified, the actuator acts on the given tendon. The actuator
+        length equals the tendon length times the gear ratio. Both spatial and
+        fixed tendons can be used.
+    :param user:
+        See User parameters.
     """
     def __init__(
         self,
@@ -1961,6 +4283,35 @@ class Position(Element):
     dyntype none dynprm 1 0 0   gaintype fixed gainprm kp 0 0   biastype
     affine biasprm 0 -kp 0             This element has one custom attribute
     in addition to the common attributes:
+
+    :param kp:
+        Position feedback gain.
+    :param class_:
+        Same as in actuator/ general.
+    :param cranklength:
+        Same as in actuator/ general.
+    :param cranksite:
+        Same as in actuator/ general.
+    :param ctrllimited:
+        Same as in actuator/ general.
+    :param ctrlrange:
+        Same as in actuator/ general.
+    :param forcelimited:
+        Same as in actuator/ general.
+    :param forcerange:
+        Same as in actuator/ general.
+    :param gear:
+        Same as in actuator/ general.
+    :param joint:
+        Same as in actuator/ general.
+    :param name:
+        Same as in actuator/ general.
+    :param slidersite:
+        Same as in actuator/ general.
+    :param tendon:
+        Same as in actuator/ general.
+    :param user:
+        Same as in actuator/ general.
     """
     def __init__(
         self,
@@ -2007,6 +4358,35 @@ class Velocity(Element):
     Attribute Setting Attribute Setting   dyntype none dynprm 1 0 0   gaintype
     fixed gainprm kv 0 0   biastype affine biasprm 0 0 -kv             This
     element has one custom attribute in addition to the common attributes:
+
+    :param kv:
+        Velocity feedback gain.
+    :param class_:
+        Same as in actuator/ general.
+    :param cranklength:
+        Same as in actuator/ general.
+    :param cranksite:
+        Same as in actuator/ general.
+    :param ctrllimited:
+        Same as in actuator/ general.
+    :param ctrlrange:
+        Same as in actuator/ general.
+    :param forcelimited:
+        Same as in actuator/ general.
+    :param forcerange:
+        Same as in actuator/ general.
+    :param gear:
+        Same as in actuator/ general.
+    :param joint:
+        Same as in actuator/ general.
+    :param name:
+        Same as in actuator/ general.
+    :param slidersite:
+        Same as in actuator/ general.
+    :param tendon:
+        Same as in actuator/ general.
+    :param user:
+        Same as in actuator/ general.
     """
     def __init__(
         self,
@@ -2051,6 +4431,42 @@ class Cylinder(Element):
     gaintype fixed gainprm area 0 0   biastype affine biasprm bias
     This element has four custom attributes in addition to the common
     attributes:
+
+    :param area:
+        Area of the cylinder. This is used internally as actuator gain.
+    :param bias:
+        Bias parameters, copied internally into biasprm.
+    :param diameter:
+        Instead of area the user can specify diameter. If both are specified,
+        diameter has precedence.
+    :param timeconst:
+        Time constant of the activation dynamics.
+    :param class_:
+        Same as in actuator/ general.
+    :param cranklength:
+        Same as in actuator/ general.
+    :param cranksite:
+        Same as in actuator/ general.
+    :param ctrllimited:
+        Same as in actuator/ general.
+    :param ctrlrange:
+        Same as in actuator/ general.
+    :param forcelimited:
+        Same as in actuator/ general.
+    :param forcerange:
+        Same as in actuator/ general.
+    :param gear:
+        Same as in actuator/ general.
+    :param joint:
+        Same as in actuator/ general.
+    :param name:
+        Same as in actuator/ general.
+    :param slidersite:
+        Same as in actuator/ general.
+    :param tendon:
+        Same as in actuator/ general.
+    :param user:
+        Same as in actuator/ general.
     """
     def __init__(
         self,
@@ -2096,6 +4512,7 @@ class Cylinder(Element):
 class Muscle(Element):
     """
              To be written.
+
     """
     def __init__(
         self,
@@ -2117,6 +4534,7 @@ class Sensor(Element):
     acceleration etc.) but even if no such sensors are defined in the model,
     these quantities themselves are "features" that could be of interest to
     the user.
+
     """
     def __init__(
         self,
@@ -2139,6 +4557,17 @@ class SensorTouch(Element):
     It is computed by adding up the (scalar) normal forces from all included
     contacts. An example of touch sensor zones for a robotic hand can be found
     in the Sensors section in the MuJoCo HATPIX chapter.
+
+    :param site:
+        Site defining the active sensor zone.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2163,6 +4592,18 @@ class SensorAccelerometer(Element):
     a site, and has the same position and orientation as the site frame. This
     sensor outputs three numbers, which are the linear acceleration of the
     site (including gravity) in local coordinates.
+
+    :param site:
+        Site where the sensor is mounted. The accelerometer is centered and
+        aligned with the site local frame.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2187,6 +4628,18 @@ class SensorVelocimeter(Element):
     site, and has the same position and orientation as the site frame. This
     sensor outputs three numbers, which are the linear velocity of the site in
     local coordinates.
+
+    :param site:
+        Site where the sensor is mounted. The velocimeter is centered and
+        aligned with the site local frame.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2213,6 +4666,18 @@ class SensorGyro(Element):
     in local coordinates. This sensor is often used in conjunction with an
     accelerometer mounted at the same site, to simulate an inertial
     measurement unit (IMU).
+
+    :param site:
+        Site where the sensor is mounted. The gyroscope is centered and aligned
+        with the site local frame.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2242,6 +4707,23 @@ class SensorForce(Element):
     acting on the system, including contacts as well as external
     perturbations. Using this sensor often requires creating a dummy body
     welded to its parent (i.e. having no joint elements).
+
+    :param site:
+        Site where the sensor is mounted. The measured interaction force is
+        between the body where the site is defined and its parent body, and
+        points from the child towards the parent. The physical sensor being
+        modeled could of course be attached to the parent body, in which case
+        the sensor data would have the opposite sign. Note that each body has a
+        unique parent but can have multiple children, which is why we define
+        this sensor through the child rather than the parent body in the pair.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2264,6 +4746,18 @@ class SensorTorque(Element):
     """
          This element creates a 3-axis torque sensor. This is similar to the
     force sensor above, but measures torque rather than force.
+
+    :param site:
+        Site where the sensor is mounted. The measured interaction torque is
+        between the body where the site is defined and its parent body.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2287,6 +4781,17 @@ class SensorMagnetometer(Element):
          This element creates a magnetometer. It measures the magnetic flux at
     the sensor site position, expressed in the sensor site frame. The output
     is a 3D vector.
+
+    :param site:
+        The site where the sensor is attached.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2317,6 +4822,17 @@ class SensorRangefinder(Element):
     that geoms made invisible in the visualizer by disabling their geom group
     are not excluded; this is because sensor calculations are independent of
     the visualizer.
+
+    :param site:
+        The site where the sensor is attached.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2342,6 +4858,18 @@ class SensorJointpos(Element):
     quantities that are already computed. This element creates a joint
     position or angle sensor. It can be attached to scalar joints (slide or
     hinge). Its output is scalar.
+
+    :param joint:
+        The joint whose position or angle will be sensed. Only scalar joints
+        can be referenced here. The sensor output is copied from mjData.qpos.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2364,6 +4892,18 @@ class SensorJointvel(Element):
     """
          This element creates a joint velocity sensor. It can be attached to
     scalar joints (slide or hinge). Its output is scalar.
+
+    :param joint:
+        The joint whose velocity will be sensed. Only scalar joints can be
+        referenced here. The sensor output is copied from mjData.qvel.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2386,6 +4926,18 @@ class SensorTendonpos(Element):
     """
          This element creates a tendon length sensor. It can be attached to
     both spatial and fixed tendons. Its output is scalar.
+
+    :param tendon:
+        The tendon whose length will be sensed. The sensor output is copied
+        from mjData.ten_length.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2408,6 +4960,18 @@ class SensorTendonvel(Element):
     """
          This element creates a tendon velocity sensor. It can be attached to
     both spatial and fixed tendons. Its output is scalar.
+
+    :param tendon:
+        The tendon whose velocity will be sensed. The sensor output is copied
+        from mjData.ten_velocity.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2431,6 +4995,18 @@ class SensorActuatorpos(Element):
          This element creates an actuator length sensor. Recall that each
     actuator has a transmission which has length. This sensor can be attached
     to any actuator. Its output is scalar.
+
+    :param actuator:
+        The actuator whose transmission's length will be sensed. The sensor
+        output is copied from mjData.actuator_length.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2453,6 +5029,18 @@ class SensorActuatorvel(Element):
     """
          This element creates an actuator velocity sensor. This sensor can be
     attached to any actuator. Its output is scalar.
+
+    :param actuator:
+        The actuator whose transmission's velocity will be sensed. The sensor
+        output is copied from mjData.actuator_velocity.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2478,6 +5066,18 @@ class SensorActuatorfrc(Element):
     by the actuator (the latter is the product of the scalar force and the
     vector of moment arms determined by the transmission). This sensor can be
     attached to any actuator. Its output is scalar.
+
+    :param actuator:
+        The actuator whose scalar force output will be sensed. The sensor
+        output is copied from mjData.actuator_force.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2500,6 +5100,18 @@ class SensorBallquat(Element):
     """
          This element creates a quaternion sensor for a ball joints. It
     outputs 4 numbers corresponding to a unit quaternion.
+
+    :param joint:
+        The ball joint whose quaternion is sensed. The sensor output is copied
+        from mjData.qpos.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2524,6 +5136,18 @@ class SensorBallangvel(Element):
     3 numbers corresponding to the angular velocity of the joint. The norm of
     that vector is the rotation speed in rad/s and the direction is the axis
     around which the rotation takes place.
+
+    :param joint:
+        The ball joint whose angular velocity is sensed. The sensor output is
+        copied from mjData.qvel.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2546,6 +5170,22 @@ class SensorFramepos(Element):
     """
          This element creates a sensor that returns the 3D position of the
     spatial frame of the object, in global coordinates.
+
+    :param objname:
+        The name of the object to which the sensor is attached.
+    :param objtype:
+        The type of object to which the sensor is attached. This must be an
+        object type that has a spatial frame. "body" refers to the inertial
+        frame of the body, while "xbody" refers to the regular frame of the
+        body (usually centered at the joint with the parent body).
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2571,6 +5211,22 @@ class SensorFramequat(Element):
          This element creates a sensor that returns the unit quaternion
     specifying the orientation of the spatial frame of the object, in global
     coordinates.
+
+    :param objname:
+        The name of the object to which the sensor is attached.
+    :param objtype:
+        The type of object to which the sensor is attached. This must be an
+        object type that has a spatial frame. "body" refers to the inertial
+        frame of the body, while "xbody" refers to the regular frame of the
+        body (usually centered at the joint with the parent body).
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2596,6 +5252,22 @@ class SensorFramexaxis(Element):
          This element creates a sensor that returns the 3D unit vector
     corresponding to the X-axis of the spatial frame of the object, in global
     coordinates.
+
+    :param objname:
+        The name of the object to which the sensor is attached.
+    :param objtype:
+        The type of object to which the sensor is attached. This must be an
+        object type that has a spatial frame. "body" refers to the inertial
+        frame of the body, while "xbody" refers to the regular frame of the
+        body (usually centered at the joint with the parent body).
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2621,6 +5293,22 @@ class SensorFrameyaxis(Element):
          This element creates a sensor that returns the 3D unit vector
     corresponding to the Y-axis of the spatial frame of the object, in global
     coordinates.
+
+    :param objname:
+        The name of the object to which the sensor is attached.
+    :param objtype:
+        The type of object to which the sensor is attached. This must be an
+        object type that has a spatial frame. "body" refers to the inertial
+        frame of the body, while "xbody" refers to the regular frame of the
+        body (usually centered at the joint with the parent body).
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2646,6 +5334,22 @@ class SensorFramezaxis(Element):
          This element creates a sensor that returns the 3D unit vector
     corresponding to the Z-axis of the spatial frame of the object, in global
     coordinates.
+
+    :param objname:
+        The name of the object to which the sensor is attached.
+    :param objtype:
+        The type of object to which the sensor is attached. This must be an
+        object type that has a spatial frame. "body" refers to the inertial
+        frame of the body, while "xbody" refers to the regular frame of the
+        body (usually centered at the joint with the parent body).
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2670,6 +5374,22 @@ class SensorFramelinvel(Element):
     """
          This element creates a sensor that returns the 3D linear velocity of
     the spatial frame of the object, in global coordinates.
+
+    :param objname:
+        The name of the object to which the sensor is attached.
+    :param objtype:
+        The type of object to which the sensor is attached. This must be an
+        object type that has a spatial frame. "body" refers to the inertial
+        frame of the body, while "xbody" refers to the regular frame of the
+        body (usually centered at the joint with the parent body).
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2694,6 +5414,22 @@ class SensorFrameangvel(Element):
     """
          This element creates a sensor that returns the 3D angular velocity of
     the spatial frame of the object, in global coordinates.
+
+    :param objname:
+        The name of the object to which the sensor is attached.
+    :param objtype:
+        The type of object to which the sensor is attached. This must be an
+        object type that has a spatial frame. "body" refers to the inertial
+        frame of the body, while "xbody" refers to the regular frame of the
+        body (usually centered at the joint with the parent body).
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2718,6 +5454,22 @@ class SensorFramelinacc(Element):
     """
          This element creates a sensor that returns the 3D linear acceleration
     of the spatial frame of the object, in global coordinates.
+
+    :param objname:
+        The name of the object to which the sensor is attached.
+    :param objtype:
+        The type of object to which the sensor is attached. This must be an
+        object type that has a spatial frame. "body" refers to the inertial
+        frame of the body, while "xbody" refers to the regular frame of the
+        body (usually centered at the joint with the parent body).
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2742,6 +5494,22 @@ class SensorFrameangacc(Element):
     """
          This element creates a sensor that returns the 3D angular
     acceleration of the spatial frame of the object, in global coordinates.
+
+    :param objname:
+        The name of the object to which the sensor is attached.
+    :param objtype:
+        The type of object to which the sensor is attached. This must be an
+        object type that has a spatial frame. "body" refers to the inertial
+        frame of the body, while "xbody" refers to the regular frame of the
+        body (usually centered at the joint with the parent body).
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2766,6 +5534,17 @@ class SensorSubtreecom(Element):
     """
          This element creates sensor that returns the center of mass of the
     kinematic subtree rooted at a specified body, in global coordinates.
+
+    :param body:
+        Name of the body where the kinematic subtree is rooted.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2789,6 +5568,17 @@ class SensorSubtreelinvel(Element):
          This element creates sensor that returns the linear velocity of the
     center of mass of the kinematic subtree rooted at a specified body, in
     global coordinates.
+
+    :param body:
+        Name of the body where the kinematic subtree is rooted.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2812,6 +5602,17 @@ class SensorSubtreeangmom(Element):
          This element creates sensor that returns the angular momentum around
     the center of mass of the kinematic subtree rooted at a specified body, in
     global coordinates.
+
+    :param body:
+        Name of the body where the kinematic subtree is rooted.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2841,6 +5642,31 @@ class SensorUser(Element):
     Note that the MuJoCo object referenced here can be a tuple, which in turn
     can reference a custom collection of MuJoCo objects - for example several
     bodies whose center of mass is of interest.
+
+    :param datatype:
+        The type of output generated by this sensor. "axis" means a unit-length
+        3D vector. "quat" means a unit quaterion. These need to be declared
+        because when MuJoCo adds noise, it must respect the vector
+        normalization. "real" means a generic array (or scalar) of real values
+        to which noise can be added independently.
+    :param dim:
+        Number of scalar outputs of this sensor.
+    :param needstage:
+        The MuJoCo computation stage that must be completed before the user
+        callback mjcb_sensor() is able to evaluate the output of this sensor.
+    :param objname:
+        Name of the MuJoCo object to which the sensor is attached.
+    :param objtype:
+        Type of the MuJoCo object to which the sensor is attached. This
+        together with the objname attribute determines the actual object.
+    :param cutoff:
+        See Sensors.
+    :param name:
+        See Sensors.
+    :param noise:
+        See Sensors.
+    :param user:
+        See Sensors.
     """
     def __init__(
         self,
@@ -2882,6 +5708,7 @@ class Keyframe(Element):
     the simulation state can be copied into a selected keyframe and vice
     versa; see Sim dialog in the MuJoco HAPTIX chapter. In Pro this has to be
     done programmatically.
+
     """
     def __init__(
         self,
@@ -2894,6 +5721,19 @@ class Key(Element):
     """
          This element sets the data for one of the keyframes. They are set in
     the order in which they appear here.
+
+    :param act:
+        Vector of actuator activations, copied into mjData.act when the
+        simulation state is set to this keyframe.
+    :param qpos:
+        Vector of joint positions, copied into mjData.qpos when the simulation
+        state is set to this keyframe.
+    :param qvel:
+        Vector of joint velocities, copied into mjData.qvel when the simulation
+        state is set to this keyframe.
+    :param time:
+        Simulation time, copied into mjData.time when the simulation state is
+        set to this keyframe.
     """
     def __init__(
         self,
@@ -2919,6 +5759,7 @@ class Worldbody(Element):
     have any attributes. It corresponds to the origin of the world frame,
     within which the rest of the kinematic tree is defined. Its body name is
     automatically defined as "world".
+
     """
     def __init__(
         self,
