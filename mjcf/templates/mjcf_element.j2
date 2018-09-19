@@ -1,16 +1,22 @@
 class {{ classname }}(Element):
-    {%- if docstring %}
+    {% if docstring %}
     """
-    {{- docstring }}
-    """{% endif %}
+    {{ docstring }}
+    """
+    {% endif %}
     def __init__(
         self,
-{%- for attr in attributes %}
+        {% for attr in attributes %}
+        {% if attr["default"] == "required" %}
+        {{ attr["name"] }},
+        {% else %}
         {{ attr["name"] }}={{ attr["default"]|string }},
-{%- endfor %}
+        {% endif %}
+        {% endfor %}
     ):
         super().__init__()
-{%- for attr in attributes %}
+{% for attr in attributes %}
         self.{{ attr["name"] }} = {{ attr["name"] }}
-{%- endfor %}
+{% endfor %}
         self._attribute_names = {{ attribute_names }}
+

@@ -1,4 +1,6 @@
 import os
+from textwrap import wrap, fill
+from operator import attrgetter
 from copy import copy, deepcopy
 from bs4 import BeautifulSoup
 from bs4.element import Tag
@@ -59,10 +61,24 @@ class MJScraper(object):
         """
         Docs point back to actuator / general for details on these attributes
         """
-        attrs = elements["general"]["attributes"]
+        attrs = deepcopy(elements["general"]["attributes"])
         elements["motor"]["attributes"] = attrs
 
         return elements
+
+    def _is_really_required(self, default_string):
+        """
+        Handle a couple annoying edge cases
+        """
+        # Assume attr 'sliderside' for actuators isn't really required
+        if "slider-crank" in default_string:
+            return False
+
+        # Assume that 'class' isn't really required for default tags
+        if "except at the top level" in default_string:
+            return False
+
+        return True
 
     def _get_type_default(self, dl_item_text):
         """
@@ -74,7 +90,7 @@ class MJScraper(object):
         if len(parts) > 1:
             detail = parts[1]
         else:
-            return None, None
+            return None, None, 3
 
         # Handle lists of valid strings
         if "[" in detail and "]" in detail:
@@ -90,11 +106,17 @@ class MJScraper(object):
             attr_type = detail_parts[0].strip()
             attr_default = detail_parts[1].strip()
 
-        if "optional" in attr_default \
-            or "required" in attr_default \
-            or "default" in attr_default:
+        required = 2  # Used in a sort later. Optional attrs should sort after required ones
+        if "required" in attr_default:
+            if self._is_really_required(attr_default):
+                attr_default = "required"
+                required = 1
+            else:
+                attr_default = None
+        elif "optional" in attr_default or "default" in attr_default:
             attr_default = None
-        return attr_type, attr_default
+
+        return attr_type, attr_default, required
 
     def _get_names(self, name_node_text):
         parts = name_node_text.split(":")
@@ -149,6 +171,10 @@ class MJScraper(object):
 
         return False
 
+    def _sort_attributes(self, attributes):
+        attributes = sorted(attributes, key=lambda x: (x["required"], x["name"]))
+        return attributes
+
     def _get_attributes_from_node(self, node):
         attr_template = {
             "type": SENTINEL,
@@ -168,7 +194,7 @@ class MJScraper(object):
                 # Make sure we're dealing with an attribute name line
                 if attr_name_node:
                     attr_names = self._get_names(attr_name_node.text)
-                    attr_type, attr_default = self._get_type_default(dl_item.text)
+                    attr_type, attr_default, attr_required = self._get_type_default(dl_item.text)
                     attr_desc = dl_item.findNext("dd").text.strip()
 
                     for attr_name in attr_names:
@@ -179,8 +205,11 @@ class MJScraper(object):
                         attribute["type"] = attr_type
                         attribute["default"] = attr_default
                         attribute["description"] = attr_desc
+                        attribute["required"] = attr_required
 
                         attributes.append(attribute)
+
+        attributes = self._sort_attributes(attributes)
 
         return attributes
 
@@ -197,6 +226,8 @@ class MJScraper(object):
         desc = p.string
         if not desc:
             desc = p.text
+
+        desc = "\n    ".join(wrap(desc, 74))
         element["description"] = desc
 
         # Attributes
@@ -230,7 +261,9 @@ def main():
     # Jinja2
     env = Environment(
         loader=PackageLoader('mjcf', 'templates'),
-        autoescape=select_autoescape(['python'])
+        autoescape=select_autoescape(['python']),
+        trim_blocks=True,
+        lstrip_blocks=True,
     )
 
     template = env.get_template('mjcf_element.j2')
