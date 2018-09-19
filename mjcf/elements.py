@@ -2257,11 +2257,11 @@ class Body(Element):
         name: str=None,
         pos: List[float]=None,
         user: str="0 0 ...",
-        axisangle: None=None,
-        euler: None=None,
-        quat: None=None,
-        xyaxes: None=None,
-        zaxis: None=None,
+        axisangle: List[float]=None,
+        euler: List[float]=None,
+        quat: List[float]=[1, 0, 0, 0],
+        xyaxes: List[float]=None,
+        zaxis: List[float]=None,
     ):
         super().__init__()
         self.childclass = childclass
@@ -2330,11 +2330,11 @@ class Inertial(Element):
         pos,
         diaginertia: List[float]=None,
         fullinertia: List[float]=None,
-        axisangle: None=None,
-        euler: None=None,
-        quat: None=None,
-        xyaxes: None=None,
-        zaxis: None=None,
+        axisangle: List[float]=None,
+        euler: List[float]=None,
+        quat: List[float]=[1, 0, 0, 0],
+        xyaxes: List[float]=None,
+        zaxis: List[float]=None,
     ):
         super().__init__()
         self.mass = mass
@@ -2859,13 +2859,13 @@ class Geom(Element):
         solmix: float=None,
         type: str="sphere",
         user: str="0 0 ...",
-        axisangle: None=None,
-        euler: None=None,
-        quat: None=None,
-        solimp: None=None,
-        solref: None=None,
-        xyaxes: None=None,
-        zaxis: None=None,
+        axisangle: List[float]=None,
+        euler: List[float]=None,
+        quat: List[float]=[1, 0, 0, 0],
+        solimp: List[float]=[0.9, 0.95, 0.001],
+        solref: List[float]=[0.02, 1],
+        xyaxes: List[float]=None,
+        zaxis: List[float]=None,
     ):
         super().__init__()
         self.class_ = class_
@@ -2956,11 +2956,11 @@ class Site(Element):
         size: List[float]=[0.0, 0.0, 0.0],
         type: str="sphere",
         user: str="0 0 ...",
-        axisangle: None=None,
-        euler: None=None,
-        quat: None=None,
-        xyaxes: None=None,
-        zaxis: None=None,
+        axisangle: List[float]=None,
+        euler: List[float]=None,
+        quat: List[float]=[1, 0, 0, 0],
+        xyaxes: List[float]=None,
+        zaxis: List[float]=None,
     ):
         super().__init__()
         self.class_ = class_
@@ -3066,11 +3066,11 @@ class Camera(Element):
         pos: List[float]=[0.0, 0.0, 0.0],
         target: str=None,
         user: str="0 0 ...",
-        axisangle: None=None,
-        euler: None=None,
-        quat: None=None,
-        xyaxes: None=None,
-        zaxis: None=None,
+        axisangle: List[float]=None,
+        euler: List[float]=None,
+        quat: List[float]=[1, 0, 0, 0],
+        xyaxes: List[float]=None,
+        zaxis: List[float]=None,
     ):
         super().__init__()
         self.class_ = class_
@@ -3276,8 +3276,8 @@ class Pair(Element):
         friction: List[float]=[1.0, 1.0, 0.005, 0.0001, 0.0001],
         gap: float=None,
         margin: float=None,
-        solimp: None=None,
-        solref: None=None,
+        solimp: List[float]=[0.9, 0.95, 0.001],
+        solref: List[float]=[0.02, 1],
     ):
         super().__init__()
         self.geom1 = geom1
@@ -3386,8 +3386,8 @@ class EqualityConnect(Element):
         body2: str=None,
         class_: str=None,
         name: str=None,
-        solimp: None=None,
-        solref: None=None,
+        solimp: List[float]=[0.9, 0.95, 0.001],
+        solref: List[float]=[0.02, 1],
     ):
         super().__init__()
         self.anchor = anchor
@@ -3437,8 +3437,8 @@ class EqualityWeld(Element):
         active: None=None,
         class_: None=None,
         name: None=None,
-        solimp: None=None,
-        solref: None=None,
+        solimp: List[float]=[0.9, 0.95, 0.001],
+        solref: List[float]=[0.02, 1],
     ):
         super().__init__()
         self.body1 = body1
@@ -3489,8 +3489,8 @@ class EqualityJoint(Element):
         active: None=None,
         class_: None=None,
         name: None=None,
-        solimp: None=None,
-        solref: None=None,
+        solimp: List[float]=[0.9, 0.95, 0.001],
+        solref: List[float]=[0.02, 1],
     ):
         super().__init__()
         self.joint1 = joint1
@@ -3536,8 +3536,8 @@ class EqualityTendon(Element):
         active: None=None,
         class_: None=None,
         name: None=None,
-        solimp: None=None,
-        solref: None=None,
+        solimp: List[float]=[0.9, 0.95, 0.001],
+        solref: List[float]=[0.02, 1],
     ):
         super().__init__()
         self.tendon1 = tendon1
@@ -3587,8 +3587,8 @@ class EqualityDistance(Element):
         active: None=None,
         class_: None=None,
         name: None=None,
-        solimp: None=None,
-        solref: None=None,
+        solimp: List[float]=[0.9, 0.95, 0.001],
+        solref: List[float]=[0.02, 1],
     ):
         super().__init__()
         self.geom1 = geom1

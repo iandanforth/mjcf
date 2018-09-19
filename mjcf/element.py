@@ -1,10 +1,21 @@
 from xmltodict import unparse
+import inspect
+from inspect import signature
 
 
 class Element(object):
     def __init__(self):
         self._attribute_names = []
         self._children = []
+        self._default_args = self.get_default_args()
+
+    def get_default_args(self):
+        sig = signature(self.__class__)
+        return {
+            k: v.default
+            for k, v in sig.parameters.items()
+            if v.default is not inspect.Parameter.empty
+        }
 
     def _xml_style_update(self, parent, child):
         """
@@ -38,7 +49,17 @@ class Element(object):
 
         return val
 
-    def _to_dict(self):
+    def _is_default_value(self, value, param):
+        """
+        Returns True if the value is equal to the default value for this param
+        """
+        default = self._default_args.get(param)
+        if default is not None and default == value:
+            return True
+
+        return False
+
+    def _to_dict(self, omit_defaults=False):
         """
         Returns a dict ready for processing by xmltodict lib
         """
@@ -50,6 +71,9 @@ class Element(object):
 
             # Ignore values set to a Python None
             if v is None:
+                continue
+            # Default values clutter mjcf xml so strip them
+            if omit_defaults and self._is_default_value(v, attr):
                 continue
             # Strip underscore from protected name
             if attr == "class_":

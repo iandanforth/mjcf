@@ -127,7 +127,8 @@ def get_leg(
         fromto=[0, 0, 0, hip_distance, hip_distance, 0],
         name="aux_geom_"+name,
         size=0.08,
-        type="capsule"
+        type="capsule",
+        rgba=None
     )
     aux_body = e.Body(
         name="aux_body_"+name,
@@ -150,7 +151,8 @@ def get_leg(
         fromto=[0.0, 0.0, 0.0, 0.2, 0.2, 0.0],
         name="leg_geom_"+name,
         size=0.08,
-        type="capsule"
+        type="capsule",
+        rgba=None
     )
     ankle_body = e.Body(
         name="ankle_body_"+name,
@@ -174,7 +176,8 @@ def get_leg(
         fromto=[0.0, 0.0, 0.0, 0.4, 0.4, 0.0],
         name="ankle_geom_"+name,
         size=0.08,
-        type="capsule"
+        type="capsule",
+        rgba=None
     )
     ankle_body.add_children([ankle_joint, ankle_geom])
 
@@ -337,7 +340,7 @@ def main():
     )
     torso = e.Body(
         name="torso",
-        pos=[0, 0, 0.75]
+        pos=[0, 0, 0.75],
     )
     worldbody.add_children([
         light,
@@ -356,7 +359,8 @@ def main():
         name="torso_geom",
         pos=[0, 0, 0],
         size=0.25,
-        type="sphere"
+        type="sphere",
+        rgba=None
     )
     joint = e.Joint(
         armature=0,
