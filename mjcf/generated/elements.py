@@ -1,4 +1,6 @@
 from mjcf.element import Element
+from typing import List
+
 
 class Include(Element):
     """
@@ -31,7 +33,7 @@ class Mujoco(Element):
     """
     def __init__(
         self,
-        model="MuJoCo Model",
+        model: str="MuJoCo Model",
     ):
         super().__init__()
         self.model = model
@@ -46,21 +48,21 @@ class Compiler(Element):
     """
     def __init__(
         self,
-        angle="degree",
-        balanceinertia="false",
-        boundinertia="0",
-        boundmass="0",
-        convexhull="true",
-        coordinate="local",
-        discardvisual="false",
-        eulerseq="xyz",
-        fitaabb="false",
-        inertiafromgeom="auto",
-        inertiagrouprange="0 4",
-        meshdir=None,
-        settotalmass="-1",
-        strippath="false",
-        texturedir=None,
+        angle: str="degree",
+        balanceinertia: bool=False,
+        boundinertia: float=None,
+        boundmass: float=None,
+        convexhull: bool=True,
+        coordinate: str="local",
+        discardvisual: bool=False,
+        eulerseq: str="xyz",
+        fitaabb: bool=False,
+        inertiafromgeom: str="auto",
+        inertiagrouprange: List[int]=[0, 4],
+        meshdir: str=None,
+        settotalmass: float=None,
+        strippath: bool=False,
+        texturedir: str=None,
     ):
         super().__init__()
         self.angle = angle
@@ -103,29 +105,29 @@ class Option(Element):
     """
     def __init__(
         self,
-        apirate="100",
-        collision="all",
-        cone="pyramidal",
-        density="0",
-        gravity="0 0 -9.81",
-        impedance="sigmoid",
-        impratio="1",
-        integrator="Euler",
-        iterations="100",
-        jacobian="auto",
-        mpr_iterations="50",
-        mpr_tolerance="1e-6",
-        noslip_iterations="0",
-        noslip_tolerance="1e-6",
-        o_margin="0",
-        o_solimp="0.8 0.8 0.01",
-        o_solref="0.02 1",
-        reference="spring",
-        solver="Newton",
-        timestep="0.002",
-        tolerance="1e-8",
-        viscosity="0",
-        wind="0 0 0",
+        apirate: float=None,
+        collision: str="all",
+        cone: str="pyramidal",
+        density: float=None,
+        gravity: List[float]=[0.0, 0.0, -9.81],
+        impedance: str="sigmoid",
+        impratio: float=None,
+        integrator: str="Euler",
+        iterations: int=None,
+        jacobian: str="auto",
+        mpr_iterations: int=None,
+        mpr_tolerance: float=None,
+        noslip_iterations: int=None,
+        noslip_tolerance: float=None,
+        o_margin: float=None,
+        o_solimp: List[float]=[0.8, 0.8, 0.01],
+        o_solref: List[float]=[0.02, 1.0],
+        reference: str="spring",
+        solver: str="Newton",
+        timestep: float=None,
+        tolerance: float=None,
+        viscosity: float=None,
+        wind: List[float]=[0.0, 0.0, 0.0],
     ):
         super().__init__()
         self.apirate = apirate
@@ -169,22 +171,22 @@ class OptionFlag(Element):
     """
     def __init__(
         self,
-        actuation="enable",
-        clampctrl="enable",
-        constraint="enable",
-        contact="enable",
-        energy="disable",
-        equality="enable",
-        filterparent="enable",
-        frictionloss="enable",
-        fwdinv="disable",
-        gravity="enable",
-        limit="enable",
-        override="disable",
-        passive="enable",
-        refsafe="enable",
-        sensornoise="disable",
-        warmstart="enable",
+        actuation: str="enable",
+        clampctrl: str="enable",
+        constraint: str="enable",
+        contact: str="enable",
+        energy: str="disable",
+        equality: str="enable",
+        filterparent: str="enable",
+        frictionloss: str="enable",
+        fwdinv: str="disable",
+        gravity: str="enable",
+        limit: str="enable",
+        override: str="disable",
+        passive: str="enable",
+        refsafe: str="enable",
+        sensornoise: str="disable",
+        warmstart: str="enable",
     ):
         super().__init__()
         self.actuation = actuation
@@ -215,19 +217,19 @@ class Size(Element):
     """
     def __init__(
         self,
-        nconmax="-1",
-        njmax="-1",
-        nkey="0",
-        nstack="-1",
-        nuser_actuator="0",
-        nuser_body="0",
-        nuser_cam="0",
-        nuser_geom="0",
-        nuser_jnt="0",
-        nuser_sensor="0",
-        nuser_site="0",
-        nuser_tendon="0",
-        nuserdata="0",
+        nconmax: int=None,
+        njmax: int=None,
+        nkey: int=None,
+        nstack: int=None,
+        nuser_actuator: int=None,
+        nuser_body: int=None,
+        nuser_cam: int=None,
+        nuser_geom: int=None,
+        nuser_jnt: int=None,
+        nuser_sensor: int=None,
+        nuser_site: int=None,
+        nuser_tendon: int=None,
+        nuserdata: int=None,
     ):
         super().__init__()
         self.nconmax = nconmax
@@ -279,12 +281,12 @@ class Global(Element):
     """
     def __init__(
         self,
-        fovy="45",
-        glow="0.3",
-        ipd="0.068",
-        linewidth="1",
-        offheight="480",
-        offwidth="640",
+        fovy: float=None,
+        glow: float=None,
+        ipd: float=None,
+        linewidth: float=None,
+        offheight: int=None,
+        offwidth: int=None,
     ):
         super().__init__()
         self.fovy = fovy
@@ -307,12 +309,12 @@ class Quality(Element):
     """
     def __init__(
         self,
-        numarrows="10",
-        numquads="4",
-        numslices="28",
-        numstacks="16",
-        offsamples="4",
-        shadowsize="1024",
+        numarrows: int=None,
+        numquads: int=None,
+        numslices: int=None,
+        numstacks: int=None,
+        offsamples: int=None,
+        shadowsize: int=None,
     ):
         super().__init__()
         self.numarrows = numarrows
@@ -336,10 +338,10 @@ class Headlight(Element):
     """
     def __init__(
         self,
-        active="1",
-        ambient="0.1 0.1 0.1",
-        diffuse="0.4 0.4 0.4",
-        specular="0.5 0.5 0.5",
+        active: int=None,
+        ambient: List[float]=[0.1, 0.1, 0.1],
+        diffuse: List[float]=[0.4, 0.4, 0.4],
+        specular: List[float]=[0.5, 0.5, 0.5],
     ):
         super().__init__()
         self.active = active
@@ -358,17 +360,17 @@ class Map(Element):
     """
     def __init__(
         self,
-        alpha="0.3",
-        fogend="10",
-        fogstart="3",
-        force="0.005",
-        shadowclip="1",
-        shadowscale="0.6",
-        stiffness="100",
-        stiffnessrot="500",
-        torque="0.1",
-        zfar="50",
-        znear="0.2",
+        alpha: float=None,
+        fogend: float=None,
+        fogstart: float=None,
+        force: float=None,
+        shadowclip: float=None,
+        shadowscale: float=None,
+        stiffness: float=None,
+        stiffnessrot: float=None,
+        torque: float=None,
+        zfar: float=None,
+        znear: float=None,
     ):
         super().__init__()
         self.alpha = alpha
@@ -394,22 +396,22 @@ class Scale(Element):
     """
     def __init__(
         self,
-        actuatorlength="0.7",
-        actuatorwidth="0.2",
-        camera="0.3",
-        com="0.4",
-        connect="0.2",
-        constraint="0.1",
-        contactheight="0.1",
-        contactwidth="0.3",
-        forcewidth="0.1",
-        framelength="1.0",
-        framewidth="0.1",
-        jointlength="1.0",
-        jointwidth="0.1",
-        light="0.3",
-        selectpoint="0.2",
-        slidercrank="0.2",
+        actuatorlength: float=None,
+        actuatorwidth: float=None,
+        camera: float=None,
+        com: float=None,
+        connect: float=None,
+        constraint: float=None,
+        contactheight: float=None,
+        contactwidth: float=None,
+        forcewidth: float=None,
+        framelength: float=None,
+        framewidth: float=None,
+        jointlength: float=None,
+        jointwidth: float=None,
+        light: float=None,
+        selectpoint: float=None,
+        slidercrank: float=None,
     ):
         super().__init__()
         self.actuatorlength = actuatorlength
@@ -441,23 +443,23 @@ class Rgba(Element):
     """
     def __init__(
         self,
-        actuator="0.9 0.4 0.4 1",
-        camera="0.6 0.9 0.6 1",
-        com="0.9 0.9 0.9 1",
-        connect="0.2 0.2 0.8 1",
-        constraint="0.9 0 0 1",
-        contactforce="0.7 0.9 0.9 1",
-        contactfriction="0.9 0.8 0.4 1",
-        contactpoint="0.9 0.6 0.2 1",
-        contacttorque="0.9 0.7 0.9 1",
-        crankbroken="0.9 0 0 1",
-        fog="0 0 0 1",
-        force="1 0.5 0.5 1",
-        inertia="0.8 0.2 0.2 0.6",
-        joint="0.2 0.6 0.8 1",
-        light="0.6 0.6 0.9 1",
-        selectpoint="0.9 0.9 0.1 1",
-        slidercrank="0.5 0.3 0.8 1",
+        actuator: List[float]=[0.9, 0.4, 0.4, 1.0],
+        camera: List[float]=[0.6, 0.9, 0.6, 1.0],
+        com: List[float]=[0.9, 0.9, 0.9, 1.0],
+        connect: List[float]=[0.2, 0.2, 0.8, 1.0],
+        constraint: List[float]=[0.9, 0.0, 0.0, 1.0],
+        contactforce: List[float]=[0.7, 0.9, 0.9, 1.0],
+        contactfriction: List[float]=[0.9, 0.8, 0.4, 1.0],
+        contactpoint: List[float]=[0.9, 0.6, 0.2, 1.0],
+        contacttorque: List[float]=[0.9, 0.7, 0.9, 1.0],
+        crankbroken: List[float]=[0.9, 0.0, 0.0, 1.0],
+        fog: List[float]=[0.0, 0.0, 0.0, 1.0],
+        force: List[float]=[1.0, 0.5, 0.5, 1.0],
+        inertia: List[float]=[0.8, 0.2, 0.2, 0.6],
+        joint: List[float]=[0.2, 0.6, 0.8, 1.0],
+        light: List[float]=[0.6, 0.6, 0.9, 1.0],
+        selectpoint: List[float]=[0.9, 0.9, 0.1, 1.0],
+        slidercrank: List[float]=[0.5, 0.3, 0.8, 1.0],
     ):
         super().__init__()
         self.actuator = actuator
@@ -491,11 +493,11 @@ class Statistic(Element):
     """
     def __init__(
         self,
-        center=None,
-        extent=None,
-        meaninertia=None,
-        meanmass=None,
-        meansize=None,
+        center: List[float]=None,
+        extent: float=None,
+        meaninertia: float=None,
+        meanmass: float=None,
+        meansize: float=None,
     ):
         super().__init__()
         self.center = center
@@ -515,7 +517,7 @@ class Default(Element):
     """
     def __init__(
         self,
-        class_=None,
+        class_: str=None,
     ):
         super().__init__()
         self.class_ = class_
@@ -752,8 +754,8 @@ class Numeric(Element):
     def __init__(
         self,
         name,
-        data="0 0 ...",
-        size=None,
+        data: str="0 0 ...",
+        size: int=None,
     ):
         super().__init__()
         self.name = name
@@ -801,7 +803,7 @@ class Tupleelement(Element):
         self,
         objname,
         objtype,
-        prm="0",
+        prm: float=None,
     ):
         super().__init__()
         self.objname = objname
@@ -840,25 +842,25 @@ class Texture(Element):
     """
     def __init__(
         self,
-        builtin="none",
-        file=None,
-        fileback=None,
-        filedown=None,
-        filefront=None,
-        fileleft=None,
-        fileright=None,
-        fileup=None,
-        gridlayout="............",
-        gridsize="1 1",
-        height="0",
-        mark="none",
-        markrgb="0 0 0",
-        name=None,
-        random="0.01",
-        rgb1="0.8 0.8 0.8",
-        rgb2="0.5 0.5 0.5",
-        type="cube",
-        width="0",
+        builtin: str="none",
+        file: str=None,
+        fileback: str=None,
+        filedown: str=None,
+        filefront: str=None,
+        fileleft: str=None,
+        fileright: str=None,
+        fileup: str=None,
+        gridlayout: str="............",
+        gridsize: List[int]=[1, 1],
+        height: int=None,
+        mark: str="none",
+        markrgb: List[float]=[0.0, 0.0, 0.0],
+        name: str=None,
+        random: float=None,
+        rgb1: List[float]=[0.8, 0.8, 0.8],
+        rgb2: List[float]=[0.5, 0.5, 0.5],
+        type: str="cube",
+        width: int=None,
     ):
         super().__init__()
         self.builtin = builtin
@@ -893,10 +895,10 @@ class Hfield(Element):
     def __init__(
         self,
         size,
-        file=None,
-        name=None,
-        ncol="0",
-        nrow="0",
+        file: str=None,
+        name: str=None,
+        ncol: int=None,
+        nrow: int=None,
     ):
         super().__init__()
         self.size = size
@@ -958,9 +960,9 @@ class Mesh(Element):
     def __init__(
         self,
         file,
-        class_=None,
-        name=None,
-        scale="1 1 1",
+        class_: str=None,
+        name: str=None,
+        scale: List[float]=[1.0, 1.0, 1.0],
     ):
         super().__init__()
         self.file = file
@@ -984,15 +986,15 @@ class Material(Element):
     def __init__(
         self,
         name,
-        class_=None,
-        emission="0",
-        reflectance="0",
-        rgba="1 1 1 1",
-        shininess="0.5",
-        specular="0.5",
-        texrepeat="1 1",
-        texture=None,
-        texuniform="false",
+        class_: str=None,
+        emission: float=None,
+        reflectance: float=None,
+        rgba: List[float]=[1.0, 1.0, 1.0, 1.0],
+        shininess: float=None,
+        specular: float=None,
+        texrepeat: List[float]=[1.0, 1.0],
+        texture: str=None,
+        texuniform: bool=False,
     ):
         super().__init__()
         self.name = name
@@ -1020,16 +1022,16 @@ class Body(Element):
     """
     def __init__(
         self,
-        childclass=None,
-        mocap="false",
-        name=None,
-        pos=None,
-        user="0 0 ...",
-        axisangle=None,
-        euler=None,
-        quat=None,
-        xyaxes=None,
-        zaxis=None,
+        childclass: str=None,
+        mocap: bool=False,
+        name: str=None,
+        pos: List[float]=None,
+        user: str="0 0 ...",
+        axisangle: None=None,
+        euler: None=None,
+        quat: None=None,
+        xyaxes: None=None,
+        zaxis: None=None,
     ):
         super().__init__()
         self.childclass = childclass
@@ -1060,13 +1062,13 @@ class Inertial(Element):
         self,
         mass,
         pos,
-        diaginertia=None,
-        fullinertia=None,
-        axisangle=None,
-        euler=None,
-        quat=None,
-        xyaxes=None,
-        zaxis=None,
+        diaginertia: List[float]=None,
+        fullinertia: List[float]=None,
+        axisangle: None=None,
+        euler: None=None,
+        quat: None=None,
+        xyaxes: None=None,
+        zaxis: None=None,
     ):
         super().__init__()
         self.mass = mass
@@ -1098,26 +1100,26 @@ class Joint(Element):
     """
     def __init__(
         self,
-        armature="0",
-        axis="0 0 1",
-        class_=None,
-        damping="0",
-        frictionloss="0",
-        limited="false",
-        margin="0",
-        name=None,
-        pos="0 0 0",
-        range="0 0",
-        ref="0",
-        springdamper="0 0",
-        springref="0",
-        stiffness="0",
-        type="hinge",
-        user="0 0 ...",
-        solimpfriction=None,
-        solimplimit=None,
-        solreffriction=None,
-        solreflimit=None,
+        armature: float=None,
+        axis: List[float]=[0.0, 0.0, 1.0],
+        class_: str=None,
+        damping: float=None,
+        frictionloss: float=None,
+        limited: bool=False,
+        margin: float=None,
+        name: str=None,
+        pos: List[float]=[0.0, 0.0, 0.0],
+        range: List[float]=[0.0, 0.0],
+        ref: float=None,
+        springdamper: List[float]=[0.0, 0.0],
+        springref: float=None,
+        stiffness: float=None,
+        type: str="hinge",
+        user: str="0 0 ...",
+        solimpfriction: None=None,
+        solimplimit: None=None,
+        solreffriction: None=None,
+        solreflimit: None=None,
     ):
         super().__init__()
         self.armature = armature
@@ -1156,7 +1158,7 @@ class Freejoint(Element):
     """
     def __init__(
         self,
-        name=None,
+        name: str=None,
     ):
         super().__init__()
         self.name = name
@@ -1185,35 +1187,35 @@ class Geom(Element):
     """
     def __init__(
         self,
-        class_=None,
-        conaffinity="1",
-        condim="3",
-        contype="1",
-        density="1000",
-        fitscale="1",
-        friction="1 0.005 0.0001",
-        fromto=None,
-        gap="0",
-        group="0",
-        hfield=None,
-        margin="0",
-        mass=None,
-        material=None,
-        mesh=None,
-        name=None,
-        pos="0 0 0",
-        rgba="0.5 0.5 0.5 1",
-        size="0 0 0",
-        solmix="1",
-        type="sphere",
-        user="0 0 ...",
-        axisangle=None,
-        euler=None,
-        quat=None,
-        solimp=None,
-        solref=None,
-        xyaxes=None,
-        zaxis=None,
+        class_: str=None,
+        conaffinity: int=None,
+        condim: int=None,
+        contype: int=None,
+        density: float=None,
+        fitscale: float=None,
+        friction: List[float]=[1.0, 0.005, 0.0001],
+        fromto: List[float]=None,
+        gap: float=None,
+        group: int=None,
+        hfield: str=None,
+        margin: float=None,
+        mass: float=None,
+        material: str=None,
+        mesh: str=None,
+        name: str=None,
+        pos: List[float]=[0.0, 0.0, 0.0],
+        rgba: List[float]=[0.5, 0.5, 0.5, 1.0],
+        size: List[float]=[0.0, 0.0, 0.0],
+        solmix: float=None,
+        type: str="sphere",
+        user: str="0 0 ...",
+        axisangle: None=None,
+        euler: None=None,
+        quat: None=None,
+        solimp: None=None,
+        solref: None=None,
+        xyaxes: None=None,
+        zaxis: None=None,
     ):
         super().__init__()
         self.class_ = class_
@@ -1262,20 +1264,20 @@ class Site(Element):
     """
     def __init__(
         self,
-        class_=None,
-        group="0",
-        material=None,
-        name=None,
-        pos="0 0 0",
-        rgba="0.5 0.5 0.5 1",
-        size="0 0 0",
-        type="sphere",
-        user="0 0 ...",
-        axisangle=None,
-        euler=None,
-        quat=None,
-        xyaxes=None,
-        zaxis=None,
+        class_: str=None,
+        group: int=None,
+        material: str=None,
+        name: str=None,
+        pos: List[float]=[0.0, 0.0, 0.0],
+        rgba: List[float]=[0.5, 0.5, 0.5, 1.0],
+        size: List[float]=[0.0, 0.0, 0.0],
+        type: str="sphere",
+        user: str="0 0 ...",
+        axisangle: None=None,
+        euler: None=None,
+        quat: None=None,
+        xyaxes: None=None,
+        zaxis: None=None,
     ):
         super().__init__()
         self.class_ = class_
@@ -1315,19 +1317,19 @@ class Camera(Element):
     """
     def __init__(
         self,
-        class_=None,
-        fovy="45",
-        ipd="0.068",
-        mode="fixed",
-        name=None,
-        pos="0 0 0",
-        target=None,
-        user="0 0 ...",
-        axisangle=None,
-        euler=None,
-        quat=None,
-        xyaxes=None,
-        zaxis=None,
+        class_: str=None,
+        fovy: float=None,
+        ipd: float=None,
+        mode: str="fixed",
+        name: str=None,
+        pos: List[float]=[0.0, 0.0, 0.0],
+        target: str=None,
+        user: str="0 0 ...",
+        axisangle: None=None,
+        euler: None=None,
+        quat: None=None,
+        xyaxes: None=None,
+        zaxis: None=None,
     ):
         super().__init__()
         self.class_ = class_
@@ -1361,21 +1363,21 @@ class Light(Element):
     """
     def __init__(
         self,
-        active="true",
-        ambient="0 0 0",
-        attenuation="1 0 0",
-        castshadow="true",
-        class_=None,
-        cutoff="45",
-        diffuse="0.7 0.7 0.7",
-        dir="0 0 -1",
-        directional="false",
-        exponent="10",
-        mode="fixed",
-        name=None,
-        pos="0 0 0",
-        specular="0.3 0.3 0.3",
-        target=None,
+        active: bool=True,
+        ambient: List[float]=[0.0, 0.0, 0.0],
+        attenuation: List[float]=[1.0, 0.0, 0.0],
+        castshadow: bool=True,
+        class_: str=None,
+        cutoff: float=None,
+        diffuse: List[float]=[0.7, 0.7, 0.7],
+        dir: List[float]=[0.0, 0.0, -1.0],
+        directional: bool=False,
+        exponent: float=None,
+        mode: str="fixed",
+        name: str=None,
+        pos: List[float]=[0.0, 0.0, 0.0],
+        specular: List[float]=[0.3, 0.3, 0.3],
+        target: str=None,
     ):
         super().__init__()
         self.active = active
@@ -1424,13 +1426,13 @@ class Pair(Element):
         self,
         geom1,
         geom2,
-        class_=None,
-        condim="3",
-        friction="1 1 0.005 0.0001 0.0001",
-        gap="0",
-        margin="0",
-        solimp=None,
-        solref=None,
+        class_: str=None,
+        condim: int=None,
+        friction: List[float]=[1.0, 1.0, 0.005, 0.0001, 0.0001],
+        gap: float=None,
+        margin: float=None,
+        solimp: None=None,
+        solref: None=None,
     ):
         super().__init__()
         self.geom1 = geom1
@@ -1494,12 +1496,12 @@ class EqualityConnect(Element):
         self,
         anchor,
         body1,
-        active="true",
-        body2=None,
-        class_=None,
-        name=None,
-        solimp=None,
-        solref=None,
+        active: bool=True,
+        body2: str=None,
+        class_: str=None,
+        name: str=None,
+        solimp: None=None,
+        solref: None=None,
     ):
         super().__init__()
         self.anchor = anchor
@@ -1527,12 +1529,12 @@ class EqualityWeld(Element):
     def __init__(
         self,
         body1,
-        body2=None,
-        active=None,
-        class_=None,
-        name=None,
-        solimp=None,
-        solref=None,
+        body2: str=None,
+        active: None=None,
+        class_: None=None,
+        name: None=None,
+        solimp: None=None,
+        solref: None=None,
     ):
         super().__init__()
         self.body1 = body1
@@ -1554,13 +1556,13 @@ class EqualityJoint(Element):
     def __init__(
         self,
         joint1,
-        joint2=None,
-        polycoef="0 1 0 0 0",
-        active=None,
-        class_=None,
-        name=None,
-        solimp=None,
-        solref=None,
+        joint2: str=None,
+        polycoef: List[float]=[0.0, 1.0, 0.0, 0.0, 0.0],
+        active: None=None,
+        class_: None=None,
+        name: None=None,
+        solimp: None=None,
+        solref: None=None,
     ):
         super().__init__()
         self.joint1 = joint1
@@ -1582,13 +1584,13 @@ class EqualityTendon(Element):
     def __init__(
         self,
         tendon1,
-        polycoef="0 1 0 0",
-        tendon2=None,
-        active=None,
-        class_=None,
-        name=None,
-        solimp=None,
-        solref=None,
+        polycoef: List[float]=[0.0, 1.0, 0.0, 0.0],
+        tendon2: str=None,
+        active: None=None,
+        class_: None=None,
+        name: None=None,
+        solimp: None=None,
+        solref: None=None,
     ):
         super().__init__()
         self.tendon1 = tendon1
@@ -1616,12 +1618,12 @@ class EqualityDistance(Element):
         self,
         geom1,
         geom2,
-        distance="0",
-        active=None,
-        class_=None,
-        name=None,
-        solimp=None,
-        solref=None,
+        distance: float=None,
+        active: None=None,
+        class_: None=None,
+        name: None=None,
+        solimp: None=None,
+        solref: None=None,
     ):
         super().__init__()
         self.geom1 = geom1
@@ -1666,22 +1668,22 @@ class Spatial(Element):
     """
     def __init__(
         self,
-        class_=None,
-        damping="0",
-        frictionloss="0",
-        limited="false",
-        margin="0",
-        material=None,
-        name=None,
-        range="0 0",
-        rgba="0.5 0.5 0.5 1",
-        stiffness="0",
-        user="0 0 ...",
-        width="0",
-        solimpfriction=None,
-        solimplimit=None,
-        solreffriction=None,
-        solreflimit=None,
+        class_: str=None,
+        damping: float=None,
+        frictionloss: float=None,
+        limited: bool=False,
+        margin: float=None,
+        material: str=None,
+        name: str=None,
+        range: List[float]=[0.0, 0.0],
+        rgba: List[float]=[0.5, 0.5, 0.5, 1.0],
+        stiffness: float=None,
+        user: str="0 0 ...",
+        width: float=None,
+        solimpfriction: None=None,
+        solimplimit: None=None,
+        solreffriction: None=None,
+        solreflimit: None=None,
     ):
         super().__init__()
         self.class_ = class_
@@ -1729,7 +1731,7 @@ class SpatialGeom(Element):
     def __init__(
         self,
         geom,
-        sidesite=None,
+        sidesite: str=None,
     ):
         super().__init__()
         self.geom = geom
@@ -1771,19 +1773,19 @@ class Fixed(Element):
     """
     def __init__(
         self,
-        class_=None,
-        damping=None,
-        frictionloss=None,
-        limited=None,
-        margin=None,
-        name=None,
-        range=None,
-        solimpfriction=None,
-        solimplimit=None,
-        solreffriction=None,
-        solreflimit=None,
-        stiffness=None,
-        user=None,
+        class_: None=None,
+        damping: None=None,
+        frictionloss: None=None,
+        limited: None=None,
+        margin: None=None,
+        name: None=None,
+        range: None=None,
+        solimpfriction: None=None,
+        solimplimit: None=None,
+        solreffriction: None=None,
+        solreflimit: None=None,
+        stiffness: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.class_ = class_
@@ -1841,27 +1843,27 @@ class General(Element):
     """
     def __init__(
         self,
-        biasprm="0 0 0",
-        biastype="none",
-        class_=None,
-        cranklength="0",
-        cranksite=None,
-        ctrllimited="false",
-        ctrlrange="0 0",
-        dynprm="1 0 0",
-        dyntype="none",
-        forcelimited="false",
-        forcerange="0 0",
-        gainprm="1 0 0",
-        gaintype="fixed",
-        gear="1 0 0 0 0 0",
-        joint=None,
-        jointinparent=None,
-        name=None,
-        site=None,
-        slidersite=None,
-        tendon=None,
-        user="0 0 ...",
+        biasprm: List[float]=[0.0, 0.0, 0.0],
+        biastype: str="none",
+        class_: str=None,
+        cranklength: float=None,
+        cranksite: str=None,
+        ctrllimited: bool=False,
+        ctrlrange: List[float]=[0.0, 0.0],
+        dynprm: List[float]=[1.0, 0.0, 0.0],
+        dyntype: str="none",
+        forcelimited: bool=False,
+        forcerange: List[float]=[0.0, 0.0],
+        gainprm: List[float]=[1.0, 0.0, 0.0],
+        gaintype: str="fixed",
+        gear: List[float]=[1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        joint: str=None,
+        jointinparent: str=None,
+        name: str=None,
+        site: str=None,
+        slidersite: str=None,
+        tendon: str=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.biasprm = biasprm
@@ -1905,27 +1907,27 @@ class Motor(Element):
     """
     def __init__(
         self,
-        biasprm="0 0 0",
-        biastype="none",
-        class_=None,
-        cranklength="0",
-        cranksite=None,
-        ctrllimited="false",
-        ctrlrange="0 0",
-        dynprm="1 0 0",
-        dyntype="none",
-        forcelimited="false",
-        forcerange="0 0",
-        gainprm="1 0 0",
-        gaintype="fixed",
-        gear="1 0 0 0 0 0",
-        joint=None,
-        jointinparent=None,
-        name=None,
-        site=None,
-        slidersite=None,
-        tendon=None,
-        user="0 0 ...",
+        biasprm: List[float]=[0.0, 0.0, 0.0],
+        biastype: str="none",
+        class_: str=None,
+        cranklength: float=None,
+        cranksite: str=None,
+        ctrllimited: bool=False,
+        ctrlrange: List[float]=[0.0, 0.0],
+        dynprm: List[float]=[1.0, 0.0, 0.0],
+        dyntype: str="none",
+        forcelimited: bool=False,
+        forcerange: List[float]=[0.0, 0.0],
+        gainprm: List[float]=[1.0, 0.0, 0.0],
+        gaintype: str="fixed",
+        gear: List[float]=[1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        joint: str=None,
+        jointinparent: str=None,
+        name: str=None,
+        site: str=None,
+        slidersite: str=None,
+        tendon: str=None,
+        user: str="0 0 ...",
     ):
         super().__init__()
         self.biasprm = biasprm
@@ -1962,20 +1964,20 @@ class Position(Element):
     """
     def __init__(
         self,
-        kp="1",
-        class_=None,
-        cranklength=None,
-        cranksite=None,
-        ctrllimited=None,
-        ctrlrange=None,
-        forcelimited=None,
-        forcerange=None,
-        gear=None,
-        joint=None,
-        name=None,
-        slidersite=None,
-        tendon=None,
-        user=None,
+        kp: float=None,
+        class_: None=None,
+        cranklength: None=None,
+        cranksite: None=None,
+        ctrllimited: None=None,
+        ctrlrange: None=None,
+        forcelimited: None=None,
+        forcerange: None=None,
+        gear: None=None,
+        joint: None=None,
+        name: None=None,
+        slidersite: None=None,
+        tendon: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.kp = kp
@@ -2008,20 +2010,20 @@ class Velocity(Element):
     """
     def __init__(
         self,
-        kv="1",
-        class_=None,
-        cranklength=None,
-        cranksite=None,
-        ctrllimited=None,
-        ctrlrange=None,
-        forcelimited=None,
-        forcerange=None,
-        gear=None,
-        joint=None,
-        name=None,
-        slidersite=None,
-        tendon=None,
-        user=None,
+        kv: float=None,
+        class_: None=None,
+        cranklength: None=None,
+        cranksite: None=None,
+        ctrllimited: None=None,
+        ctrlrange: None=None,
+        forcelimited: None=None,
+        forcerange: None=None,
+        gear: None=None,
+        joint: None=None,
+        name: None=None,
+        slidersite: None=None,
+        tendon: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.kv = kv
@@ -2052,23 +2054,23 @@ class Cylinder(Element):
     """
     def __init__(
         self,
-        area="1",
-        bias="0 0 0",
-        diameter=None,
-        timeconst="1",
-        class_=None,
-        cranklength=None,
-        cranksite=None,
-        ctrllimited=None,
-        ctrlrange=None,
-        forcelimited=None,
-        forcerange=None,
-        gear=None,
-        joint=None,
-        name=None,
-        slidersite=None,
-        tendon=None,
-        user=None,
+        area: float=None,
+        bias: List[float]=[0.0, 0.0, 0.0],
+        diameter: float=None,
+        timeconst: float=None,
+        class_: None=None,
+        cranklength: None=None,
+        cranksite: None=None,
+        ctrllimited: None=None,
+        ctrlrange: None=None,
+        forcelimited: None=None,
+        forcerange: None=None,
+        gear: None=None,
+        joint: None=None,
+        name: None=None,
+        slidersite: None=None,
+        tendon: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.area = area
@@ -2141,10 +2143,10 @@ class SensorTouch(Element):
     def __init__(
         self,
         site,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.site = site
@@ -2165,10 +2167,10 @@ class SensorAccelerometer(Element):
     def __init__(
         self,
         site,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.site = site
@@ -2189,10 +2191,10 @@ class SensorVelocimeter(Element):
     def __init__(
         self,
         site,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.site = site
@@ -2215,10 +2217,10 @@ class SensorGyro(Element):
     def __init__(
         self,
         site,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.site = site
@@ -2244,10 +2246,10 @@ class SensorForce(Element):
     def __init__(
         self,
         site,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.site = site
@@ -2266,10 +2268,10 @@ class SensorTorque(Element):
     def __init__(
         self,
         site,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.site = site
@@ -2289,10 +2291,10 @@ class SensorMagnetometer(Element):
     def __init__(
         self,
         site,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.site = site
@@ -2319,10 +2321,10 @@ class SensorRangefinder(Element):
     def __init__(
         self,
         site,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.site = site
@@ -2344,10 +2346,10 @@ class SensorJointpos(Element):
     def __init__(
         self,
         joint,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.joint = joint
@@ -2366,10 +2368,10 @@ class SensorJointvel(Element):
     def __init__(
         self,
         joint,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.joint = joint
@@ -2388,10 +2390,10 @@ class SensorTendonpos(Element):
     def __init__(
         self,
         tendon,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.tendon = tendon
@@ -2410,10 +2412,10 @@ class SensorTendonvel(Element):
     def __init__(
         self,
         tendon,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.tendon = tendon
@@ -2433,10 +2435,10 @@ class SensorActuatorpos(Element):
     def __init__(
         self,
         actuator,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.actuator = actuator
@@ -2455,10 +2457,10 @@ class SensorActuatorvel(Element):
     def __init__(
         self,
         actuator,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.actuator = actuator
@@ -2480,10 +2482,10 @@ class SensorActuatorfrc(Element):
     def __init__(
         self,
         actuator,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.actuator = actuator
@@ -2502,10 +2504,10 @@ class SensorBallquat(Element):
     def __init__(
         self,
         joint,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.joint = joint
@@ -2526,10 +2528,10 @@ class SensorBallangvel(Element):
     def __init__(
         self,
         joint,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.joint = joint
@@ -2549,10 +2551,10 @@ class SensorFramepos(Element):
         self,
         objname,
         objtype,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.objname = objname
@@ -2574,10 +2576,10 @@ class SensorFramequat(Element):
         self,
         objname,
         objtype,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.objname = objname
@@ -2599,10 +2601,10 @@ class SensorFramexaxis(Element):
         self,
         objname,
         objtype,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.objname = objname
@@ -2624,10 +2626,10 @@ class SensorFrameyaxis(Element):
         self,
         objname,
         objtype,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.objname = objname
@@ -2649,10 +2651,10 @@ class SensorFramezaxis(Element):
         self,
         objname,
         objtype,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.objname = objname
@@ -2673,10 +2675,10 @@ class SensorFramelinvel(Element):
         self,
         objname,
         objtype,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.objname = objname
@@ -2697,10 +2699,10 @@ class SensorFrameangvel(Element):
         self,
         objname,
         objtype,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.objname = objname
@@ -2721,10 +2723,10 @@ class SensorFramelinacc(Element):
         self,
         objname,
         objtype,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.objname = objname
@@ -2745,10 +2747,10 @@ class SensorFrameangacc(Element):
         self,
         objname,
         objtype,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.objname = objname
@@ -2768,10 +2770,10 @@ class SensorSubtreecom(Element):
     def __init__(
         self,
         body,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.body = body
@@ -2791,10 +2793,10 @@ class SensorSubtreelinvel(Element):
     def __init__(
         self,
         body,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.body = body
@@ -2814,10 +2816,10 @@ class SensorSubtreeangmom(Element):
     def __init__(
         self,
         body,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.body = body
@@ -2847,10 +2849,10 @@ class SensorUser(Element):
         needstage,
         objname,
         objtype,
-        cutoff=None,
-        name=None,
-        noise=None,
-        user=None,
+        cutoff: None=None,
+        name: None=None,
+        noise: None=None,
+        user: None=None,
     ):
         super().__init__()
         self.datatype = datatype
@@ -2895,10 +2897,10 @@ class Key(Element):
     """
     def __init__(
         self,
-        act="0 0 ...",
-        qpos=None,
-        qvel="0 0 ...",
-        time="0",
+        act: str="0 0 ...",
+        qpos: str=None,
+        qvel: str="0 0 ...",
+        time: float=None,
     ):
         super().__init__()
         self.act = act

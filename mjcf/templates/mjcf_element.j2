@@ -10,7 +10,7 @@ class {{ classname }}(Element):
         {% if attr["default"] == "required" %}
         {{ attr["name"] }},
         {% else %}
-        {{ attr["name"] }}={{ attr["default"]|string }},
+        {{ attr["name"] }}: {{ attr["type"]|string }}={{ attr["default"]|string }},
         {% endif %}
         {% endfor %}
     ):

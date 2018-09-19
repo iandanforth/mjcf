@@ -1,4 +1,5 @@
 import os
+from typing import List
 from textwrap import wrap, fill
 from operator import attrgetter
 from copy import copy, deepcopy
@@ -80,6 +81,54 @@ class MJScraper(object):
 
         return True
 
+    def _parse_list_string(self, list_string, cls):
+        if not list_string or list_string == 'required':
+            return list_string
+
+        # Split
+        vals = list_string.split(" ")
+        vals = [v.strip('\"') for v in vals]
+        vals = [cls(v) for v in vals]
+        return vals
+
+    def _parse_val_string(self, val_string, cls):
+        if not val_string or val_string == 'required':
+            return val_string
+
+        val_string = cls(val_string.strip("\""))
+
+    def _pythonify_type_and_default(self, attr_type, attr_default):
+
+        float_lists = ["real(2)", "real(3)", "real(4)", "real(5)", "real(6)"]
+
+        orig_type = attr_type
+        if attr_type == "real":
+            attr_type = "float"
+            attr_default = self._parse_val_string(attr_default, float)
+        elif attr_type in float_lists:
+            attr_type = "List[float]"
+            attr_default = self._parse_list_string(attr_default, float)
+        elif attr_type == "string":
+            attr_type = "str"
+        elif attr_type == "int(2)":
+            attr_type = "List[int]"
+            attr_default = self._parse_list_string(attr_default, int)
+        elif attr_type == "int":
+            attr_type = "int"
+            attr_default = self._parse_val_string(attr_default, int)
+        elif attr_type == ['false', 'true']:
+            attr_type = "bool"
+            if attr_default and attr_default != 'required':
+                if attr_default == '"false"':
+                    attr_default = False
+                elif attr_default == '"true"':
+                    attr_default = True
+        else:
+            attr_type = "str"
+
+        print(orig_type, attr_type, attr_default)
+        return attr_type, attr_default
+
     def _get_type_default(self, dl_item_text):
         """
         Splits a 'detail' string into the type and default parts
@@ -115,6 +164,12 @@ class MJScraper(object):
                 attr_default = None
         elif "optional" in attr_default or "default" in attr_default:
             attr_default = None
+
+        # Modify defaults based on type
+        attr_type, attr_default = self._pythonify_type_and_default(
+            attr_type,
+            attr_default
+        )
 
         return attr_type, attr_default, required
 
