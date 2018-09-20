@@ -1,4 +1,3 @@
-import os
 from mjcf import elements as e
 
 
@@ -251,8 +250,7 @@ def main():
     model_xml = mujoco.xml()
 
     # Output
-    outpath = os.path.join('tendon-gen.xml')
-    with open(outpath, 'w') as fh:
+    with open('tendon-gen.xml', 'w') as fh:
         fh.write(model_xml)
 
 

@@ -1,4 +1,3 @@
-import os
 from mjcf import elements as e
 
 
@@ -106,8 +105,7 @@ def main():
     model_xml = mujoco.xml()
 
     # Output
-    outpath = os.path.join('empty-gen.xml')
-    with open(outpath, 'w') as fh:
+    with open('empty-gen.xml', 'w') as fh:
         fh.write(model_xml)
 
 
