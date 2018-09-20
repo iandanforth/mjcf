@@ -1,6 +1,5 @@
 import os
 from mjcf import elements as e
-from mjcf import spatial
 
 
 def main():
@@ -56,7 +55,7 @@ def main():
     ])
 
     # Visual
-    headlight = e.Headlight(
+    headlight = e.visual.Headlight(
         diffuse=[0.7, 0.7, 0.7]
     )
     visual.add_child(headlight)
@@ -141,17 +140,17 @@ def main():
     ])
 
     # spatial_tendon
-    ss1 = spatial.Site(site="s1")
-    ss2 = spatial.Site(site="s2")
-    sg1 = spatial.Geom(geom="g1")
-    ss3 = spatial.Site(site="s3")
-    sp1 = spatial.Pulley(divisor=2)
-    sg2 = spatial.Geom(geom="g2", sidesite="side2")
-    ss4 = spatial.Site(site="s4")
-    sp2 = spatial.Pulley(divisor=2)
-    ss5 = spatial.Site(site="s5")
-    sg3 = spatial.Geom(geom="g3", sidesite="side3")
-    ss6 = spatial.Site(site="s6")
+    ss1 = e.spatial.Site(site="s1")
+    ss2 = e.spatial.Site(site="s2")
+    sg1 = e.spatial.Geom(geom="g1")
+    ss3 = e.spatial.Site(site="s3")
+    sp1 = e.spatial.Pulley(divisor=2)
+    sg2 = e.spatial.Geom(geom="g2", sidesite="side2")
+    ss4 = e.spatial.Site(site="s4")
+    sp2 = e.spatial.Pulley(divisor=2)
+    ss5 = e.spatial.Site(site="s5")
+    sg3 = e.spatial.Geom(geom="g3", sidesite="side3")
+    ss6 = e.spatial.Site(site="s6")
 
     spatial_tendon.add_children([
         ss1,

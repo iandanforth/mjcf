@@ -1,11 +1,16 @@
 from collections import OrderedDict
 from lib.xmltodict.xmltodict import unparse  # Patched Fork
-import inspect
-from inspect import signature
+from inspect import signature, Parameter
 
 
 class Element(object):
     def __init__(self):
+        """
+        Base class for all MuJoCo elements.
+
+        The Python class -> MJCF xml file conversion takes a bit of
+        hackery and we take care of that here.
+        """
         self._attribute_names = []
         self._children = []
         self._default_args = self.get_default_args()
@@ -19,7 +24,7 @@ class Element(object):
         return {
             k: v.default
             for k, v in sig.parameters.items()
-            if v.default is not inspect.Parameter.empty
+            if v.default is not Parameter.empty
         }
 
     def _xml_style_update(self, parent, child):
