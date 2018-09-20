@@ -1,0 +1,83 @@
+#contents {
+	position: fixed;
+	top: 180;
+	left: 0;
+	bottom: 0;
+	width: 160;
+	padding: 10;
+	overflow-y: auto;
+	overflow-x: hidden;
+	background: #176093;
+}
+
+#menu {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 160;
+	height: 160;
+	float: left;
+	background: #032a46;
+	padding: 10;
+}
+
+div.ch {
+	width: 170;
+	height: 20;
+}
+
+div.chsel {
+	padding-right: 0;
+	width: 170;
+	height: 20;
+	background: white;
+}
+
+
+img {border-color:#CCCCCC}
+
+p {font-family:Arial; font-size:15; color:black; line-height:1.3; text-align:justify}
+p.title {font-size:16; font-weight:bold; line-height:0.8}
+
+span {color:darkred; font-weight: normal}
+span.el {color:darkblue; font-weight: bold}
+span.comment {color:red; font-weight: normal}
+
+a {text-decoration:none; font-family:Arial; font-size:15; font-weight:normal; color:blue; line-height:1.3}
+a:hover {text-decoration: underline}
+
+a.menu {font-size:16; padding-left:5; color:white; display:block; height:100%; width:100%; line-height:1.4}
+a.menusel {font-size:16; padding-left:5; color:#032a46; display:block; height:100%; width:100%; line-height:1.4}
+a.menusel:hover {text-decoration:none}
+
+a.menuback {font-size:16; padding-left:5; color:#c0c0c0; font-variant: small-caps; display:block; height:100%; width:100%; line-height:1}
+
+a.contents {font-family:Arial; font-size:15; color:white; display:block; width:100%; line-height:1.4}
+a.current {font-family:Arial; font-size:15; color:#176093; background-color:white; padding-left:5; display:block; width:100%}
+
+i {font-weight: bold; font-style: italic}
+
+h1 {font-family:Arial; font-size:26; text-align: center; width:100%; color:white; background-color:#176093}
+h2 {font-family:Arial; font-weight:bold; font-size:20; padding-top:20}
+h3 {font-family:Arial; font-weight:normal; font-size:16; color:darkblue; padding-top:10}
+h4 {font-family:Arial; font-weight:bold; font-size:16; color:black; font-style:italic; padding-top:10}
+h5 {font-family:Arial; font-weight:bold; font-size:15; color:black; padding-top:5}
+	
+dt {font-family:Arial; font-weight:normal; font-size:15; color:darkred; line-height:1.3;
+	padding-top:5}
+dd {font-family:Arial; font-weight:normal; font-size:15; color:black; line-height:1.3; text-align:justify}
+
+li {font-family:Arial; font-weight:normal; font-size:15; color:black; line-height:1.3}
+
+td {font-family:Arial; font-weight:normal; font-size:15; color:black; line-height:1.3;
+    padding:5; text-align:justify; overflow-x:hidden}
+td.chapter {left:190; right:10; position:absolute}
+td.el {background:#EEEEEE; font-weight:bold; color:darkblue}
+td.ty {background:#EEEEEE; font-weight:bold; color:darkblue}
+td.at {color:darkred; text-align:left}
+td.at1 {text-align:left}
+td.el1 {background:#EEEEEE; font-weight:bold}
+td.sym {padding-bottom:1; padding-left:10}
+tr {vertical-align:top}
+tr.header {background:#EEEEEE}
+

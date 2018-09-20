@@ -1,6 +1,5 @@
 import os
 from mjcf import elements as e
-import math
 
 
 def get_leg(
