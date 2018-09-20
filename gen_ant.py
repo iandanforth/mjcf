@@ -88,15 +88,6 @@ def get_leg(
 
 
 def main():
-    # filepath = os.path.join('assets', 'minimal.xml')
-    # with open(filepath, 'r') as fh:
-    #     raw = fh.read()
-    # markup = parse(raw)
-    # jason = json.dumps(markup, indent=4)
-
-    # world_dict = gen_world()
-    # world_markup = unparse(world_dict, pretty=True)
-
     #########################
     # Level 1
     mujoco = e.Mujoco(

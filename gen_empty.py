@@ -1,22 +1,3 @@
-# mjcf
-Python Library for MuJoCo Format model xml
-
-## WARNING: Not high quality code. Use at your own risk.
-
-With that out of the way ... have you ever wanted to generate MuJoCo format
-xml files from Python classes? Of course you have! That's why this library
-exists. 
-
-For every mjcf element there is now a Python class for you to play with.
-
-## Usage
-
-The following is the contents of `gen_empty.py` which will (re)generate
-`empty-gen.xml`. This is an empty checkerboard world, ripe for populating with
-creations of your devising!
-
-```python
-
 import os
 from mjcf import elements as e
 
@@ -132,18 +113,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-```
-
-## What is this insanity?
-
-*So these are thin Python class wrapers for XML elements?*
-
-Yup!
-
-*Why?*
-
-Python all the things!
-
-*Ok*
-
-Shutup!
