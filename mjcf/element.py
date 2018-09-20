@@ -1,4 +1,5 @@
-from xmltodict import unparse
+from collections import OrderedDict
+from lib.xmltodict.xmltodict import unparse  # Patched Fork
 import inspect
 from inspect import signature
 
@@ -59,13 +60,14 @@ class Element(object):
 
         return False
 
-    def _to_dict(self, omit_defaults=False):
+    def _to_dict(self, order=None, omit_defaults=False):
         """
         Returns a dict ready for processing by xmltodict lib
         """
         element_name = self.__class__.__name__
         element_name = element_name.lower()
-        outdict = {element_name: {}}
+        outdict = OrderedDict()
+        outdict[element_name] = OrderedDict()
         for attr in self._attribute_names:
             v = getattr(self, attr)
 
@@ -81,8 +83,11 @@ class Element(object):
             k = "@{}".format(attr)
             outdict[element_name][k] = self._stringify_value(v)
 
-        for child in self._children:
-            child_dict = child._to_dict()
+        if order is not None:
+            outdict[element_name]["@__order__"] = order
+
+        for i, child in enumerate(self._children):
+            child_dict = child._to_dict(order=i)
             outdict[element_name] = self._xml_style_update(
                 outdict[element_name],
                 child_dict
@@ -96,7 +101,12 @@ class Element(object):
         """
 
         outdict = self._to_dict()
-        return unparse(outdict, pretty=True)
+        return unparse(
+            outdict,
+            ordered_mixed_children=True,
+            short_empty_elements=True,
+            pretty=True
+        )
 
     def add_child(self, child):
         """
