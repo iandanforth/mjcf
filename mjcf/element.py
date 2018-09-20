@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from lib.xmltodict.xmltodict import unparse  # Patched Fork
+from mjcf.lib.xmltodict import unparse  # Patched Fork
 from inspect import signature, Parameter
 
 
