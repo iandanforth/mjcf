@@ -7,8 +7,8 @@ def get_leg(
     name,
     hip_distance=0.2,
     hip_angle=0.0,
-    leg_length=0.2,
-    foot_length=0.4
+    leg_length=0.4,
+    foot_length=0.6
 ):
     leg = e.Body(
         name=name,
@@ -57,7 +57,7 @@ def get_leg(
 
     # Body
     ankle_joint = e.Joint(
-        axis=[-1, 1, 0],
+        axis=[0, 1, 0],
         name="ankle_joint_"+name,
         pos=[0.0, 0.0, 0.0],
         range=[30, 70],
