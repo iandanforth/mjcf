@@ -9,6 +9,10 @@ class Element(object):
         self._attribute_names = []
         self._children = []
         self._default_args = self.get_default_args()
+        try:
+            getattr(self, "call_kwargs")
+        except AttributeError:
+            self.call_kwargs = {}
 
     def get_default_args(self):
         sig = signature(self.__class__)
@@ -55,12 +59,20 @@ class Element(object):
         Returns True if the value is equal to the default value for this param
         """
         default = self._default_args.get(param)
-        if default is not None and default == value:
+
+        # If someone explicitly instantiates an element using a keyword
+        # value that is the default value we want this to appear in the
+        # final xml.
+        #
+        # This is because MJCF allows for global default setting that
+        # can be overridden by child elements
+        override = param in self.call_kwargs
+        if default is not None and not override and default == value:
             return True
 
         return False
 
-    def _to_dict(self, order=None, omit_defaults=False):
+    def _to_dict(self, order=None, omit_defaults=True):
         """
         Returns a dict ready for processing by xmltodict lib
         """

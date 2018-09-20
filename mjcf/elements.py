@@ -1,5 +1,14 @@
 from mjcf.element import Element
 from typing import List
+import functools
+
+
+def capture_kwargs(f):
+    @functools.wraps(f)
+    def wrapper(self, *args, **kwargs):
+        self.call_kwargs = kwargs
+        f(self, *args, **kwargs)
+    return wrapper
 
 
 class Include(Element):
@@ -22,6 +31,7 @@ class Include(Element):
         to the directory of the main MJCF file. If the file is not in the same
         directory, it should be prefixed with a relative path.
     """
+    @capture_kwargs
     def __init__(
         self,
         file,
@@ -40,6 +50,7 @@ class Mujoco(Element):
         The name of the model. This name is shown in the title bar of MuJoCo
         HAPTIX.
     """
+    @capture_kwargs
     def __init__(
         self,
         model: str="MuJoCo Model",
@@ -184,6 +195,7 @@ class Compiler(Element):
         This attribute is used to instruct the compiler where to look for
         texture files. It works in the same way as meshdir above.
     """
+    @capture_kwargs
     def __init__(
         self,
         angle: str="degree",
@@ -226,6 +238,7 @@ class CompilerLengthrange(Element):
          To be written.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -381,6 +394,7 @@ class Option(Element):
         Passive forces in the Computation chapter. The magnitude of these
         forces scales with the values of the next two attributes.
     """
+    @capture_kwargs
     def __init__(
         self,
         apirate: float=None,
@@ -520,6 +534,7 @@ class OptionFlag(Element):
         of states that do not form a trajectory - in which case warm starts
         make no sense and are likely to slow down the solver.
     """
+    @capture_kwargs
     def __init__(
         self,
         actuation: str="enable",
@@ -638,6 +653,7 @@ class Size(Element):
         The size of the field mjData.userdata of mjData. This field should be
         used to store custom dynamic variables. See also User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         nconmax: int=None,
@@ -732,6 +748,7 @@ class Global(Element):
         the buffer. The size of this buffer can also be adjusted at runtime,
         but it is usually more convenient to set it in the XML.
     """
+    @capture_kwargs
     def __init__(
         self,
         fovy: float=None,
@@ -803,6 +820,7 @@ class Quality(Element):
         other advanced feature) is not supported by the video driver, it
         automatically disables that feature.
     """
+    @capture_kwargs
     def __init__(
         self,
         numarrows: int=None,
@@ -844,6 +862,7 @@ class Headlight(Element):
     :param specular:
         The specular component of the headlight, in the sense of OpenGL.
     """
+    @capture_kwargs
     def __init__(
         self,
         active: int=None,
@@ -924,6 +943,7 @@ class Map(Element):
         clipping plane is the model extent multiplied by the value of this
         attribute.
     """
+    @capture_kwargs
     def __init__(
         self,
         alpha: float=None,
@@ -1011,6 +1031,7 @@ class Scale(Element):
         second part of the mechanism is automatically scaled relative to this
         setting.
     """
+    @capture_kwargs
     def __init__(
         self,
         actuatorlength: float=None,
@@ -1106,6 +1127,7 @@ class Rgba(Element):
     :param slidercrank:
         Color of slider-crank mechanisms.
     """
+    @capture_kwargs
     def __init__(
         self,
         actuator: List[float]=[0.9, 0.4, 0.4, 1.0],
@@ -1189,6 +1211,7 @@ class Statistic(Element):
         inertia boxes. At runtime this value is multiplied by the attributes of
         the scale element above.
     """
+    @capture_kwargs
     def __init__(
         self,
         center: List[float]=None,
@@ -1218,6 +1241,7 @@ class Default(Element):
         classes. This name is used to make the class active when creating an
         actual model element.
     """
+    @capture_kwargs
     def __init__(
         self,
         class_: str=None,
@@ -1233,6 +1257,7 @@ class DefaultMesh(Element):
     defaults class.          The only mesh attribute available here is: scale.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1247,6 +1272,7 @@ class DefaultMaterial(Element):
     except:     name, class.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1261,6 +1287,7 @@ class DefaultJoint(Element):
     name, class.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1275,6 +1302,7 @@ class DefaultGeom(Element):
     name, class.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1289,6 +1317,7 @@ class DefaultSite(Element):
     name, class.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1303,6 +1332,7 @@ class DefaultCamera(Element):
     name, class.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1317,6 +1347,7 @@ class DefaultLight(Element):
     name, class.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1331,6 +1362,7 @@ class DefaultPair(Element):
     class, geom1, geom2.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1348,6 +1380,7 @@ class DefaultEquality(Element):
     attributes available here are:     active, solref, solimp.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1364,6 +1397,7 @@ class DefaultTendon(Element):
     class.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1378,6 +1412,7 @@ class DefaultGeneral(Element):
     name, class, joint, jointinparent, site, tendon, slidersite, cranksite.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1395,6 +1430,7 @@ class DefaultMotor(Element):
     jointinparent, site, tendon, slidersite, cranksite.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1408,6 +1444,7 @@ class DefaultPosition(Element):
     joint, jointinparent, site, tendon, slidersite, cranksite.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1421,6 +1458,7 @@ class DefaultVelocity(Element):
     joint, jointinparent, site, tendon, slidersite, cranksite.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1434,6 +1472,7 @@ class DefaultCylinder(Element):
     joint, jointinparent, site, tendon, slidersite, cranksite.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1447,6 +1486,7 @@ class DefaultMuscle(Element):
     joint, jointinparent, site, tendon, slidersite, cranksite.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1460,6 +1500,7 @@ class Custom(Element):
     does not have attributes.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1486,6 +1527,7 @@ class Numeric(Element):
         doubles. If this attribute is not specified, the size will be inferred
         from the actual data array below.
     """
+    @capture_kwargs
     def __init__(
         self,
         name,
@@ -1510,6 +1552,7 @@ class Text(Element):
     :param name:
         Name of the custom text field.
     """
+    @capture_kwargs
     def __init__(
         self,
         data,
@@ -1529,6 +1572,7 @@ class Tuple(Element):
     :param name:
         Name of the custom tuple.
     """
+    @capture_kwargs
     def __init__(
         self,
         name,
@@ -1552,6 +1596,7 @@ class Tupleelement(Element):
         Real-valued parameter associated with this element of the tuple. Its
         use is up to the user.
     """
+    @capture_kwargs
     def __init__(
         self,
         objname,
@@ -1573,6 +1618,7 @@ class Asset(Element):
     chapter.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -1853,6 +1899,7 @@ class Texture(Element):
         although in some cases (e.g. checker patterns) small values are
         sufficient.
     """
+    @capture_kwargs
     def __init__(
         self,
         builtin: str="none",
@@ -1950,6 +1997,7 @@ class Hfield(Element):
         The default value of 0 means that the data will be loaded from a file,
         which will be used to infer the size of the matrix.
     """
+    @capture_kwargs
     def __init__(
         self,
         size,
@@ -2029,6 +2077,7 @@ class Mesh(Element):
         data along each coordinate axis. Negative values are allowed, resulting
         in flipping the mesh along the corresponding axis.
     """
+    @capture_kwargs
     def __init__(
         self,
         file,
@@ -2122,6 +2171,7 @@ class Material(Element):
         "true" means that the 2d texture is repeated N times over one spatial
         unit, regardless of object size.
     """
+    @capture_kwargs
     def __init__(
         self,
         name,
@@ -2250,6 +2300,7 @@ class Body(Element):
         rules, the copy operation applies to both position and orientation, and
         the setting of the orientation-related attributes is ignored.
     """
+    @capture_kwargs
     def __init__(
         self,
         childclass: str=None,
@@ -2324,6 +2375,7 @@ class Inertial(Element):
     :param zaxis:
         Orientation of the inertial frame. See Frame orientations.
     """
+    @capture_kwargs
     def __init__(
         self,
         mass,
@@ -2493,6 +2545,7 @@ class Joint(Element):
         Constraint solver parameters for simulating joint limits. See Solver
         parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         armature: float=None,
@@ -2554,6 +2607,7 @@ class Freejoint(Element):
     :param name:
         Name of the joint.
     """
+    @capture_kwargs
     def __init__(
         self,
         name: str=None,
@@ -2835,6 +2889,7 @@ class Geom(Element):
     :param zaxis:
         Orientation of the geom frame. See Frame orientations.
     """
+    @capture_kwargs
     def __init__(
         self,
         class_: str=None,
@@ -2945,6 +3000,7 @@ class Site(Element):
     :param zaxis:
         Orientation of the site frame. See Frame orientations.
     """
+    @capture_kwargs
     def __init__(
         self,
         class_: str=None,
@@ -3056,6 +3112,7 @@ class Camera(Element):
     :param zaxis:
         Orientation of the camera frame. See Frame orientations.
     """
+    @capture_kwargs
     def __init__(
         self,
         class_: str=None,
@@ -3168,6 +3225,7 @@ class Light(Element):
         which body should be targeted in "targetbody" and "targetbodycom"
         modes.
     """
+    @capture_kwargs
     def __init__(
         self,
         active: bool=True,
@@ -3213,6 +3271,7 @@ class Contact(Element):
     detail in the Computation chapter, thus the description here is brief.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -3267,6 +3326,7 @@ class Pair(Element):
         Constraint solver parameters for contact simulation. See Solver
         parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         geom1,
@@ -3309,6 +3369,7 @@ class Exclude(Element):
     :param body2:
         The name of the second body in the pair.
     """
+    @capture_kwargs
     def __init__(
         self,
         body1,
@@ -3329,6 +3390,7 @@ class Equality(Element):
     under the connect element.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -3378,6 +3440,7 @@ class EqualityConnect(Element):
         Constraint solver parameters for equality constraint simulation. See
         Solver parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         anchor,
@@ -3430,6 +3493,7 @@ class EqualityWeld(Element):
     :param solref:
         Same as in connect element.
     """
+    @capture_kwargs
     def __init__(
         self,
         body1,
@@ -3481,6 +3545,7 @@ class EqualityJoint(Element):
     :param solref:
         Same as in connect element.
     """
+    @capture_kwargs
     def __init__(
         self,
         joint1,
@@ -3528,6 +3593,7 @@ class EqualityTendon(Element):
     :param solref:
         Same as in connect element.
     """
+    @capture_kwargs
     def __init__(
         self,
         tendon1,
@@ -3579,6 +3645,7 @@ class EqualityDistance(Element):
     :param solref:
         Same as in connect element.
     """
+    @capture_kwargs
     def __init__(
         self,
         geom1,
@@ -3612,6 +3679,7 @@ class Tendon(Element):
     tendons can also represent different forms of mechanical coupling.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -3690,6 +3758,7 @@ class Spatial(Element):
         Constraint solver parameters for simulating tendon limits. See Solver
         parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         class_: str=None,
@@ -3727,87 +3796,6 @@ class Spatial(Element):
         self.solreffriction = solreffriction
         self.solreflimit = solreflimit
         self._attribute_names = ['class_', 'damping', 'frictionloss', 'limited', 'margin', 'material', 'name', 'range', 'rgba', 'stiffness', 'user', 'width', 'solimpfriction', 'solimplimit', 'solreffriction', 'solreflimit']
-
-
-class SpatialSite(Element):
-    """
-         This attribute specifies a site that the tendon path has to pass
-    through. Recall that sites are rigidly attached to bodies.
-
-    :param site:
-        The name of the site that the tendon must pass through.
-    """
-    def __init__(
-        self,
-        site,
-    ):
-        super().__init__()
-        self.site = site
-        self._attribute_names = ['site']
-
-
-class SpatialGeom(Element):
-    """
-         This element specifies a geom that acts as an obstacle for the tendon
-    path. If the minimum-length path does not touch the geom it has no effect;
-    otherwise the path wraps around the surface of the geom. Wrapping is
-    computed analytically, which is why we restrict the geom types allowed
-    here to spheres and cylinders. The latter are treated as having infinite
-    length for tendon wrapping purposes.
-
-    :param geom:
-        The name of a geom that acts as an obstacle for the tendon path. Only
-        sphere and cylinder geoms can be referenced here.
-    :param sidesite:
-        To prevent the tendon path from snapping from one side of the geom to
-        the other as the model configuration varies, the user can define a
-        preferred "side" of the geom. At runtime, the wrap that is closer to
-        the specified site is automatically selected. Specifying a side site is
-        often needed in practice.
-    """
-    def __init__(
-        self,
-        geom,
-        sidesite: str=None,
-    ):
-        super().__init__()
-        self.geom = geom
-        self.sidesite = sidesite
-        self._attribute_names = ['geom', 'sidesite']
-
-
-class SpatialPulley(Element):
-    """
-         This element starts a new branch in the tendon path. The branches are
-    not required to be connected spatially. Similar to the transmissions
-    described in the Actuation model section of the Computation chapter, the
-    quantity that affects the simulation is the tendon length and its gradient
-    with respect to the joint positions. If a spatial tendon has multiple
-    branches, the length of each branch is divided by the divisor attribute of
-    the pulley element that started the branch, and added up to obtain the
-    overall tendon length. This is why the spatial relations among branches
-    are not relevant to the simulation. The tendon.xml example above
-    illustrated the use of pulleys.
-
-    :param divisor:
-        The length of the tendon branch started by the pulley element is
-        divided by the value specified here. For a physical pulley that splits
-        a single branch into two parallel branches, the common branch would
-        have divisor value of 1 and the two branches following the pulley would
-        have divisor values of 2. If one of them is further split by another
-        pulley, each new branch would have divisor value of 4 and so on. Note
-        that in MJCF each branch starts with a pulley, thus a single physical
-        pulley is modeled with two MJCF pulleys. If no pulley elements are
-        included in the tendon path, the first and only branch has divisor
-        value of 1.
-    """
-    def __init__(
-        self,
-        divisor,
-    ):
-        super().__init__()
-        self.divisor = divisor
-        self._attribute_names = ['divisor']
 
 
 class Fixed(Element):
@@ -3851,6 +3839,7 @@ class Fixed(Element):
     :param user:
         Same as in the spatial element.
     """
+    @capture_kwargs
     def __init__(
         self,
         class_: None=None,
@@ -3897,6 +3886,7 @@ class FixedJoint(Element):
         Name of the joint to be added to the fixed tendon. Only scalar joints
         (slide and hinge) can be referenced here.
     """
+    @capture_kwargs
     def __init__(
         self,
         coef,
@@ -3917,6 +3907,7 @@ class Actuator(Element):
     document them only once, under the general actuator.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -4046,6 +4037,7 @@ class General(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         biasprm: List[float]=[0.0, 0.0, 0.0],
@@ -4192,6 +4184,7 @@ class Motor(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         class_: str=None,
@@ -4266,6 +4259,7 @@ class Position(Element):
     :param user:
         Same as in actuator/ general.
     """
+    @capture_kwargs
     def __init__(
         self,
         kp: float=None,
@@ -4341,6 +4335,7 @@ class Velocity(Element):
     :param user:
         Same as in actuator/ general.
     """
+    @capture_kwargs
     def __init__(
         self,
         kv: float=None,
@@ -4421,6 +4416,7 @@ class Cylinder(Element):
     :param user:
         Same as in actuator/ general.
     """
+    @capture_kwargs
     def __init__(
         self,
         area: float=None,
@@ -4467,6 +4463,7 @@ class Muscle(Element):
              To be written.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -4489,6 +4486,7 @@ class Sensor(Element):
     the user.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -4527,6 +4525,7 @@ class SensorTouch(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         site,
@@ -4568,6 +4567,7 @@ class SensorAccelerometer(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         site,
@@ -4609,6 +4609,7 @@ class SensorVelocimeter(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         site,
@@ -4652,6 +4653,7 @@ class SensorGyro(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         site,
@@ -4703,6 +4705,7 @@ class SensorForce(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         site,
@@ -4742,6 +4745,7 @@ class SensorTorque(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         site,
@@ -4781,6 +4785,7 @@ class SensorMagnetometer(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         site,
@@ -4827,6 +4832,7 @@ class SensorRangefinder(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         site,
@@ -4869,6 +4875,7 @@ class SensorJointpos(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         joint,
@@ -4908,6 +4915,7 @@ class SensorJointvel(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         joint,
@@ -4947,6 +4955,7 @@ class SensorTendonpos(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         tendon,
@@ -4986,6 +4995,7 @@ class SensorTendonvel(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         tendon,
@@ -5026,6 +5036,7 @@ class SensorActuatorpos(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         actuator,
@@ -5065,6 +5076,7 @@ class SensorActuatorvel(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         actuator,
@@ -5107,6 +5119,7 @@ class SensorActuatorfrc(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         actuator,
@@ -5146,6 +5159,7 @@ class SensorBallquat(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         joint,
@@ -5187,6 +5201,7 @@ class SensorBallangvel(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         joint,
@@ -5230,6 +5245,7 @@ class SensorFramepos(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         objname,
@@ -5276,6 +5292,7 @@ class SensorFramequat(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         objname,
@@ -5322,6 +5339,7 @@ class SensorFramexaxis(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         objname,
@@ -5368,6 +5386,7 @@ class SensorFrameyaxis(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         objname,
@@ -5414,6 +5433,7 @@ class SensorFramezaxis(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         objname,
@@ -5459,6 +5479,7 @@ class SensorFramelinvel(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         objname,
@@ -5504,6 +5525,7 @@ class SensorFrameangvel(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         objname,
@@ -5549,6 +5571,7 @@ class SensorFramelinacc(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         objname,
@@ -5594,6 +5617,7 @@ class SensorFrameangacc(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         objname,
@@ -5634,6 +5658,7 @@ class SensorSubtreecom(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         body,
@@ -5673,6 +5698,7 @@ class SensorSubtreelinvel(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         body,
@@ -5712,6 +5738,7 @@ class SensorSubtreeangmom(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         body,
@@ -5771,6 +5798,7 @@ class SensorUser(Element):
     :param user:
         See User parameters.
     """
+    @capture_kwargs
     def __init__(
         self,
         datatype,
@@ -5813,6 +5841,7 @@ class Keyframe(Element):
     done programmatically.
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):
@@ -5838,6 +5867,7 @@ class Key(Element):
         Simulation time, copied into mjData.time when the simulation state is
         set to this keyframe.
     """
+    @capture_kwargs
     def __init__(
         self,
         act: str="0 0 ...",
@@ -5864,6 +5894,7 @@ class Worldbody(Element):
     automatically defined as "world".
 
     """
+    @capture_kwargs
     def __init__(
         self,
     ):

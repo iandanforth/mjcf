@@ -3,113 +3,6 @@ from mjcf import elements as e
 import math
 
 
-def rotate(point, angle, origin=[0, 0]):
-    """
-    Rotate a point counterclockwise by a given angle around a given origin.
-
-    The angle should be given in radians.
-
-    Source: https://stackoverflow.com/a/34374437/1775741
-    """
-    ox, oy = origin
-    px, py = point
-
-    qx = ox + math.cos(angle) * (px - ox) - math.sin(angle) * (py - oy)
-    qy = oy + math.sin(angle) * (px - ox) + math.cos(angle) * (py - oy)
-    return qx, qy
-
-
-def gen_world():
-    world = {
-        "mujoco": {
-            "worldbody": {
-                "light": {
-                    "@cutoff": "100",
-                    "@diffuse": "1 1 1",
-                    "@dir": "-0 0 -1.3",
-                    "@directional": "true",
-                    "@exponent": "1",
-                    "@pos": "0 0 1.3",
-                    "@specular": ".1 .1 .1"
-                },
-                "geom": {
-                    "@conaffinity": "1",
-                    "@condim": "3",
-                    "@material": "MatPlane",
-                    "@name": "floor",
-                    "@pos": "0 0 0",
-                    "@rgba": "0.8 0.9 0.8 1",
-                    "@size": "20 20 .125",
-                    "@type": "plane"
-                },
-                "body": {
-                    "@name": "ball",
-                    "@pos": "0.0 0.0 1.0",
-                    "joint": [
-                        {
-                            "@name": "ball_joint",
-                            "@pos": "0.0 0.0 0.2",
-                            "@type": "ball",
-                            "@damping": "2.0"
-                        },
-                        {
-                            "@type": "slide",
-                            "@axis": "0 0 1",
-                            "@damping": "2.0"
-                        },
-                        {
-                            "@type": "slide",
-                            "@axis": "0 1 0",
-                            "@damping": "2.0"
-                        },
-                        {
-                            "@type": "slide",
-                            "@axis": "1 0 0",
-                            "@damping": "2.0"
-                        }
-                    ],
-                    "geom": {
-                        "@pos": "0.0 0.0 0.0",
-                        "@size": "0.2",
-                        "@type": "sphere"
-                    }
-                }
-            },
-            "asset": {
-                "texture": [
-                    {
-                        "@builtin": "gradient",
-                        "@height": "100",
-                        "@rgb1": ".4 .5 .6",
-                        "@rgb2": "0 0 0",
-                        "@type": "skybox",
-                        "@width": "100"
-                    },
-                    {
-                        "@builtin": "checker",
-                        "@height": "100",
-                        "@name": "texplane",
-                        "@rgb1": "0 0 0",
-                        "@rgb2": "0.8 0.8 0.8",
-                        "@type": "2d",
-                        "@width": "100"
-                    }
-                ],
-                "material": {
-                    "@name": "MatPlane",
-                    "@reflectance": "0.5",
-                    "@shininess": "1",
-                    "@specular": "1",
-                    "@texrepeat": "60 60",
-                    "@texture": "texplane"
-                }
-            }
-        }
-    }
-
-    return world
-
-
 def get_leg(
     name,
     hip_distance=0.2,
@@ -124,15 +17,14 @@ def get_leg(
     )
 
     aux_geom = e.Geom(
-        fromto=[0, 0, 0, hip_distance, hip_distance, 0],
+        fromto=[0, 0, 0, hip_distance, 0, 0],
         name="aux_geom_"+name,
         size=0.08,
-        type="capsule",
-        rgba=None
+        type="capsule"
     )
     aux_body = e.Body(
         name="aux_body_"+name,
-        pos=[hip_distance, hip_distance, 0]
+        pos=[hip_distance, 0, 0]
     )
     leg.add_children([
         aux_geom,
@@ -148,15 +40,14 @@ def get_leg(
         type="hinge"
     )
     leg_geom = e.Geom(
-        fromto=[0.0, 0.0, 0.0, 0.2, 0.2, 0.0],
+        fromto=[0.0, 0.0, 0.0, leg_length, 0.0, 0.0],
         name="leg_geom_"+name,
         size=0.08,
-        type="capsule",
-        rgba=None
+        type="capsule"
     )
     ankle_body = e.Body(
         name="ankle_body_"+name,
-        pos=[0.2, 0.2, 0]
+        pos=[leg_length, 0.0, 0]
     )
     aux_body.add_children([
         hip_joint,
@@ -173,11 +64,10 @@ def get_leg(
         type="hinge"
     )
     ankle_geom = e.Geom(
-        fromto=[0.0, 0.0, 0.0, 0.4, 0.4, 0.0],
+        fromto=[0.0, 0.0, 0.0, foot_length, 0.0, 0.0],
         name="ankle_geom_"+name,
         size=0.08,
-        type="capsule",
-        rgba=None
+        type="capsule"
     )
     ankle_body.add_children([ankle_joint, ankle_geom])
 
