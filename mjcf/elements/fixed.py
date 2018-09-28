@@ -1,7 +1,7 @@
 from mjcf.element import Element
 
 
-class FixedJoint(Element):
+class Joint(Element):
     """
          This element adds a joint to the computation of the fixed tendon
     length. The position or angle of each included joint is multiplied by the
