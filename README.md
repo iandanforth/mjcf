@@ -15,6 +15,12 @@ The following is the contents of `gen_empty.py` which will (re)generate
 `empty-gen.xml`. This is an empty checkerboard world, ripe for populating with
 creations of your devising!
 
+You can then run that world with
+
+```
+python model-viewer.py empty-gen.xml
+```
+
 ```python
 from mjcf import elements as e
 
