@@ -97,39 +97,50 @@ def get_source_string(queue):
 
 def main():
 
-    # Load and parse the xml
-    xml_path = os.path.join("sample_models", "humanoid.xml")
-    with open(xml_path, 'r') as fh:
-        xml_string = fh.read()
-    xml_dict = xmltodict.parse(xml_string)
+    # Get a list of all the xml files we want to convert
+    orig_xml_dir = "sample_models"
+    files = os.listdir(orig_xml_dir)
+    # Screen out anything that's not xml
+    files = [f for f in files if 'xml' in f]
 
-    # Prepare nodes for traversal and top node
-    items = list(xml_dict.items())
-    start = items[0][1]
-    start["__name"] = 'mujoco'
-    start["__type"] = 'mujoco'
-    start["__parent"] = 'mujoco'
-    queue = [start]
-    current_parent = start["__parent"]
-    children = []
-    prev_names = []
+    py_script_dir = "gen_scripts"
+    for f in files:
+        # Load and parse the xml
+        xml_path = os.path.join(orig_xml_dir, f)
+        with open(xml_path, 'r') as fh:
+            xml_string = fh.read()
+        xml_dict = xmltodict.parse(xml_string)
 
-    # BF traversal of 
-    source_string = get_source_string(queue)
+        # Prepare nodes for traversal and top node
+        items = list(xml_dict.items())
+        start = items[0][1]
+        start["__name"] = 'mujoco'
+        start["__type"] = 'mujoco'
+        start["__parent"] = 'mujoco'
+        queue = [start]
 
-    # Prepare Jinja2 env
-    env = Environment(
-        loader=FileSystemLoader('templates/'),
-        autoescape=select_autoescape(['python']),
-        trim_blocks=True,
-        lstrip_blocks=True,
-    )
-    template = env.get_template('gen_script.j2')
+        # BF traversal to get xml string
+        source_string = get_source_string(queue)
 
-    rendered = template.render(source_string=source_string)
-    sourcepath = os.path.join("generated", "gen_xml.py")
-    with open(sourcepath, 'w') as fh:
-        fh.write(rendered)
+        # Prepare Jinja2 env
+        env = Environment(
+            loader=FileSystemLoader('templates/'),
+            autoescape=select_autoescape(['python']),
+            trim_blocks=True,
+            lstrip_blocks=True,
+        )
+        template = env.get_template('gen_script.j2')
+
+        model_name = f.split(".")[0]
+        rendered = template.render(
+            source_string=source_string,
+            model_name=model_name
+        )
+
+        script_name = "gen_{}.py".format(model_name)
+        sourcepath = os.path.join(py_script_dir, script_name)
+        with open(sourcepath, 'w') as fh:
+            fh.write(rendered)
 
 
 if __name__ == '__main__':

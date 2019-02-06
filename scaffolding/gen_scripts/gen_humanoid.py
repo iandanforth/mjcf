@@ -700,7 +700,7 @@ def main():
     model_xml = mujoco.xml()
 
     # Output
-    with open('new-gen.xml', 'w') as fh:
+    with open('humanoid_gen.xml', 'w') as fh:
         fh.write(model_xml)
 
 

@@ -4,7 +4,7 @@ from mjcf import elements as e
 def main():
 
     mujoco = e.Mujoco(
-        model="humanoid",
+        model="humanoidstandup",
     )
     compiler = e.Compiler(
         angle="degree",
@@ -142,7 +142,7 @@ def main():
     )
     torso = e.Body(
         name="torso",
-        pos="0 0 1.4",
+        pos="0 0 .105",
     )
     worldbody.add_children([
         light,
@@ -266,7 +266,7 @@ def main():
     track = e.Camera(
         name="track",
         mode="trackcom",
-        pos="0 -4 0",
+        pos="0 -3 .5",
         xyaxes="1 0 0 0 0 1",
     )
     root = e.Joint(
@@ -286,20 +286,20 @@ def main():
     )
     head = e.Geom(
         name="head",
-        pos="0 0 .19",
+        pos="-.15 0 0",
         size=".09",
         type="sphere",
         user="258",
     )
     uwaist = e.Geom(
-        fromto="-.01 -.06 -.12 -.01 .06 -.12",
+        fromto=".11 -.06 0 .11 .06 0",
         name="uwaist",
         size="0.06",
         type="capsule",
     )
     lwaist = e.Body(
         name="lwaist",
-        pos="-.01 0 -0.260",
+        pos=".21 0 0",
         quat="1.000 0 -0.002 0",
     )
     right_upper_arm = e.Body(
@@ -372,7 +372,7 @@ def main():
     )
     pelvis = e.Body(
         name="pelvis",
-        pos="0 0 -0.165",
+        pos="0.165 0 0",
         quat="1.000 0 -0.002 0",
     )
     lwaist.add_children([
@@ -467,11 +467,11 @@ def main():
     )
     right_thigh = e.Body(
         name="right_thigh",
-        pos="0 -0.1 -0.04",
+        pos="0 -0.1 0",
     )
     left_thigh = e.Body(
         name="left_thigh",
-        pos="0 0.1 -0.04",
+        pos="0 0.1 0",
     )
     pelvis.add_children([
         abdomen_x_1,
@@ -566,14 +566,14 @@ def main():
         type="hinge",
     )
     right_thigh1 = e.Geom(
-        fromto="0 0 0 0 0.01 -.34",
+        fromto="0 0 0 0.34 0.01 0",
         name="right_thigh1",
         size="0.06",
         type="capsule",
     )
     right_shin = e.Body(
         name="right_shin",
-        pos="0 0.01 -0.403",
+        pos="0.403 0.01 0",
     )
     right_thigh.add_children([
         right_hip_x_1,
@@ -613,14 +613,14 @@ def main():
         type="hinge",
     )
     left_thigh1 = e.Geom(
-        fromto="0 0 0 0 -0.01 -.34",
+        fromto="0 0 0 0.34 -0.01 0",
         name="left_thigh1",
         size="0.06",
         type="capsule",
     )
     left_shin = e.Body(
         name="left_shin",
-        pos="0 -0.01 -0.403",
+        pos="0.403 -0.01 0",
     )
     left_thigh.add_children([
         left_hip_x_1,
@@ -638,14 +638,14 @@ def main():
         type="hinge",
     )
     right_shin1 = e.Geom(
-        fromto="0 0 0 0 0 -.3",
+        fromto="0 0 0 0.3 0 0",
         name="right_shin1",
         size="0.049",
         type="capsule",
     )
     right_foot = e.Body(
         name="right_foot",
-        pos="0 0 -0.45",
+        pos="0.35 0 -.10",
     )
     right_shin.add_children([
         right_knee_1,
@@ -662,14 +662,14 @@ def main():
         type="hinge",
     )
     left_shin1 = e.Geom(
-        fromto="0 0 0 0 0 -.3",
+        fromto="0 0 0 0.3 0 0",
         name="left_shin1",
         size="0.049",
         type="capsule",
     )
     left_foot = e.Body(
         name="left_foot",
-        pos="0 0 -0.45",
+        pos="0.35 0 -.1",
     )
     left_shin.add_children([
         left_knee_1,
@@ -700,7 +700,7 @@ def main():
     model_xml = mujoco.xml()
 
     # Output
-    with open('new-gen.xml', 'w') as fh:
+    with open('humanoidstandup_gen.xml', 'w') as fh:
         fh.write(model_xml)
 
 

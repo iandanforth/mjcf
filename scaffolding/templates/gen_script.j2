@@ -7,7 +7,7 @@ def main():
     model_xml = mujoco.xml()
 
     # Output
-    with open('new-gen.xml', 'w') as fh:
+    with open('{{ model_name }}_gen.xml', 'w') as fh:
         fh.write(model_xml)
 
 
