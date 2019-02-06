@@ -1,9 +1,7 @@
 # mjcf
 Python Library for MuJoCo Format model xml
 
-## WARNING: Not high quality code. Use at your own risk.
-
-With that out of the way ... have you ever wanted to generate MuJoCo format
+Have you ever wanted to generate MuJoCo format
 xml files from Python classes? Of course you have! That's why this library
 exists. 
 
