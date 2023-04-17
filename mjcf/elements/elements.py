@@ -427,7 +427,7 @@ class Option(Element):
         self._attribute_names = ['apirate', 'collision', 'cone', 'density', 'gravity', 'impedance', 'impratio', 'integrator', 'iterations', 'jacobian', 'mpr_iterations', 'mpr_tolerance', 'noslip_iterations', 'noslip_tolerance', 'o_margin', 'o_solimp', 'o_solref', 'reference', 'solver', 'timestep', 'tolerance', 'viscosity', 'wind']
 
 
-class OptionFlag(Element):
+class Flag(Element):
     """
          This element sets the flags that enable and disable different parts
     of the simulation pipeline. The actual flags used at runtime are
