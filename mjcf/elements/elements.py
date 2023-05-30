@@ -427,7 +427,7 @@ class Option(Element):
         self._attribute_names = ['apirate', 'collision', 'cone', 'density', 'gravity', 'impedance', 'impratio', 'integrator', 'iterations', 'jacobian', 'mpr_iterations', 'mpr_tolerance', 'noslip_iterations', 'noslip_tolerance', 'o_margin', 'o_solimp', 'o_solref', 'reference', 'solver', 'timestep', 'tolerance', 'viscosity', 'wind']
 
 
-class OptionFlag(Element):
+class Flag(Element):
     """
          This element sets the flags that enable and disable different parts
     of the simulation pipeline. The actual flags used at runtime are
@@ -3353,6 +3353,83 @@ class Velocity(Element):
         self.tendon = tendon
         self.user = user
         self._attribute_names = ['kv', 'class_', 'cranklength', 'cranksite', 'ctrllimited', 'ctrlrange', 'forcelimited', 'forcerange', 'gear', 'joint', 'name', 'slidersite', 'tendon', 'user']
+
+class IntVelocity(Element):
+    """
+    This element creates a velocity servo. Note that in order create a PD
+    controller, one has to define two actuators: a position servo and a
+    velocity servo. This is because MuJoCo actuators are SISO while a PD
+    controller takes two control inputs (reference position and reference
+    velocity). The underlying general attributes are set as follows:
+    Attribute Setting Attribute Setting   dyntype none dynprm 1 0 0   gaintype
+    fixed gainprm kv 0 0   biastype affine biasprm 0 0 -kv             This
+    element has one custom attribute in addition to the common attributes:
+
+    :param kv:
+        Velocity feedback gain.
+    :param class_:
+        Same as in actuator/ general.
+    :param cranklength:
+        Same as in actuator/ general.
+    :param cranksite:
+        Same as in actuator/ general.
+    :param ctrllimited:
+        Same as in actuator/ general.
+    :param ctrlrange:
+        Same as in actuator/ general.
+    :param forcelimited:
+        Same as in actuator/ general.
+    :param forcerange:
+        Same as in actuator/ general.
+    :param gear:
+        Same as in actuator/ general.
+    :param joint:
+        Same as in actuator/ general.
+    :param name:
+        Same as in actuator/ general.
+    :param slidersite:
+        Same as in actuator/ general.
+    :param tendon:
+        Same as in actuator/ general.
+    :param user:
+        Same as in actuator/ general.
+    """
+    @capture_kwargs
+    def __init__(
+        self,
+        kp: float=None,
+        class_: None=None,
+        cranklength: None=None,
+        actrange: None=None,
+        cranksite: None=None,
+        ctrllimited: None=None,
+        ctrlrange: None=None,
+        forcelimited: None=None,
+        forcerange: None=None,
+        gear: None=None,
+        joint: None=None,
+        name: None=None,
+        slidersite: None=None,
+        tendon: None=None,
+        user: None=None,
+    ):
+        super().__init__()
+        self.kp = kp
+        self.class_ = class_
+        self.actrange = actrange
+        self.cranklength = cranklength
+        self.cranksite = cranksite
+        self.ctrllimited = ctrllimited
+        self.ctrlrange = ctrlrange
+        self.forcelimited = forcelimited
+        self.forcerange = forcerange
+        self.gear = gear
+        self.joint = joint
+        self.name = name
+        self.slidersite = slidersite
+        self.tendon = tendon
+        self.user = user
+        self._attribute_names = ['kp', 'class_', 'actrange', 'cranklength', 'cranksite', 'ctrllimited', 'ctrlrange', 'forcelimited', 'forcerange', 'gear', 'joint', 'name', 'slidersite', 'tendon', 'user']
 
 
 class Cylinder(Element):
